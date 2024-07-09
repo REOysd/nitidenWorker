@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "899480932485",
+    "project_id": "nitidenworker",
+    "storage_bucket": "nitidenworker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899480932485:android:32778458caff579efb19ec",
+        "android_client_info": {
+          "package_name": "jp.ac.jec.cm01xx.nitidenworker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9paIOsseRRYBg3kKDpMZD_snl7UE9Xu4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
