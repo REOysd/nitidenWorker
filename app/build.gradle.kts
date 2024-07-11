@@ -68,15 +68,21 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //Firebase
     implementation(libs.firebase.auth)
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-analytics")
 
+    //GoogleCredentials
     implementation ("androidx.credentials:credentials:1.2.2")
     implementation ("androidx.credentials:credentials-play-services-auth:1.2.2")
     implementation ("com.google.android.libraries.identity.googleid:googleid:1.1.0")
 
+    //navigationCompose
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation ("com.google.accompanist:accompanist-insets:0.25.1")
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.31.0-alpha")
+
+    //coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation ("io.coil-kt:coil-video:2.4.0")
 }

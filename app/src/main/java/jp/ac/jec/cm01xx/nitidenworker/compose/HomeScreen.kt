@@ -17,7 +17,6 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
     ){
-        Icon(painter = painterResource(id = R.drawable.home_icon_by_icons8_), contentDescription = null)
     }
 }
 
