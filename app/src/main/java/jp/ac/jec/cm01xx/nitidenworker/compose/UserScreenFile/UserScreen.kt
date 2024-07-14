@@ -67,6 +67,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserScreen(
+    modifier: Modifier,
     currentUser:FirebaseUser?,
     onClickLoginButton:() -> Unit,
     onClickLogoutButton:() -> Unit,
@@ -108,7 +109,7 @@ fun UserScreen(
                     when(it){
                         0 ->
                             UserProfileScreen(
-                                modifier = Modifier
+                                modifier = modifier
                                     .padding(innerPadding),
                                 onClickLogoutButton = onClickLogoutButton,
                                 SwitchProfileCurrentUser = {
@@ -118,7 +119,7 @@ fun UserScreen(
 
                         1 ->
                             UserProfileAppeal(
-                                modifier = Modifier
+                                modifier = modifier
                                     .padding(innerPadding)
                             )
                     }
@@ -140,7 +141,7 @@ fun ProfileTopBar(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = height)
-            .height(250.dp)
+            .height(230.dp)
             .background(Color.White)
             .verticalScroll(rememberScrollState())
     ) {

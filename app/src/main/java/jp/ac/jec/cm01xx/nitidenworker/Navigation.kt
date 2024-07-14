@@ -1,8 +1,13 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package jp.ac.jec.cm01xx.nitidenworker
 
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -23,10 +29,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -36,6 +46,9 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +81,22 @@ fun Navigation(
     val backStack by navHostController.currentBackStackEntryAsState()
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
     val height = systemBarsPadding.calculateTopPadding()
+    var isBottomBarVisible by remember{ mutableStateOf(true) }
+    var lastScrollOffset by remember { mutableStateOf(0f) }
+    var nestScrollConnection = remember {
+        object:NestedScrollConnection{
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
+                if(delta < 0){
+                    isBottomBarVisible = false
+                }else if(delta > 0){
+                    isBottomBarVisible = true
+                }
+                lastScrollOffset += delta
+                return Offset.Zero
+            }
+        }
+    }
     val navigationItems = listOf(
         BottomNavigationItems(
             title = NavigationScreen.Home.name,
@@ -110,10 +139,16 @@ fun Navigation(
             }
         },
         bottomBar = {
-            BottomBarNavigationContext(
-                navigationItems = navigationItems,
-                navHostController = navHostController
-            )
+            AnimatedVisibility(
+                visible = isBottomBarVisible,
+                enter = slideInVertically (initialOffsetY = {it}),
+                exit = slideOutVertically (targetOffsetY = {it})
+            ) {
+                BottomBarNavigationContext(
+                    navigationItems = navigationItems,
+                    navHostController = navHostController
+                )
+            }
         }
     ) {innerPadding ->
         NavHost(
@@ -206,7 +241,8 @@ fun Navigation(
                                 ClearCredentialStateRequest()
                             )
                         }
-                    }
+                    },
+                    modifier = Modifier.nestedScroll(nestScrollConnection)
                 )
             }
         }

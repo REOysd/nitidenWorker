@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">nitidenWorker</string>
+    <string name="UserProfileAppealExample">＜例＞現在日本電子専門学校のモバイルアプリケーション開発科の一年に所属している吉田です。\n
+                        今はモバイルアプリ開発のアルバイトをしながら、プライベートでkotlinを触っています。\n
+                        その為、モバイルアプリの実装や、モバイルアプリの学習のお手伝いをすることも可能ですので、お気軽にお声が下ください。\n
+                        また、こちらとしましては現在デザイン、バックエンドを募集していますので機会がありましたらよろしくお願いします。
+                        </string>
+    <string name="UserProfileAppealUrlExample">
+        　＜例＞https://qiita.com/goretzka_\n
+        ＜例＞https://github.com/REOysd\n
+        ＜例＞https://x.com/7qT59sJGCPLRkUA
+    </string>
 </resources>
