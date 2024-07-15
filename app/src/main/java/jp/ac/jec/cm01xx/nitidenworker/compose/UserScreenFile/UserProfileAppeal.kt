@@ -2,10 +2,8 @@ package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreenFile
 
 import android.util.Patterns
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,55 +19,41 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.sharp.Check
-import androidx.compose.material.icons.twotone.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
-import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -210,6 +194,7 @@ fun UserProfileAppeal(
     )
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalBottomSheetOnProfileAppealText(
@@ -221,7 +206,7 @@ fun ModalBottomSheetOnProfileAppealText(
 ){
     val isExpanded = sheetState.currentValue == SheetValue.Expanded
     val fabOffsetY by animateDpAsState(
-        targetValue = if(isExpanded) -10.dp else -370.dp,
+        targetValue = if(isExpanded) -30.dp else -390.dp,
     )
 
     ModalBottomSheet(
@@ -306,6 +291,7 @@ fun ModalBottomSheetOnProfileAppealText(
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalBottomSheetOnProfileAppealURL(
@@ -314,10 +300,10 @@ fun ModalBottomSheetOnProfileAppealURL(
 ){
     val isExpanded = sheetState.currentValue == SheetValue.Expanded
     val fabOffsetY by animateDpAsState(
-        targetValue = if(isExpanded) -10.dp else -370.dp,
+        targetValue = if(isExpanded) -30.dp else -390.dp,
     )
-    var text by rememberSaveable { mutableStateOf("") }
-    var notUrlError by rememberSaveable { mutableStateOf(true) }
+    var urlInputs by remember { mutableStateOf(listOf("")) }
+    var urlErrors by remember { mutableStateOf(listOf(false)) }
 
     ModalBottomSheet(
         onDismissRequest = {
@@ -359,59 +345,7 @@ fun ModalBottomSheetOnProfileAppealURL(
                 Spacer(modifier = Modifier.height(16.dp))
 
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .background(Color.White)
-                ) {
-                    OutlinedTextField(
-                        value = text,
-                        onValueChange = {
-                            text = it
-                            notUrlError = CheckURL(text)
-                                        },
-                        maxLines = 1,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 20.dp)
-                            .width(310.dp)
-                            .fillMaxHeight(),
-                        placeholder = {
-                            Text(
-                                text = "URLを記入",
-                                color = Color.Gray.copy(alpha = 0.5f),
-                                fontSize = 14.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        },
-                        isError = !notUrlError
-                    )
-                    
-                    Spacer(modifier = Modifier.weight(1f))
 
-                    IconButton(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 14.dp)
-                            .background(Color.White)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "delete"
-                        )
-                    }
-                }
-                Row{
-                    if(!notUrlError){
-                        Text(
-                            text = "入力されたURlは正しくありません",
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(start = 26.dp)
-                        )
-                    }
-                }
             }
 
             Column(
@@ -419,25 +353,23 @@ fun ModalBottomSheetOnProfileAppealURL(
                     .align(Alignment.BottomEnd)
                     .offset(y = fabOffsetY, x = -20.dp)
             ) {
-
-
-                ElevatedButton(
+                FloatingActionButton(
                     onClick = {
-                        onDismiss()
+                        if(urlErrors.){
+                            onDismiss()
+                        }
                     },
                     modifier = Modifier
                         .padding(bottom = 30.dp, end = 20.dp)
                         .size(60.dp),
-                    colors = ButtonDefaults.elevatedButtonColors(Color(0xFF00B900)),
+                    shape = FloatingActionButtonDefaults.largeShape,
+                    containerColor = if(notUrlError_1)Color(0xFF00B900)else Color.Gray,
 
                 ) {
                     Icon(
-                        imageVector = Icons.Sharp.Check,
+                        imageVector = Icons.Default.Check,
                         contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(40.dp)
-
+                        tint = if(notUrlError_1)Color.White else Color.DarkGray
                     )
                 }
             }
@@ -447,4 +379,86 @@ fun ModalBottomSheetOnProfileAppealURL(
 
 fun CheckURL(url:String):Boolean{
     return Patterns.WEB_URL.matcher(url).matches()
+}
+
+@Preview
+@Composable
+fun Preview(){
+    var urlInputs by remember { mutableStateOf(listOf("")) }
+    var urlErrors by remember { mutableStateOf(listOf(false)) }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        urlInputs.forEachIndexed { index, url ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(Color.White)
+            ) {
+                OutlinedTextField(
+                    value = url,
+                    onValueChange = { newText ->
+                        urlInputs = urlInputs.toMutableList().also { it[index] = newText }
+                        urlErrors = urlErrors.toMutableList().also { it[index] = !CheckURL(newText) }
+                    },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 20.dp, end = 10.dp),
+                    placeholder = {
+                        Text(
+                            text = "URLを記入",
+                            color = Color.Gray.copy(alpha = 0.5f),
+                            fontSize = 14.sp
+                        )
+                    },
+                    isError = urlErrors[index]
+                )
+
+                IconButton(
+                    onClick = {
+                        if (urlInputs.size > 1) {
+                            urlInputs = urlInputs.filterIndexed { i, _ -> i != index }
+                            urlErrors = urlErrors.filterIndexed { i, _ -> i != index }
+                        } else {
+                            urlInputs = listOf("")
+                            urlErrors = listOf(false)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 14.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "delete"
+                    )
+                }
+            }
+
+            if (urlErrors[index]) {
+                Text(
+                    text = "入力されたURLは正しくありません",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 26.dp)
+                )
+            }
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        FloatingActionButton(
+            onClick = {
+                if (urlInputs.size < 5) {
+                    urlInputs = urlInputs + ""
+                    urlErrors = urlErrors + false
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Add URL field")
+        }
+    }
 }
