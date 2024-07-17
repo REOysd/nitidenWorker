@@ -24,3 +24,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun MainPreview(){
+    val navController = rememberNavController()
+    Navigation(navHostController = navController)
+}

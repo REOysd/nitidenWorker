@@ -64,7 +64,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import jp.ac.jec.cm01xx.nitidenworker.compose.FavoriteScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen
@@ -72,6 +74,7 @@ import jp.ac.jec.cm01xx.nitidenworker.compose.MessageScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.SearchScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreenFile.UserScreen
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun Navigation(
@@ -159,80 +162,51 @@ fun Navigation(
                 HomeScreen(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .nestedScroll(nestScrollConnection)
                 )
             }
             composable(NavigationScreen.Search.name){
                 SearchScreen(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .nestedScroll(nestScrollConnection)
                 )
             }
             composable(NavigationScreen.Favorite.name){
                 FavoriteScreen(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .nestedScroll(nestScrollConnection)
                 )
             }
             composable(NavigationScreen.Message.name){
                 MessageScreen(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .nestedScroll(nestScrollConnection)
                 )
             }
             composable(NavigationScreen.MyJob.name){
                 JobScreen(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .nestedScroll(nestScrollConnection)
                 )
             }
             composable(NavigationScreen.User.name){
                 val context = LocalContext.current
                 val credentialManager = CredentialManager.create(context)
-                val WEB_CLIENT_ID = "899480932485-vq9dkp81a41l1kargodov0ld004sndsi.apps.googleusercontent.com"
                 val scope = rememberCoroutineScope()
 
                 UserScreen(
-                    currentUser = firebaseViewModel.auth.currentUser,
                     onClickLoginButton = {
-                        val googleIdOption = GetGoogleIdOption.Builder()
-                            .setFilterByAuthorizedAccounts(false)
-                            .setServerClientId(WEB_CLIENT_ID)
-                            .build()
-
-                        val request = GetCredentialRequest.Builder()
-                            .addCredentialOption(googleIdOption)
-                            .build()
-
-                        scope.launch {
-                            try{
-                                val result = credentialManager.getCredential(
-                                    request = request,
-                                    context = context
-                                )
-                                val credential = result.credential
-                                val googleIdTokenCredential = GoogleIdTokenCredential
-                                    .createFrom(credential.data)
-                                val googleIdToken = googleIdTokenCredential.idToken
-                                val firebaseCredential = GoogleAuthProvider.getCredential(
-                                    googleIdToken,
-                                    null
-                                )
-
-                                firebaseViewModel.auth.signInWithCredential(firebaseCredential)
-                                    .addOnCompleteListener{ task ->
-                                        if(task.isSuccessful){
-                                            navHostController.navigate(NavigationScreen.User.name)
-                                        }
-                                    }
-                            }catch (e:Exception){
-                                e.printStackTrace()
-                                Toast.makeText(
-                                    context,
-                                    "${e.message}",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
+                        CredentialManagerAuthentication(
+                            firebaseViewModel = firebaseViewModel,
+                            navHostController = navHostController,
+                            context = context,
+                            credentialManager = credentialManager,
+                            scope = scope
+                        )
                     },
                     onClickLogoutButton = {
                         firebaseViewModel.auth.signOut()
@@ -242,6 +216,8 @@ fun Navigation(
                             )
                         }
                     },
+                    firebaseViewModel = firebaseViewModel,
+                    currentUser = firebaseViewModel.auth.currentUser,
                     modifier = Modifier.nestedScroll(nestScrollConnection)
                 )
             }

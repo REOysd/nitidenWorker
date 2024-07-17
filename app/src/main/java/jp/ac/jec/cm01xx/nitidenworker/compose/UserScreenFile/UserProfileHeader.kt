@@ -14,7 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 
 
 @Composable
@@ -44,6 +49,7 @@ fun UserProfileScreen(
     modifier: Modifier,
     onClickLogoutButton: () -> Unit,
     SwitchProfileCurrentUser:() -> Unit,
+    userData:UserDocument?
 ){
 
     Column(
@@ -76,7 +82,7 @@ fun UserProfileScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "--件",
+                    text = "${userData?.numberOfAchievement}件",
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally),
                     fontSize = 24.sp,
@@ -105,7 +111,7 @@ fun UserProfileScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "--％",
+                    text = "${userData?.completionRate}％",
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally),
                     fontSize = 24.sp,
@@ -160,7 +166,7 @@ fun UserProfileScreen(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
+
                         .height(80.dp)
                 ) {
                     Text(
@@ -170,11 +176,24 @@ fun UserProfileScreen(
                         fontSize = 10.sp
                     )
                     Text(
-                        text = "モバイルアプリケーション開発科",
-                        color = Color.Black,
+                        text = if(userData?.job == "--")"＜例＞モバイルアプリケーション開発科" else "${userData?.job}",
+                        color = if(userData?.job == "--")Color.Gray.copy(alpha = 0.5f) else Color.Black,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W600
                     )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+                
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(70.dp)
+                        .align(Alignment.Top)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "編集")
                 }
             }
         }
