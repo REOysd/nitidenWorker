@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreenFile.UserProfileAppeal
+package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal
 
 import android.content.Intent
 import android.net.Uri
@@ -15,10 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
@@ -59,7 +56,6 @@ import kotlinx.coroutines.launch
 fun UserProfileAppeal(
     modifier: Modifier,
     userData:UserDocument?,
-    updateOnMyProfile: (String,Any) -> Unit,
     firebaseViewModel: FirebaseViewModel
 ){
     val context = LocalContext.current
@@ -270,7 +266,7 @@ fun UserProfileAppeal(
         changeText = {text = it},
         text = text ,
         onClickCheckButton = {
-            updateOnMyProfile("selfPresentation", text)
+            firebaseViewModel.updateOnMyProfile("selfPresentation", text)
                              },
     )
 

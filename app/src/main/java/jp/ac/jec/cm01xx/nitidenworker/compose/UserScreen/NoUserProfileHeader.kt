@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreenFile
+package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

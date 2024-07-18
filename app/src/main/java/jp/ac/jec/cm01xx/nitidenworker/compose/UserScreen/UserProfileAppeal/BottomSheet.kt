@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreenFile.UserProfileAppeal
+package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal
 
 import android.util.Log
 import androidx.compose.animation.core.animateDpAsState

@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreenFile
+package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -47,13 +47,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseUser
 import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
-import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreenFile.UserProfileAppeal.UserProfileAppeal
+import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal.UserProfileAppeal
+import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileHeader.UserProfileScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun UserScreen(
+    fun UserScreen(
     modifier: Modifier,
     firebaseViewModel:FirebaseViewModel,
     currentUser:FirebaseUser?,
@@ -111,7 +112,8 @@ fun UserScreen(
                                 SwitchProfileCurrentUser = {
                                     ProfileCurrentUser = null
                                 },
-                                userData = userData
+                                userData = userData,
+                                firebaseViewModel = firebaseViewModel
                             )
 
                         1 ->
@@ -119,7 +121,6 @@ fun UserScreen(
                                 modifier = modifier
                                     .padding(innerPadding),
                                 userData = userData,
-                                updateOnMyProfile = firebaseViewModel::updateOnMyProfile,
                                 firebaseViewModel = firebaseViewModel
                             )
                     }
