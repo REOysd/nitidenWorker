@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -39,108 +40,15 @@ import coil.request.ImageRequest
 import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ClientScreen(
-    modifier: Modifier,
-    onClickToProfile:() -> Unit,
-    userData:UserDocument?,
-    firebaseViewModel: FirebaseViewModel
+    modifier: Modifier
 ){
-    val currentUser = firebaseViewModel.auth.currentUser
-    val context = LocalContext.current
-
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
             .verticalScroll(rememberScrollState())
     ){
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .height(90.dp)
-                .combinedClickable(
-                    onClick = onClickToProfile
-                )
-        ) {
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .height(90.dp)
-                    .drawWithContent {
-                        drawContent()
-                        drawLine(
-                            color = Color.Gray.copy(alpha = 0.5f),
-                            start = Offset(0f, size.height),
-                            end = Offset(size.width, size.height),
-                            strokeWidth = 0.5.dp.toPx()
-                        )
-                    }
-            ){
-                Spacer(modifier = Modifier.width(12.dp))
-
-                currentUser?.photoUrl?.let {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = context)
-                            .data(it)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = "ProfileImage",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clip(RoundedCornerShape(40.dp))
-                            .align(Alignment.CenterVertically)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .background(Color.White)
-                ){
-                    currentUser?.email?.let {
-                        Text(
-                            text = it,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    userData?.job?.let {
-                        Text(
-                            text = userData.job,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            color = Color.Gray.copy(alpha = 0.5f)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Box(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .align(Alignment.CenterVertically)
-                        .padding(end = 20.dp)
-                ){
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                        contentDescription = "ToProfile",
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(24.dp)
-                    )
-                }
-            }
-        }
+        Text(text = "dfsdaff")
     }
 }
