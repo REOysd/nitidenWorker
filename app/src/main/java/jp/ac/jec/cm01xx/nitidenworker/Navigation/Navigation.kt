@@ -39,6 +39,8 @@ import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.compose.FavoriteScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.JobScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.requestServiceScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.MessageScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.SearchScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserScreen
@@ -100,7 +102,8 @@ fun Navigation(
         topBar = {
             if(
                 backStack?.destination?.route != NavigationScreen.User.name &&
-                backStack?.destination?.route != NavigationScreen.MyJob.name
+                backStack?.destination?.route != NavigationScreen.MyJob.name &&
+                backStack?.destination?.route != NavigationScreen.serviceOfferings.name
                 ){
                 TopBarContext(
                     backStack = NavigationScreen
@@ -162,7 +165,13 @@ fun Navigation(
                     modifier = Modifier
                         .nestedScroll(nestScrollConnection),
                     firebaseViewModel = firebaseViewModel,
-                    onClickToProfile = {navHostController.navigate(NavigationScreen.User.name)}
+                    onClickToProfile = {navHostController.navigate(NavigationScreen.User.name)},
+                    onClickToServiceOfferingsScreen = {
+                        navHostController.navigate(NavigationScreen.serviceOfferings.name)
+                    },
+                    onClickToRequestServiceScreen = {
+                        navHostController.navigate(NavigationScreen.requestService.name)
+                    }
                 )
             }
             composable(NavigationScreen.User.name){
@@ -193,6 +202,19 @@ fun Navigation(
                     modifier = Modifier.nestedScroll(nestScrollConnection)
                 )
             }
+            composable(NavigationScreen.serviceOfferings.name){
+                ServiceOfferingsScreen(
+                    modifier = Modifier
+                        .nestedScroll(nestScrollConnection),
+                    onClickToPopBackStack = {navHostController.popBackStack()}
+                )
+            }
+            composable(NavigationScreen.requestService.name){
+                requestServiceScreen(
+                    modifier = Modifier
+                        .nestedScroll(nestScrollConnection)
+                )
+            }
         }
     }
 }
@@ -204,7 +226,9 @@ enum class NavigationScreen{
     Favorite,
     Message,
     MyJob,
-    User
+    User,
+    serviceOfferings,
+    requestService,
 }
 
 data class BottomNavigationItems(

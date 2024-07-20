@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -93,6 +95,19 @@ fun TopBarContext(
                 )
             }
         }else{
+            IconButton(
+                onClick = {
+                    navHostController.popBackStack()
+                },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 18.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = "backToScreen"
+                )
+            }
             Text(
                 text = backStack.name,
                 modifier = Modifier

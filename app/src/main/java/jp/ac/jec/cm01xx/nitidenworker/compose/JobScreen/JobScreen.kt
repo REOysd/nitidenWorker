@@ -1,6 +1,5 @@
 package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -71,6 +70,8 @@ import kotlinx.coroutines.launch
 fun JobScreen(
     modifier: Modifier,
     onClickToProfile:() -> Unit,
+    onClickToServiceOfferingsScreen:() -> Unit,
+    onClickToRequestServiceScreen:() -> Unit,
     firebaseViewModel: FirebaseViewModel
 ){
     val state = rememberPagerState(
@@ -236,7 +237,7 @@ fun JobScreen(
                         Spacer(modifier = Modifier.weight(1f))
 
                         FloatingActionButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onClickToServiceOfferingsScreen,
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
                                 .width(170.dp)
@@ -254,7 +255,7 @@ fun JobScreen(
                         Spacer(modifier = Modifier.weight(1f))
 
                         FloatingActionButton(
-                            onClick = { /*TODO*/ },
+                            onClick = {onClickToRequestServiceScreen()},
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
                                 .width(170.dp)
