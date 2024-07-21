@@ -39,7 +39,9 @@ import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.compose.FavoriteScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.JobScreen
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingsScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.requestServiceScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.MessageScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.SearchScreen
@@ -50,6 +52,8 @@ import kotlinx.coroutines.launch
 fun Navigation(
     navHostController: NavHostController
 ){
+    lateinit var data: ServiceOfferingData
+
     val firebaseViewModel = FirebaseViewModel()
     val backStack by navHostController.currentBackStackEntryAsState()
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
@@ -206,7 +210,19 @@ fun Navigation(
                 ServiceOfferingsScreen(
                     modifier = Modifier
                         .nestedScroll(nestScrollConnection),
-                    onClickToPopBackStack = {navHostController.popBackStack()}
+                    onClickToPopBackStack = {navHostController.popBackStack()},
+                    publishServiceOfferingsData = { data = it },
+                    onClickToServiceOfferingDetailScreen = {
+                        navHostController.navigate(NavigationScreen.serviceOfferingsDetail.name)
+                    }
+                )
+            }
+            composable(NavigationScreen.serviceOfferingsDetail.name){
+                ServiceOfferingsDetailScreen(
+                    data = data,
+                    modifier = Modifier
+                        .nestedScroll(nestScrollConnection)
+                        .padding(innerPadding)
                 )
             }
             composable(NavigationScreen.requestService.name){
@@ -229,6 +245,7 @@ enum class NavigationScreen{
     User,
     serviceOfferings,
     requestService,
+    serviceOfferingsDetail,
 }
 
 data class BottomNavigationItems(
