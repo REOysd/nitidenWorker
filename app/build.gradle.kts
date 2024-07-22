@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.media3.common)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.volley)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -91,4 +92,6 @@ dependencies {
     implementation ("io.coil-kt:coil-video:2.4.0")
 
     implementation("androidx.media3:media3-exoplayer:1.3.1")
+
+
 }

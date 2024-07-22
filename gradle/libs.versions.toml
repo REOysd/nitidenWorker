@@ -13,6 +13,7 @@ firebaseAuth = "23.0.0"
 media3Common = "1.3.1"
 firebaseFirestore = "25.0.0"
 media3Ui = "1.3.1"
+volley = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +34,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3Common" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3Ui" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

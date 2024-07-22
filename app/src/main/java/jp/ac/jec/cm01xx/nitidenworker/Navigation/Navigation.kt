@@ -39,7 +39,7 @@ import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.compose.FavoriteScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.JobScreen
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingsScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.requestServiceScreen
@@ -220,9 +220,9 @@ fun Navigation(
             composable(NavigationScreen.serviceOfferingsDetail.name){
                 ServiceOfferingsDetailScreen(
                     data = data,
+                    onClickToPopBackStack = {navHostController.popBackStack()},
                     modifier = Modifier
                         .nestedScroll(nestScrollConnection)
-                        .padding(innerPadding)
                 )
             }
             composable(NavigationScreen.requestService.name){
