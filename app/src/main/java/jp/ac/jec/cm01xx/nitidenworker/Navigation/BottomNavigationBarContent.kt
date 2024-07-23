@@ -21,8 +21,9 @@ import androidx.navigation.NavHostController
 fun BottomNavigationBarContext(
     navigationItems: List<BottomNavigationItems>,
     navHostController: NavHostController,
+    selectedItemIndex:Int,
+    onSelectedItemIndexChange:(Int) -> Unit,
 ){
-    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
 
     NavigationBar(
         containerColor = Color.White,
@@ -39,7 +40,7 @@ fun BottomNavigationBarContext(
             NavigationBarItem(
                 selected = index == selectedItemIndex,
                 onClick = {
-                    selectedItemIndex = index
+                    onSelectedItemIndexChange(index)
                     navHostController.navigate(bottomNavigationItems.title)
                 },
                 icon = {

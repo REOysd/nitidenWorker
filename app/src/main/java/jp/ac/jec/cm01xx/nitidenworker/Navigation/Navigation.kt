@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
 
 package jp.ac.jec.cm01xx.nitidenworker.Navigation
 
@@ -18,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -59,6 +59,7 @@ fun Navigation(
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
     val height = systemBarsPadding.calculateTopPadding()
     var isBottomBarVisible by remember{ mutableStateOf(true) }
+    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
     var lastScrollOffset by remember { mutableStateOf(0f) }
     val nestScrollConnection = remember {
         object:NestedScrollConnection{
@@ -126,6 +127,8 @@ fun Navigation(
                 exit = slideOutVertically (targetOffsetY = {it})
             ) {
                 BottomNavigationBarContext(
+                    selectedItemIndex = selectedItemIndex,
+                    onSelectedItemIndexChange = {selectedItemIndex = it},
                     navigationItems = navigationItems,
                     navHostController = navHostController
                 )
@@ -219,6 +222,7 @@ fun Navigation(
             }
             composable(NavigationScreen.serviceOfferingsDetail.name){
                 ServiceOfferingsDetailScreen(
+                    firebaseViewModel = firebaseViewModel,
                     data = data,
                     onClickToPopBackStack = {navHostController.popBackStack()},
                     modifier = Modifier
