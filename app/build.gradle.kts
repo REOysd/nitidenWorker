@@ -91,7 +91,9 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation ("io.coil-kt:coil-video:2.4.0")
 
+    //media3
     implementation("androidx.media3:media3-exoplayer:1.3.1")
 
-
+    //lottie
+    implementation ("com.airbnb.android:lottie-compose:6.4.1")
 }

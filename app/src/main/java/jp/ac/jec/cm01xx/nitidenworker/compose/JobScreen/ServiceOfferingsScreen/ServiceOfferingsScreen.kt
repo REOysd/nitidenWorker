@@ -89,10 +89,10 @@ fun ServiceOfferingsScreen(
     var categoryText by rememberSaveable { mutableStateOf(data?.category?:"") }
     var categoryTextIsError by rememberSaveable { mutableStateOf(false) }
     var titleText by rememberSaveable { mutableStateOf(data?.title?:"") }
-    val maxTitleTextLength = 20
+    val maxTitleTextLength = 25
     var titleTextIsError by rememberSaveable { mutableStateOf(false) }
     var subTitleText by rememberSaveable { mutableStateOf(data?.subTitle?:"") }
-    val maxSubTitleTextLength = 40
+    val maxSubTitleTextLength = 70
     var subTitleTextIsError by rememberSaveable { mutableStateOf(false) }
     var descriptionText by rememberSaveable { mutableStateOf(data?.description?:"") }
     val maxDescriptionTextLength = 1000
@@ -310,7 +310,7 @@ fun ServiceOfferingsScreen(
                                 titleTextIsError = false
                             }
                         },
-                        maxLines = 1,
+                        maxLines = 2,
                         placeholder = {
                             Text(
                                 text = "タイトルを入力",
@@ -407,6 +407,7 @@ fun ServiceOfferingsScreen(
                                 color = Color.Gray.copy(alpha = 0.5f)
                             )
                                       },
+                        maxLines = 3,
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
