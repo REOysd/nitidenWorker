@@ -89,11 +89,10 @@ fun ServiceOfferingsScreen(
     var categoryText by rememberSaveable { mutableStateOf(data?.category?:"") }
     var categoryTextIsError by rememberSaveable { mutableStateOf(false) }
     var titleText by rememberSaveable { mutableStateOf(data?.title?:"") }
-    val maxTitleTextLength = 25
+    val maxTitleTextLength = 30
     var titleTextIsError by rememberSaveable { mutableStateOf(false) }
     var subTitleText by rememberSaveable { mutableStateOf(data?.subTitle?:"") }
-    val maxSubTitleTextLength = 70
-    var subTitleTextIsError by rememberSaveable { mutableStateOf(false) }
+    val maxSubTitleTextLength = 60
     var descriptionText by rememberSaveable { mutableStateOf(data?.description?:"") }
     val maxDescriptionTextLength = 1000
     var descriptionTextIsError by rememberSaveable { mutableStateOf(false) }
@@ -362,16 +361,6 @@ fun ServiceOfferingsScreen(
                         modifier = Modifier
                             .padding(start = 20.dp)
                     )
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    Text(
-                        text = "＊必須",
-                        fontWeight = FontWeight.Normal,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .align(Alignment.Bottom)
-                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -397,9 +386,6 @@ fun ServiceOfferingsScreen(
                                 subTitleText = newText
                             }
 
-                            if(subTitleText != ""){
-                                subTitleTextIsError = false
-                            }
                         },
                         placeholder = {
                             Text(
@@ -415,7 +401,6 @@ fun ServiceOfferingsScreen(
                             unfocusedIndicatorColor = Color.Gray,
                             cursorColor = Color(0xFF00B900)
                         ),
-                        isError = subTitleTextIsError,
                         modifier = Modifier
                             .fillMaxWidth()
                             .defaultMinSize(minHeight = 60.dp)
@@ -429,11 +414,6 @@ fun ServiceOfferingsScreen(
                             .padding(end = 20.dp)
                     )
                 }
-
-                AlertText(
-                    alertText = "サブタイトルを入力してください",
-                    isError = subTitleTextIsError
-                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -1042,7 +1022,6 @@ fun ServiceOfferingsScreen(
                                             deliveryDaysText = deliveryDaysText,
                                             changeCategoryTextIsError = { categoryTextIsError = it },
                                             changeTitleTextIsError = { titleTextIsError = it },
-                                            changeSubTitleTextIsError = { subTitleTextIsError = it },
                                             changeDescriptionTextIsError = { descriptionTextIsError = it },
                                             changeDeliveryDaysTextIsError = { deliveryDaysTextIsError = it }
                                         )
@@ -1144,7 +1123,6 @@ fun CheckRequiredFields(
     deliveryDaysText:String,
     changeCategoryTextIsError:(Boolean) -> Unit,
     changeTitleTextIsError:(Boolean) -> Unit,
-    changeSubTitleTextIsError:(Boolean) -> Unit,
     changeDescriptionTextIsError:(Boolean) -> Unit,
     changeDeliveryDaysTextIsError:(Boolean) -> Unit,
 ): Boolean {
@@ -1162,12 +1140,6 @@ fun CheckRequiredFields(
         changeTitleTextIsError(false)
     }
 
-    if(subTitle == ""){
-        changeSubTitleTextIsError(true)
-    }else{
-        changeSubTitleTextIsError(false)
-    }
-
     if(descriptionText == ""){
         changeDescriptionTextIsError(true)
     }else{
@@ -1183,7 +1155,6 @@ fun CheckRequiredFields(
     if(
         categoryText != "" &&
         titleText != "" &&
-        subTitle != "" &&
         descriptionText != "" &&
         deliveryDaysText != ""
         ){
