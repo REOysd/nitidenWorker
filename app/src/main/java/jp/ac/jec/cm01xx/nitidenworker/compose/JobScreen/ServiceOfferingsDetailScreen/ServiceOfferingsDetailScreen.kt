@@ -627,20 +627,22 @@ fun BottomItemBar(
     precautions:String
 ){
     Column {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp)
+                .padding(start = 10.dp, end = 20.dp)
         ){
             Text(
-                text = "カテゴリー   :    ",
-                fontWeight = FontWeight.Medium,
+                text = "カテゴリー",
+                fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
             )
+
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 text = category,
@@ -656,7 +658,6 @@ fun BottomItemBar(
                     )
                     .padding(horizontal = 10.dp, vertical = 6.dp)
             )
-
         }
 
         Spacer(modifier = Modifier.height(18.dp))
@@ -664,15 +665,17 @@ fun BottomItemBar(
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp)
+                .padding(start = 10.dp, end = 20.dp)
         ){
             Text(
-                text = "応募してる人数   :    ",
-                fontWeight = FontWeight.Medium,
+                text = "応募してる人数",
+                fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
             )
+
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 text = "0",
@@ -681,6 +684,16 @@ fun BottomItemBar(
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
             )
+
+            Text(
+                text = "　人",
+                fontWeight = FontWeight.Medium,
+                fontSize = 13.sp,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+            )
+
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -688,15 +701,17 @@ fun BottomItemBar(
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp)
+                .padding(start = 10.dp, end = 20.dp)
         ){
             Text(
-                text = "予想お届け日数   :    ",
-                fontWeight = FontWeight.Medium,
+                text = "予想お届け日数",
+                fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
             )
+
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 text = deliveryDays,
@@ -705,6 +720,14 @@ fun BottomItemBar(
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
             )
+
+            Text(
+                text = "　日",
+                fontWeight = FontWeight.Medium,
+                fontSize = 13.sp,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -712,15 +735,17 @@ fun BottomItemBar(
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp)
+                .padding(start = 10.dp, end = 22.dp)
         ){
             Text(
-                text = "外部サイトでのビデオチャット   :    ",
-                fontWeight = FontWeight.Medium,
+                text = "外部サイトでのビデオチャット",
+                fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
             )
+
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 text = if(checkBoxState) "あり" else "なし",
@@ -745,12 +770,21 @@ fun BottomItemBar(
                 modifier = Modifier
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            HorizontalDivider(
+                color = Color.Gray.copy(alpha = 0.5f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(0.2.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = description,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Thin
+                fontWeight = FontWeight.Normal
             )
 
         }
@@ -770,7 +804,16 @@ fun BottomItemBar(
                     modifier = Modifier
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+
+                HorizontalDivider(
+                    color = Color.Gray.copy(alpha = 0.5f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(0.2.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     text = precautions,

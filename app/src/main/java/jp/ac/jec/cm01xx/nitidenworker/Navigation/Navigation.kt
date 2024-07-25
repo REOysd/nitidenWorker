@@ -2,22 +2,21 @@
 package jp.ac.jec.cm01xx.nitidenworker.Navigation
 
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -29,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,7 +40,6 @@ import jp.ac.jec.cm01xx.nitidenworker.compose.FavoriteScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.JobScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailScreen
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingsScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.requestServiceScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.MessageScreen
@@ -50,72 +49,34 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Navigation(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    navigationViewModel:NavigationViewModel = viewModel(),
+    firebaseViewModel: FirebaseViewModel = viewModel()
 ){
-    lateinit var data: ServiceOfferingData
-
-    val firebaseViewModel = FirebaseViewModel()
+    val serviceOfferingData by navigationViewModel.serviceOfferingData.collectAsState()
     val backStack by navHostController.currentBackStackEntryAsState()
-    val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
-    val height = systemBarsPadding.calculateTopPadding()
-    var isBottomBarVisible by remember{ mutableStateOf(true) }
-    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
-    var lastScrollOffset by remember { mutableStateOf(0f) }
-    val nestScrollConnection = remember {
-        object:NestedScrollConnection{
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                if(delta < 0){
-                    isBottomBarVisible = false
-                }else if(delta > 0){
-                    isBottomBarVisible = true
-                }
-                lastScrollOffset += delta
-                return Offset.Zero
-            }
-        }
+    val currentBackStackEntry = backStack?.destination?.route
+    val isBottomBarVisible by navigationViewModel.isBottomBarVisible.collectAsState()
+    val selectedItemIndex by navigationViewModel.selectedItemIndex.collectAsState()
+    val userData by firebaseViewModel.userData.collectAsState()
+
+    LaunchedEffect(currentBackStackEntry) {
+        navigationViewModel.setBottomBarVisible(true)
     }
-    val navigationItems = listOf(
-        BottomNavigationItems(
-            title = NavigationScreen.Home.name,
-            selectedImageVector = painterResource(id = R.drawable.home_icon_by_icons8),
-            unSelectedImageVector = painterResource(id = R.drawable.home_icon_black_by_icons8)
-        ),
-        BottomNavigationItems(
-            title = NavigationScreen.Search.name,
-            selectedImageVector = painterResource(id = R.drawable.search_icon_by_icons8),
-            unSelectedImageVector = painterResource(id = R.drawable.search_icon_black_by_icons8)
-        ),
-        BottomNavigationItems(
-            title = NavigationScreen.Favorite.name,
-            selectedImageVector = painterResource(id = R.drawable.favorite_icon_by_icons8),
-            unSelectedImageVector = painterResource(id = R.drawable.favorite_icon_black_by_icons8)
-        ),
-        BottomNavigationItems(
-            title = NavigationScreen.Message.name,
-            selectedImageVector = painterResource(id = R.drawable.message_icon_by_icons8),
-            unSelectedImageVector = painterResource(id = R.drawable.message_icon_black_by_icons8)
-        ),
-        BottomNavigationItems(
-            title = NavigationScreen.MyJob.name,
-            selectedImageVector = painterResource(id = R.drawable.job_icon_by_icons8),
-            unSelectedImageVector = painterResource(id = R.drawable.job_icon_black_by_icons8)
-        )
-    )
 
     Scaffold(
         topBar = {
             if(
-                backStack?.destination?.route != NavigationScreen.User.name &&
-                backStack?.destination?.route != NavigationScreen.MyJob.name &&
-                backStack?.destination?.route != NavigationScreen.serviceOfferings.name
+                currentBackStackEntry != NavigationScreen.User.name &&
+                currentBackStackEntry != NavigationScreen.MyJob.name &&
+                currentBackStackEntry != NavigationScreen.serviceOfferings.name
                 ){
                 TopBarContext(
                     backStack = NavigationScreen
                         .valueOf(backStack?.destination?.route?: NavigationScreen.Home.name),
                     navHostController = navHostController,
                     modifier = Modifier
-                        .padding(top = height)
+                        .statusBarsPadding()
                         .fillMaxWidth()
                 )
             }
@@ -126,12 +87,20 @@ fun Navigation(
                 enter = slideInVertically (initialOffsetY = {it}),
                 exit = slideOutVertically (targetOffsetY = {it})
             ) {
-                BottomNavigationBarContext(
-                    selectedItemIndex = selectedItemIndex,
-                    onSelectedItemIndexChange = {selectedItemIndex = it},
-                    navigationItems = navigationItems,
-                    navHostController = navHostController
-                )
+                if(backStack?.destination?.route != NavigationScreen.serviceOfferingsDetail.name){
+                    BottomNavigationBarContext(
+                        selectedItemIndex = selectedItemIndex,
+                        onSelectedItemIndexChange = { navigationViewModel.setSelectedItemIndex(it) },
+                        navigationItems = navigationViewModel.navigationItems,
+                        navHostController = navHostController
+                    )
+                }else{
+                    NavigateFloatingActionButtonOnBottom(
+                        firebaseViewModel = firebaseViewModel,
+                        data = serviceOfferingData,
+                        userData = userData
+                    )
+                }
             }
         }
     ) {innerPadding ->
@@ -143,34 +112,34 @@ fun Navigation(
                 HomeScreen(
                     modifier = Modifier
                         .padding(innerPadding)
-                        .nestedScroll(nestScrollConnection)
+                        .nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
             composable(NavigationScreen.Search.name){
                 SearchScreen(
                     modifier = Modifier
                         .padding(innerPadding)
-                        .nestedScroll(nestScrollConnection)
+                        .nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
             composable(NavigationScreen.Favorite.name){
                 FavoriteScreen(
                     modifier = Modifier
                         .padding(innerPadding)
-                        .nestedScroll(nestScrollConnection)
+                        .nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
             composable(NavigationScreen.Message.name){
                 MessageScreen(
                     modifier = Modifier
                         .padding(innerPadding)
-                        .nestedScroll(nestScrollConnection)
+                        .nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
             composable(NavigationScreen.MyJob.name){
                 JobScreen(
                     modifier = Modifier
-                        .nestedScroll(nestScrollConnection),
+                        .nestedScroll(navigationViewModel.nestScrollConnection),
                     firebaseViewModel = firebaseViewModel,
                     onClickToProfile = {navHostController.navigate(NavigationScreen.User.name)},
                     onClickToServiceOfferingsScreen = {
@@ -206,33 +175,35 @@ fun Navigation(
                     },
                     firebaseViewModel = firebaseViewModel,
                     currentUser = firebaseViewModel.auth.currentUser,
-                    modifier = Modifier.nestedScroll(nestScrollConnection)
+                    modifier = Modifier.nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
             composable(NavigationScreen.serviceOfferings.name){
                 ServiceOfferingsScreen(
                     modifier = Modifier
-                        .nestedScroll(nestScrollConnection),
+                        .nestedScroll(navigationViewModel.nestScrollConnection),
                     onClickToPopBackStack = {navHostController.popBackStack()},
-                    publishServiceOfferingsData = { data = it },
+                    publishServiceOfferingsData = { navigationViewModel.setServiceOfferingData(it) },
                     onClickToServiceOfferingDetailScreen = {
                         navHostController.navigate(NavigationScreen.serviceOfferingsDetail.name)
                     }
                 )
             }
             composable(NavigationScreen.serviceOfferingsDetail.name){
-                ServiceOfferingsDetailScreen(
-                    firebaseViewModel = firebaseViewModel,
-                    data = data,
-                    onClickToPopBackStack = {navHostController.popBackStack()},
-                    modifier = Modifier
-                        .nestedScroll(nestScrollConnection)
-                )
+                serviceOfferingData?.let{
+                    ServiceOfferingsDetailScreen(
+                        firebaseViewModel = firebaseViewModel,
+                        data = it,
+                        onClickToPopBackStack = { navHostController.popBackStack() },
+                        modifier = Modifier
+                            .nestedScroll(navigationViewModel.nestScrollConnection)
+                    )
+                }
             }
             composable(NavigationScreen.requestService.name){
                 requestServiceScreen(
                     modifier = Modifier
-                        .nestedScroll(nestScrollConnection)
+                        .nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
         }
@@ -251,10 +222,4 @@ enum class NavigationScreen{
     requestService,
     serviceOfferingsDetail,
 }
-
-data class BottomNavigationItems(
-    val title:String,
-    val selectedImageVector:Painter,
-    val unSelectedImageVector:Painter,
-)
 

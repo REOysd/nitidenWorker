@@ -14,12 +14,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
 fun BottomNavigationBarContext(
-    navigationItems: List<BottomNavigationItems>,
+    navigationItems: List<NavigationItem>,
     navHostController: NavHostController,
     selectedItemIndex:Int,
     onSelectedItemIndexChange:(Int) -> Unit,
@@ -41,12 +42,12 @@ fun BottomNavigationBarContext(
                 selected = index == selectedItemIndex,
                 onClick = {
                     onSelectedItemIndexChange(index)
-                    navHostController.navigate(bottomNavigationItems.title)
+                    navHostController.navigate(bottomNavigationItems.route)
                 },
                 icon = {
                     if(index == selectedItemIndex){
                         Icon(
-                            painter = bottomNavigationItems.unSelectedImageVector,
+                            painter = painterResource(bottomNavigationItems.unSelectedIcon),
                             contentDescription = bottomNavigationItems.title,
                             modifier = Modifier
                                 .size(20.dp),
@@ -54,7 +55,7 @@ fun BottomNavigationBarContext(
                         )
                     }else{
                         Icon(
-                            painter = bottomNavigationItems.selectedImageVector,
+                            painter = painterResource(bottomNavigationItems.selectedIcon),
                             contentDescription = bottomNavigationItems.title,
                             modifier = Modifier
                                 .size(20.dp),

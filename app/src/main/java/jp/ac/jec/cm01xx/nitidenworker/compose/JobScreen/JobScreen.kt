@@ -281,11 +281,12 @@ fun JobScreen(
                     .offset(y = animatedHeight)
             ) {
                 when (it) {
-                    0 -> ClientScreen(
+                    0 -> Page1(
                         modifier = modifier
                             .nestedScroll(nestScrollConnection)
                     )
-                    1 -> Page1(
+
+                    1 -> ClientScreen(
                         modifier = modifier
                             .nestedScroll(nestScrollConnection)
                     )
@@ -313,7 +314,7 @@ fun JobTopBarContent(
 ) {
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
     val height = systemBarsPadding.calculateTopPadding()
-    val scrollPage = listOf("Client","Worker")
+    val scrollPage = listOf("Worker","Client")
     val scope = rememberCoroutineScope()
 
     Column(
@@ -349,7 +350,7 @@ fun JobTopBarContent(
                 TabRowDefaults.Indicator(
                     modifier = Modifier.tabIndicatorOffset(tabPositions[state.currentPage]),
                     height = 3.dp,
-                    color = Color(0xFF00B900)  // ここで指定した色を使用
+                    color = Color(0xFF00B900)
                 )
             }
         ) {

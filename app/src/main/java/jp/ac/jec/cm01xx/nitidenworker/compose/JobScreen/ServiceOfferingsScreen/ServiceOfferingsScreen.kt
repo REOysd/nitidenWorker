@@ -81,7 +81,7 @@ fun ServiceOfferingsScreen(
     publishServiceOfferingsData:(ServiceOfferingData) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit
 ){
-    var data: ServiceOfferingData? = null
+    val data: ServiceOfferingData? = null
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -173,17 +173,17 @@ fun ServiceOfferingsScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                HorizontalDivider(
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(0.2.dp)
-                        .padding(start = 20.dp, end = 20.dp)
-                )
+                    HorizontalDivider(
+                        color = Color.Gray,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(0.2.dp)
+                            .padding(start = 20.dp, end = 20.dp)
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                 ExposedDropdownMenuBox(
                     expanded = expanded,
@@ -1017,7 +1017,6 @@ fun ServiceOfferingsScreen(
                                         if(CheckRequiredFields(
                                             categoryText = categoryText,
                                             titleText = titleText,
-                                            subTitle = subTitleText,
                                             descriptionText = descriptionText,
                                             deliveryDaysText = deliveryDaysText,
                                             changeCategoryTextIsError = { categoryTextIsError = it },
@@ -1118,7 +1117,6 @@ fun AlertText(
 fun CheckRequiredFields(
     categoryText:String,
     titleText:String,
-    subTitle:String,
     descriptionText:String,
     deliveryDaysText:String,
     changeCategoryTextIsError:(Boolean) -> Unit,
