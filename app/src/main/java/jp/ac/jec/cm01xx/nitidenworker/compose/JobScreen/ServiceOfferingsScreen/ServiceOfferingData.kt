@@ -11,5 +11,8 @@ data class ServiceOfferingData(
     val precautions:String?,
     val selectImages:List<Uri?>,
     val selectMovies:List<Uri?>,
-    val checkBoxState:Boolean
+    val checkBoxState:Boolean,
+    val niceCount:Int,
+    val favoriteCount:Int,
+    val applyingCount:Int
 )

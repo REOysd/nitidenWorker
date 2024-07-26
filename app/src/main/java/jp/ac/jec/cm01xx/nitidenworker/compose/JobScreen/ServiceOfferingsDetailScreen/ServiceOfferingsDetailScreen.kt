@@ -135,8 +135,21 @@ fun ServiceOfferingsDetailScreen(
                 subTitle = uiState.subTitle,
                 niceCount = uiState.niceCount,
                 favoriteCount = uiState.favoriteCount,
-                onChangeNiceCount = { viewModel.onChangedNiceCount(it) },
-                onChangeFavoriteCount = { viewModel.onChangedFavoriteCount(it) }
+                onChangeNiceCount = {
+                    viewModel.onChangedNiceCount(
+                        Swith = it,
+                        data = data,
+                        updateTotalNiceCount = firebaseViewModel::updateOnMyProfile,
+                        updateNiceCount = firebaseViewModel::updateServiceOfferings
+                    )
+                                    },
+                onChangeFavoriteCount = {
+                    viewModel.onChangedFavoriteCount(
+                        Swith = it,
+                        data = data,
+                        updateTotalNiceCount = firebaseViewModel::updateOnMyProfile
+                    )
+                }
             )
 
             MyProfileItems(
@@ -149,6 +162,7 @@ fun ServiceOfferingsDetailScreen(
             BottomItemBar(
                 category = data.category,
                 deliveryDays = data.deliveryDays,
+                applyingCount = data.applyingCount,
                 checkBoxState = data.checkBoxState,
                 description = data.description,
                 precautions = data.precautions?:"",
@@ -577,7 +591,7 @@ fun MyProfileItems(
             Spacer(modifier = Modifier.height(4.dp))
 
 
-            userData?.completionRate?.let {
+            userData?.totalLikes?.let {
                 Text(
                     text = "総イイね数 : ${it}",
                     fontWeight = FontWeight.Bold,
@@ -622,9 +636,10 @@ fun MyProfileItems(
 fun BottomItemBar(
     category:String,
     deliveryDays:String,
+    applyingCount:Int,
     checkBoxState:Boolean,
     description:String,
-    precautions:String
+    precautions:String,
 ){
     Column {
         Spacer(modifier = Modifier.height(20.dp))
@@ -678,7 +693,7 @@ fun BottomItemBar(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "0",
+                text = "${applyingCount}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 17.sp,
                 modifier = Modifier
@@ -843,10 +858,13 @@ fun ServiceOfferingsDetailScreenPreview(){
             precautions = "precautionsText",
             selectImages = listOf(null),
             selectMovies = emptyList(),
-            checkBoxState = false
+            checkBoxState = false,
+            niceCount = 10,
+            favoriteCount = 10,
+            applyingCount = 100,
         ),
         onClickToPopBackStack = { /*TODO*/ },
         modifier = Modifier,
-        firebaseViewModel = FirebaseViewModel()
+        firebaseViewModel = FirebaseViewModel(),
     )
 }

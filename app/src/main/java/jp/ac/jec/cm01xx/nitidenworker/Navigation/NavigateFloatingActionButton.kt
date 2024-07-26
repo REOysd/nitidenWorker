@@ -40,7 +40,6 @@ fun NavigateFloatingActionButtonOnBottom(
             onClick = {
                 if(data != null && userData != null){
                     firebaseViewModel.publishServiceOfferings(
-                        userData = userData,
                         serviceOfferingData = data
                     )
                 }

@@ -1036,7 +1036,10 @@ fun ServiceOfferingsScreen(
                                                 precautions = precautionsText,
                                                 selectImages = selectImages,
                                                 selectMovies = selectMovies,
-                                                checkBoxState = checkBoxState
+                                                checkBoxState = checkBoxState,
+                                                niceCount = 0,
+                                                favoriteCount = 0,
+                                                applyingCount = 0
                                             )
 
                                             publishServiceOfferingsData(data)

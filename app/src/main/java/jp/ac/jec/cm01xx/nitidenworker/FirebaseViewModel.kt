@@ -74,7 +74,6 @@ class FirebaseViewModel:ViewModel() {
     }
 
     fun publishServiceOfferings(
-        userData:UserDocument,
         serviceOfferingData: ServiceOfferingData
     ){
         val images = serviceOfferingData.selectImages.filterNotNull().map { it.toString() }
@@ -89,15 +88,9 @@ class FirebaseViewModel:ViewModel() {
             selectImages = images,
             selectMovies = movies,
             checkBoxState = serviceOfferingData.checkBoxState,
-            uid = userData.uid,
-            mail = userData.mail,
-            name = userData.mail,
-            numberOfAchievement = userData.numberOfAchievement,
-            completionRate = userData.completionRate,
-            job = userData.job,
-            selfPresentation = userData.selfPresentation,
-            urls = userData.urls,
-            timeStamp = Timestamp.now()
+            niceCount = serviceOfferingData.niceCount,
+            favoriteCount = serviceOfferingData.favoriteCount,
+            applyingCount = serviceOfferingData.applyingCount
         )
 
         viewModelScope.launch {
@@ -113,6 +106,22 @@ class FirebaseViewModel:ViewModel() {
             }
         }
     }
+
+    fun updateServiceOfferings(key:String,value:Any?,offeringId:String){
+        viewModelScope.launch {
+            try{
+                auth.currentUser?.let {
+                    fireStore
+                        .collection("ServiceOfferings")
+                        .document(offeringId)
+                        .update(key,value)
+                        .await()
+                }
+            }catch (e:Exception){
+                Log.d("updateOnMyProfileError",e.message.toString())
+            }
+        }
+    }
 }
 
 data class publishData(
@@ -125,13 +134,8 @@ data class publishData(
     val selectImages:List<String?> = emptyList(),
     val selectMovies:List<String?> = emptyList(),
     val checkBoxState:Boolean = false,
-    val uid:String = "",
-    val mail:String = "",
-    val name:String = "",
-    val numberOfAchievement:String = "--",
-    val completionRate:String = "--",
-    val job:String = "--",
-    val selfPresentation:String = "",
-    val urls:List<String> = emptyList(),
-    val timeStamp: Timestamp = Timestamp.now()
+    val niceCount:Int = 0,
+    val favoriteCount:Int = 0,
+    val applyingCount:Int = 0,
+    val timestamp: Timestamp = Timestamp.now(),
 )

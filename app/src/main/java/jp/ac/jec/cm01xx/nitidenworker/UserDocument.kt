@@ -11,6 +11,7 @@ data class UserDocument(
     val job:String = "--",
     val selfPresentation:String = "",
     val urls:List<String> = emptyList(),
+    val totalLikes:Int = 0,
     val timeStamp: Timestamp = Timestamp.now()
 )
 
