@@ -62,7 +62,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -72,14 +76,16 @@ fun JobScreen(
     onClickToProfile:() -> Unit,
     onClickToServiceOfferingsScreen:() -> Unit,
     onClickToRequestServiceScreen:() -> Unit,
-    firebaseViewModel: FirebaseViewModel
+    userData_:StateFlow<UserDocument?>,
+    auth_:FirebaseAuth?,
+    startLeadingUserData:(String) -> Unit,
 ){
     val state = rememberPagerState(
         pageCount = {2},
         initialPage = 0
     )
-    val userData by firebaseViewModel.userData.collectAsState()
-    val currentUser = firebaseViewModel.auth.currentUser
+    val userData by userData_.collectAsState()
+    val currentUser = auth_?.currentUser
     val context = LocalContext.current
     var isProfileLinkVisible by remember{ mutableStateOf(true) }
     val profileLinkHeight = 170.dp
@@ -104,9 +110,9 @@ fun JobScreen(
     }
 
     LaunchedEffect(Unit) {
-        val uid = firebaseViewModel.auth.currentUser?.uid
+        val uid = auth_?.currentUser?.uid
         if(uid != null){
-            firebaseViewModel.startLeadingUserData(uid)
+            startLeadingUserData(uid)
         }
     }
 
@@ -281,9 +287,10 @@ fun JobScreen(
                     .offset(y = animatedHeight)
             ) {
                 when (it) {
-                    0 -> Page1(
+                    0 -> RequestServiceScreen(
                         modifier = modifier
-                            .nestedScroll(nestScrollConnection)
+                            .nestedScroll(nestScrollConnection),
+                        firebaseViewModel = firebaseViewModel
                     )
 
                     1 -> ClientScreen(
@@ -296,16 +303,6 @@ fun JobScreen(
     }
 }
 
-
-@Composable
-fun Page1(modifier:Modifier){
-    Box(modifier = modifier
-        .fillMaxSize()
-        .background(Color.White)
-        .verticalScroll(rememberScrollState())){
-        Text(text = "fa")
-    }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -2,7 +2,6 @@
 package jp.ac.jec.cm01xx.nitidenworker.Navigation
 
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -14,18 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,14 +26,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import jp.ac.jec.cm01xx.nitidenworker.CredentialManagerAuthentication
 import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
-import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.compose.FavoriteScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.JobScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.RequestServiceScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailScreen
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailViewModel
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingsScreen
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.requestServiceScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.MessageScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.SearchScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserScreen
@@ -97,9 +86,10 @@ fun Navigation(
                     )
                 }else{
                     NavigateFloatingActionButtonOnBottom(
-                        firebaseViewModel = firebaseViewModel,
+                        publishServiceOfferings = firebaseViewModel::publishServiceOfferings,
                         data = serviceOfferingData,
-                        userData = userData
+                        userData = userData,
+                        onClickToMyJob = { navHostController.navigate(NavigationScreen.MyJob.name) }
                     )
                 }
             }
@@ -111,9 +101,11 @@ fun Navigation(
         ) {
             composable(NavigationScreen.Home.name){
                 HomeScreen(
+                    getServiceOfferings = firebaseViewModel::getServiceOfferings,
+                    serviceOfferings = firebaseViewModel.serviceOfferings,
                     modifier = Modifier
                         .padding(innerPadding)
-                        .nestedScroll(navigationViewModel.nestScrollConnection)
+                        .nestedScroll(navigationViewModel.nestScrollConnection),
                 )
             }
             composable(NavigationScreen.Search.name){
@@ -141,7 +133,9 @@ fun Navigation(
                 JobScreen(
                     modifier = Modifier
                         .nestedScroll(navigationViewModel.nestScrollConnection),
-                    firebaseViewModel = firebaseViewModel,
+                    auth_ = firebaseViewModel.auth,
+                    userData_ = firebaseViewModel.userData,
+                    startLeadingUserData = firebaseViewModel::startLeadingUserData,
                     onClickToProfile = {navHostController.navigate(NavigationScreen.User.name)},
                     onClickToServiceOfferingsScreen = {
                         navHostController.navigate(NavigationScreen.serviceOfferings.name)
@@ -202,7 +196,8 @@ fun Navigation(
                 }
             }
             composable(NavigationScreen.requestService.name){
-                requestServiceScreen(
+                RequestServiceScreen(
+                    firebaseViewModel = firebaseViewModel,
                     modifier = Modifier
                         .nestedScroll(navigationViewModel.nestScrollConnection)
                 )

@@ -47,7 +47,6 @@ fun TopBarContext(
             .background(Color.White)
             .drawWithContent {
                 drawContent()
-                // 下部にのみボーダーを描画
                 drawLine(
                     color = Color.Gray,
                     start = Offset(0f, size.height),

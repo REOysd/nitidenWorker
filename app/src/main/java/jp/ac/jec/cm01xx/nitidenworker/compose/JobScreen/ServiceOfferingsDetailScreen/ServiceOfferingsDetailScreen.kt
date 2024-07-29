@@ -90,7 +90,7 @@ fun ServiceOfferingsDetailScreen(
     firebaseViewModel: FirebaseViewModel,
     data:ServiceOfferingData,
     onClickToPopBackStack:() -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
 ){
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -303,7 +303,8 @@ fun RatingStar(
 
 @Composable
 fun HeartIcon(
-    onChangeNiceCount:(Boolean) -> Unit
+    onChangeNiceCount:(Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ){
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.heart_lottie))
     var isLiked by remember { mutableStateOf(false) }
@@ -322,7 +323,7 @@ fun HeartIcon(
                 onChangeNiceCount(false)
             }
         },
-        modifier = Modifier.size(50.dp)
+        modifier = modifier.size(50.dp)
     ) {
         LottieAnimation(
             composition = heart,
@@ -335,6 +336,7 @@ fun HeartIcon(
 @Composable
 fun FavoriteIcon(
     onChangeFavoriteCount:(Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.favorite_lottie))
     var isLiked by remember { mutableStateOf(false) }
@@ -353,7 +355,7 @@ fun FavoriteIcon(
                 onChangeFavoriteCount(false)
             }
         },
-        modifier = Modifier.size(50.dp)
+        modifier = modifier.size(50.dp)
     ) {
         LottieAnimation(
             composition = heart,
@@ -454,7 +456,6 @@ fun ImageAndVideoThumbnail(
                             }
                         }
                     }
-
                 }else{
                     AsyncImage(
                         model =  selectImageAndMovie[page],

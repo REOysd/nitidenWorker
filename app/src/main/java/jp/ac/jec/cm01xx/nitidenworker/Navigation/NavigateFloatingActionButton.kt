@@ -10,24 +10,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.firestore.core.UserData
 import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 
 @Composable
 fun NavigateFloatingActionButtonOnBottom(
-    firebaseViewModel: FirebaseViewModel,
+    publishServiceOfferings:(ServiceOfferingData) -> Unit,
     data:ServiceOfferingData?,
-    userData: UserDocument?
+    userData: UserDocument?,
+    onClickToMyJob:() -> Unit,
 ){
 
     Box(
@@ -39,10 +37,9 @@ fun NavigateFloatingActionButtonOnBottom(
         FloatingActionButton(
             onClick = {
                 if(data != null && userData != null){
-                    firebaseViewModel.publishServiceOfferings(
-                        serviceOfferingData = data
-                    )
+                    publishServiceOfferings(data)
                 }
+                onClickToMyJob()
             },
             modifier = Modifier
                 .fillMaxWidth()
