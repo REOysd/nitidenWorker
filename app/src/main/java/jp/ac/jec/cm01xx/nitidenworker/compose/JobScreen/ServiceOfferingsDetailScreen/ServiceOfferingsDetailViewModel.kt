@@ -2,13 +2,12 @@ package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailS
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ServiceOfferingsDetailViewModel():ViewModel() {
+class ServiceOfferingsDetailViewModel:ViewModel() {
     private val _uiState = MutableStateFlow(ServiceOfferingsDetailUiState())
     val uiState = _uiState.asStateFlow()
 

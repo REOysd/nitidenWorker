@@ -1,19 +1,20 @@
 package jp.ac.jec.cm01xx.nitidenworker
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailUiState
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.net.URL
+import java.security.MessageDigest
 import java.util.UUID
 
 class FirebaseViewModel:ViewModel() {
@@ -34,7 +37,8 @@ class FirebaseViewModel:ViewModel() {
     val myServiceOfferings = _myServiceOfferings.asStateFlow()
     private val _serviceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
     val serviceOfferings = _serviceOfferings.asStateFlow()
-
+    private val _serviceOfferingData = MutableStateFlow<publishData?>(null)
+    val serviceOfferingData = _serviceOfferingData.asStateFlow()
     private var listenerRegistration: ListenerRegistration? = null
 
     fun startLeadingUserData(userId:String){
@@ -85,17 +89,27 @@ class FirebaseViewModel:ViewModel() {
 
     fun publishServiceOfferings(
         serviceOfferingData: ServiceOfferingData,
+        context: Context
     ){
         viewModelScope.launch{
             try{
-                val images = uploadFiles(serviceOfferingData.selectImages, "images")
-                val photoUrl = uploadUserPhoto(auth.currentUser?.photoUrl)
-                val movies = uploadFiles(serviceOfferingData.selectMovies, "movies")
+                val images = uploadFiles(serviceOfferingData.selectImages, "images",context)
+                val authPhotoUrl = uploadUserPhoto(auth.currentUser?.photoUrl)
+                val movies = uploadFiles(serviceOfferingData.selectMovies, "movies",context)
+                var movieThumbnail:String? = null
+
+                if(movies.isNotEmpty()){
+                    val _movieThumbnail = createThumbnail(movies.firstOrNull())
+                    movieThumbnail = uploadMovieThumbnail(_movieThumbnail)
+                }
+
+
+
                 val publishData = publishData(
                     myUid = auth.currentUser?.uid.toString(),
                     name = userData.value?.name.toString(),
                     job = userData.value?.job.toString(),
-                    photoUrl = photoUrl,
+                    photoUrl = authPhotoUrl,
                     category = serviceOfferingData.category,
                     title = serviceOfferingData.title,
                     subTitle = serviceOfferingData.subTitle,
@@ -104,11 +118,11 @@ class FirebaseViewModel:ViewModel() {
                     precautions = serviceOfferingData.precautions,
                     selectImages = images,
                     selectMovies = movies,
+                    selectImageThumbnail = movieThumbnail,
                     checkBoxState = serviceOfferingData.checkBoxState,
                     niceCount = serviceOfferingData.niceCount,
                     favoriteCount = serviceOfferingData.favoriteCount,
                     applyingCount = serviceOfferingData.applyingCount,
-
                 )
 
                 auth.currentUser?.let {
@@ -124,11 +138,20 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
-    private suspend fun uploadFiles(uris:List<Uri?>,folder:String):List<String?>{
+    private suspend fun uploadFiles(uris:List<Uri?>,folder:String,context: Context):List<String?>{
         return withContext(Dispatchers.IO){
             uris.filterNotNull().map { file ->
                 val reference = Firebase.storage.reference.child("$folder/${UUID.randomUUID()}")
-                reference.putFile(file).await()
+
+                if(folder == "images"){
+                    val compressedBytes = compressImage(file,context)
+
+                    reference.putBytes(compressedBytes).await()
+                }else{
+
+                    reference.putFile(file).await()
+                }
+
                 reference.downloadUrl.await().toString()
             }
         }
@@ -138,12 +161,85 @@ class FirebaseViewModel:ViewModel() {
         return withContext(Dispatchers.IO) {
             try {
                 val inputStream = URL(photoUrl.toString()).openStream()
-                val reference = Firebase.storage.reference.child("UserPhoto/${UUID.randomUUID()}")
-                reference.putStream(inputStream).await()
+                val photoByte = inputStream.readBytes()
+                val photoHash = calculateMD5(photoByte)
+                val exitingPhotoUrl = checkExitingPhoto(photoHash)
+
+                exitingPhotoUrl?.let {
+                    return@withContext it
+                }
+
+                val reference = Firebase.storage.reference.child("UserPhoto/$photoHash")
+                reference.putBytes(photoByte).await()
                 reference.downloadUrl.await().toString()
             } catch (e: Exception) {
                 Log.d("uploadUserPhotoError", e.message.toString())
                 ""
+            }
+        }
+    }
+
+    private fun calculateMD5(byte:ByteArray):String{
+        val md = MessageDigest.getInstance("MD5")
+        val digest = md.digest(byte)
+        return digest.joinToString("") { "%02x".format(it) }
+    }
+
+    private suspend fun checkExitingPhoto(photoByte:String):String?{
+        return try{
+            val reference = Firebase.storage.reference.child("UserPhoto/${photoByte}")
+            reference.downloadUrl.await().toString()
+        }catch (e:Exception){
+            Log.d("checkExitingPhotoError",e.message.toString())
+            null
+        }
+    }
+
+    private suspend fun compressImage(uri:Uri,context:Context):ByteArray{
+        return withContext(Dispatchers.IO){
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            val outputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG,50,outputStream)
+            outputStream.toByteArray()
+        }
+    }
+
+    private suspend fun createThumbnail(videoUri:String?):Bitmap?{
+       return withContext(Dispatchers.IO) {
+             videoUri.let { movieUri ->
+                try {
+                    val retriever = MediaMetadataRetriever()
+                    retriever.setDataSource(
+                        movieUri,
+                        HashMap<String, String>()
+                    )
+                    val thumbnail = retriever.frameAtTime
+                    retriever.release()
+                    thumbnail
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
+        }
+    }
+
+    private suspend fun uploadMovieThumbnail(thumbnail:Bitmap?):String?{
+        return withContext(Dispatchers.IO){
+            thumbnail?.let {
+                try{
+                    val baos = ByteArrayOutputStream()
+                    it.compress(Bitmap.CompressFormat.JPEG, 50, baos)
+                    val thumbnailByteArray = baos.toByteArray()
+                    val reference = Firebase.storage.reference.child("movieThumbnail/${UUID.randomUUID()}.jpg")
+                    reference.putBytes(thumbnailByteArray).await()
+
+                    reference.downloadUrl.await().toString()
+                }catch (e:Exception){
+                    Log.d("uploadMovieThumbnailError",e.message.toString())
+                    null
+                }
             }
         }
     }
@@ -187,6 +283,27 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
+    fun getServiceOfferingData(id:String){
+        viewModelScope.launch {
+            try{
+                auth.currentUser?.let {
+                    val querySnapshot = fireStore
+                        .collection("ServiceOfferings")
+                        .whereEqualTo("id", id)
+                        .get()
+                        .await()
+
+                    querySnapshot.documents.firstOrNull()?.let {
+                         _serviceOfferingData.value= it.toObject(publishData::class.java)
+                    }
+                    Log.d("getServiceOfferingData",serviceOfferingData.value.toString())
+                }
+            }catch (e:Exception){
+                Log.d("getServiceOfferingDataError",e.message.toString())
+            }
+        }
+    }
+
     fun updateServiceOfferings(key:String,value:Any?,offeringId:String){
         viewModelScope.launch {
             try{
@@ -205,6 +322,7 @@ class FirebaseViewModel:ViewModel() {
 }
 
 data class publishData(
+    val id:String = UUID.randomUUID().toString(),
     val myUid:String = "",
     val name:String = "",
     val job:String = "",
@@ -217,6 +335,7 @@ data class publishData(
     val precautions:String? = null,
     val selectImages:List<String?> = emptyList(),
     val selectMovies:List<String?> = emptyList(),
+    val selectImageThumbnail:String? = null,
     val checkBoxState:Boolean = false,
     val niceCount:Int = 0,
     val favoriteCount:Int = 0,

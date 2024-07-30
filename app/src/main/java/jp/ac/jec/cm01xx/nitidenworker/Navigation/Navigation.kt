@@ -89,7 +89,8 @@ fun Navigation(
                         publishServiceOfferings = firebaseViewModel::publishServiceOfferings,
                         data = serviceOfferingData,
                         userData = userData,
-                        onClickToMyJob = { navHostController.navigate(NavigationScreen.MyJob.name) }
+                        onClickToMyJob = { navHostController.navigate(NavigationScreen.MyJob.name) },
+                        context = LocalContext.current
                     )
                 }
             }
@@ -102,7 +103,8 @@ fun Navigation(
             composable(NavigationScreen.Home.name){
                 HomeScreen(
                     getServiceOfferings = firebaseViewModel::getServiceOfferings,
-                    serviceOfferings = firebaseViewModel.serviceOfferings,
+                    serviceOfferings_ = firebaseViewModel.serviceOfferings,
+                    onClickToServiceOfferingsDetailScreen = firebaseViewModel::getServiceOfferingData,
                     modifier = Modifier
                         .padding(innerPadding)
                         .nestedScroll(navigationViewModel.nestScrollConnection),
@@ -142,8 +144,12 @@ fun Navigation(
                     },
                     onClickToRequestServiceScreen = {
                         navHostController.navigate(NavigationScreen.requestService.name)
-                    }
+                    },
+                    onClickToServiceOfferingsDetailScreen = { firebaseViewModel.getServiceOfferingData(it) },
+                    getMyServiceOfferings = { firebaseViewModel.getMyServiceOfferings() },
+                    myServiceOfferings = firebaseViewModel.myServiceOfferings
                 )
+
             }
             composable(NavigationScreen.User.name){
                 val context = LocalContext.current
@@ -153,7 +159,7 @@ fun Navigation(
                 UserScreen(
                     onClickLoginButton = {
                         CredentialManagerAuthentication(
-                            firebaseViewModel = firebaseViewModel,
+                            firebaseAuth = firebaseViewModel.auth,
                             navHostController = navHostController,
                             context = context,
                             credentialManager = credentialManager,
@@ -197,9 +203,11 @@ fun Navigation(
             }
             composable(NavigationScreen.requestService.name){
                 RequestServiceScreen(
-                    firebaseViewModel = firebaseViewModel,
+                    getMyServiceOfferings = firebaseViewModel::getMyServiceOfferings,
+                    myServiceOfferings = firebaseViewModel.myServiceOfferings,
                     modifier = Modifier
-                        .nestedScroll(navigationViewModel.nestScrollConnection)
+                        .nestedScroll(navigationViewModel.nestScrollConnection),
+                    onClickToServiceOfferingsDetailScreen = firebaseViewModel::getServiceOfferingData
                 )
             }
         }

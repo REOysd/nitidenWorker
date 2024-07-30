@@ -9,6 +9,7 @@ import java.util.Locale
 class ServiceOfferingsViewingViewModel(serviceOfferings: publishData?): ViewModel() {
     val selectImages = serviceOfferings?.selectImages
     val selectMovies = serviceOfferings?.selectMovies
+    val selectMovieThumbnail = serviceOfferings?.selectImageThumbnail
 
     fun formatTimeStamp(timeStamp: Timestamp):String{
         val data = timeStamp.toDate()

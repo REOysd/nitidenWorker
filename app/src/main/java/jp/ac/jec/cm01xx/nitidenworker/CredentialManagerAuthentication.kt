@@ -7,6 +7,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.navigation.NavHostController
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.ac.jec.cm01xx.nitidenworker.Navigation.NavigationScreen
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 fun CredentialManagerAuthentication(
-    firebaseViewModel: FirebaseViewModel,
+    firebaseAuth:FirebaseAuth,
     navHostController: NavHostController,
     context:Context,
     scope:CoroutineScope,
@@ -48,7 +49,7 @@ fun CredentialManagerAuthentication(
             )
 
             val authResult =
-                firebaseViewModel.auth.signInWithCredential(firebaseCredential).await()
+                firebaseAuth.signInWithCredential(firebaseCredential).await()
             val user = authResult.user
 
             if (user != null) {

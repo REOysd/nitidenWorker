@@ -46,7 +46,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
-import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.launch
@@ -56,7 +55,8 @@ import kotlinx.coroutines.launch
 fun UserProfileAppeal(
     modifier: Modifier,
     userData:UserDocument?,
-    firebaseViewModel: FirebaseViewModel
+    updateOnMyProfile:(String,Any) -> Unit,
+    updateUrlOnMyProfile:(List<String>) -> Unit
 ){
     val context = LocalContext.current
     var openBottomSheetOfText by rememberSaveable { mutableStateOf(false) }
@@ -266,7 +266,7 @@ fun UserProfileAppeal(
         changeText = {text = it},
         text = text ,
         onClickCheckButton = {
-            firebaseViewModel.updateOnMyProfile("selfPresentation", text)
+            updateOnMyProfile("selfPresentation", text)
                              },
     )
 
@@ -274,7 +274,7 @@ fun UserProfileAppeal(
         onDismiss = { openBottomSheetOfUrl = false },
         sheetState = UrlSheetState,
         userData = userData,
-        updateUrlOnMyProfile = firebaseViewModel::updateUrlOnMyProfile
+        updateUrlOnMyProfile = updateUrlOnMyProfile
     )
 }
 

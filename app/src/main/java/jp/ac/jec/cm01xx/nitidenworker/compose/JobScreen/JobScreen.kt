@@ -63,9 +63,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
+import jp.ac.jec.cm01xx.nitidenworker.publishData
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -79,6 +78,9 @@ fun JobScreen(
     userData_:StateFlow<UserDocument?>,
     auth_:FirebaseAuth?,
     startLeadingUserData:(String) -> Unit,
+    myServiceOfferings:StateFlow<List<publishData?>>,
+    getMyServiceOfferings:() -> Unit,
+    onClickToServiceOfferingsDetailScreen:(String) -> Unit
 ){
     val state = rememberPagerState(
         pageCount = {2},
@@ -290,7 +292,9 @@ fun JobScreen(
                     0 -> RequestServiceScreen(
                         modifier = modifier
                             .nestedScroll(nestScrollConnection),
-                        firebaseViewModel = firebaseViewModel
+                        myServiceOfferings = myServiceOfferings,
+                        getMyServiceOfferings = getMyServiceOfferings,
+                        onClickToServiceOfferingsDetailScreen = onClickToServiceOfferingsDetailScreen
                     )
 
                     1 -> ClientScreen(

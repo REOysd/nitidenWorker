@@ -113,7 +113,7 @@ import kotlinx.coroutines.launch
                                     ProfileCurrentUser = null
                                 },
                                 userData = userData,
-                                firebaseViewModel = firebaseViewModel
+                                onClickCheckButton = firebaseViewModel::updateOnMyProfile
                             )
 
                         1 ->
@@ -121,7 +121,8 @@ import kotlinx.coroutines.launch
                                 modifier = modifier
                                     .padding(innerPadding),
                                 userData = userData,
-                                firebaseViewModel = firebaseViewModel
+                                updateOnMyProfile = firebaseViewModel::updateOnMyProfile,
+                                updateUrlOnMyProfile = firebaseViewModel::updateUrlOnMyProfile
                             )
                     }
                 }

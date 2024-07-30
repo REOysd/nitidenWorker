@@ -42,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.launch
@@ -53,9 +52,9 @@ import kotlinx.coroutines.launch
 fun UserProfileScreen(
     modifier: Modifier,
     onClickLogoutButton: () -> Unit,
+    onClickCheckButton:(String,String) -> Unit,
     SwitchProfileCurrentUser:() -> Unit,
     userData:UserDocument?,
-    firebaseViewModel: FirebaseViewModel
 ){
     var openBottomSheetOfDepartment by rememberSaveable { mutableStateOf(false) }
     val DepartmentSheetState = rememberModalBottomSheetState(
@@ -303,7 +302,7 @@ fun UserProfileScreen(
             placeholderOnTextField = "自分の所属する学科を記入してください",
             onDismiss = { openBottomSheetOfDepartment = false },
             sheetState = DepartmentSheetState,
-            onClickCheckButton = firebaseViewModel::updateOnMyProfile
+            onClickCheckButton = onClickCheckButton
         )
     }
 }

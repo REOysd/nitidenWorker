@@ -1,5 +1,6 @@
 package jp.ac.jec.cm01xx.nitidenworker.Navigation
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,16 +17,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 
 @Composable
 fun NavigateFloatingActionButtonOnBottom(
-    publishServiceOfferings:(ServiceOfferingData) -> Unit,
+    publishServiceOfferings:(ServiceOfferingData,Context) -> Unit,
     data:ServiceOfferingData?,
     userData: UserDocument?,
     onClickToMyJob:() -> Unit,
+    context: Context
 ){
 
     Box(
@@ -37,7 +38,7 @@ fun NavigateFloatingActionButtonOnBottom(
         FloatingActionButton(
             onClick = {
                 if(data != null && userData != null){
-                    publishServiceOfferings(data)
+                    publishServiceOfferings(data,context)
                 }
                 onClickToMyJob()
             },

@@ -27,10 +27,10 @@ import jp.ac.jec.cm01xx.nitidenworker.publishData
 fun ServiceOfferingsViewingScreen(
     serviceOfferings:publishData?,
     isAuthDataVisible:Boolean,
-    serviceOfferingsViewingViewModel:ServiceOfferingsViewingViewModel = ServiceOfferingsViewingViewModel(serviceOfferings)
+    serviceOfferingsViewingViewModel:ServiceOfferingsViewingViewModel =
+        ServiceOfferingsViewingViewModel(serviceOfferings),
+    onClickToServiceOfferingsDetailScreen:() -> Unit,
 ){
-    val selectImages = serviceOfferingsViewingViewModel.selectImages
-    val selectMovies = serviceOfferingsViewingViewModel.selectMovies
     val context = LocalContext.current
 
     Box{
@@ -44,9 +44,7 @@ fun ServiceOfferingsViewingScreen(
             ),
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(Color.White),
-            onClick = {
-
-            }
+            onClick = { onClickToServiceOfferingsDetailScreen() }
         ) {
             Row(
                 modifier = Modifier
@@ -67,8 +65,9 @@ fun ServiceOfferingsViewingScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     ServiceOfferingsViewingImage(
-                        selectImages = selectImages,
-                        selectMovies = selectMovies
+                        selectImages = serviceOfferingsViewingViewModel.selectImages,
+                        selectMovies = serviceOfferingsViewingViewModel.selectMovies,
+                        selectMovieThumbnail = serviceOfferingsViewingViewModel.selectMovieThumbnail
                     )
 
                 }
@@ -166,9 +165,11 @@ fun PreviewServiceOfferingsViewingScreen(){
             checkBoxState = false,
             niceCount = 0,
             favoriteCount = 0,
-            applyingCount = 0
+            applyingCount = 0,
+            selectImageThumbnail = null,
         ),
-        isAuthDataVisible = true
+        isAuthDataVisible = true,
+        onClickToServiceOfferingsDetailScreen = {}
     )
 }
 

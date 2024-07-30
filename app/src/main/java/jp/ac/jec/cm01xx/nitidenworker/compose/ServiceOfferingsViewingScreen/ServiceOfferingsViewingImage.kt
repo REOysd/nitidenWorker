@@ -47,7 +47,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun ServiceOfferingsViewingImage(
     selectImages: List<String?>?,
-    selectMovies: List<String?>?
+    selectMovies: List<String?>?,
+    selectMovieThumbnail:String?
 ){
     if(selectImages?.isEmpty() == true && selectMovies?.isEmpty() == true){
         DefaultImage()
@@ -59,7 +60,7 @@ fun ServiceOfferingsViewingImage(
 
     }else if(selectMovies?.isNotEmpty() == true){
         selectMovies[0]?.let{
-            MovieThumbnail(selectMovies = it)
+            MovieThumbnail( selectMovieThumbnail = selectMovieThumbnail)
         }
     }
 }
@@ -123,27 +124,8 @@ fun ImageThumbnail(selectImages:String){
 }
 
 @Composable
-fun MovieThumbnail(selectMovies:String){
-    var thumbnail by rememberSaveable { mutableStateOf<Bitmap?>(null) }
-    val scope = rememberCoroutineScope()
+fun MovieThumbnail(selectMovieThumbnail:String?){
 
-    LaunchedEffect(Unit){
-        scope.launch(Dispatchers.IO) {
-            selectMovies.firstOrNull()?.let { movieUri ->
-                try {
-                    val retriever = MediaMetadataRetriever()
-                    retriever.setDataSource(
-                        selectMovies,
-                        HashMap<String, String>()
-                    )
-                    thumbnail = retriever.frameAtTime
-                    retriever.release()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
     Box(
         modifier = Modifier
             .height(80.dp)
@@ -155,34 +137,37 @@ fun MovieThumbnail(selectMovies:String){
                 shape = RoundedCornerShape(8.dp)
             )
     ){
-        if(thumbnail != null){
-            thumbnail?.let{
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(8.dp))
+        if(selectMovieThumbnail != null){
+
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(selectMovieThumbnail)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "MovieThumbnail",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(8.dp))
                 )
 
-                IconButton(
-                    onClick = { },
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(20.dp),
+                colors = IconButtonDefaults.iconButtonColors(Color.White)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = "play video",
                     modifier = Modifier
-                        .align(Alignment.Center)
                         .size(20.dp),
-                    colors = IconButtonDefaults.iconButtonColors(Color.White)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "play video",
-                        modifier = Modifier
-                            .size(20.dp),
-                        tint = Color.Black
-                    )
-                }
+                    tint = Color.Black
+                )
             }
         }else{
+
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.Center)
