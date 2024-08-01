@@ -1,6 +1,7 @@
 package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -47,8 +48,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseUser
 import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal.UserProfileAppeal
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileHeader.UserProfileScreen
+import jp.ac.jec.cm01xx.nitidenworker.publishData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -72,11 +76,17 @@ import kotlinx.coroutines.launch
     val scrollPage = listOf("プロフィール","アピール")
     val scope = rememberCoroutineScope()
     val userData by firebaseViewModel.userData.collectAsState()
+    val serviceOfferingData by firebaseViewModel.serviceOfferingData.collectAsState()
 
     LaunchedEffect(Unit) {
         val uid = firebaseViewModel.auth.currentUser?.uid
-        if(uid != null){
-            firebaseViewModel.startLeadingUserData(uid)
+
+        if(serviceOfferingData != null){
+            serviceOfferingData?.let{
+                firebaseViewModel.startLeadingUserData(it.thisUid)
+            }
+        }else{
+            uid?.let{ firebaseViewModel.startLeadingUserData(uid) }
         }
     }
 
@@ -85,13 +95,14 @@ import kotlinx.coroutines.launch
             NoUserProfileHeader(
                 onClickLoginButton = onClickLoginButton
             )
+
         }else{
             Scaffold(
                 topBar = {
                     ProfileTopBar(
                         height = height,
-                        ProfileCurrentUser = currentUser,
                         context = context,
+                        userData = userData,
                         state = state,
                         scrollPage = scrollPage,
                         scope = scope
@@ -113,6 +124,7 @@ import kotlinx.coroutines.launch
                                     ProfileCurrentUser = null
                                 },
                                 userData = userData,
+                                uid = currentUser?.uid,
                                 onClickCheckButton = firebaseViewModel::updateOnMyProfile
                             )
 
@@ -121,6 +133,7 @@ import kotlinx.coroutines.launch
                                 modifier = modifier
                                     .padding(innerPadding),
                                 userData = userData,
+                                uid = currentUser?.uid,
                                 updateOnMyProfile = firebaseViewModel::updateOnMyProfile,
                                 updateUrlOnMyProfile = firebaseViewModel::updateUrlOnMyProfile
                             )
@@ -133,8 +146,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileTopBar(
     height:Dp,
-    ProfileCurrentUser:FirebaseUser?,
     context: Context,
+    userData:UserDocument?,
     state:PagerState,
     scrollPage:List<String>,
     scope:CoroutineScope
@@ -147,7 +160,7 @@ fun ProfileTopBar(
             .background(Color.White)
             .verticalScroll(rememberScrollState())
     ) {
-        ProfileCurrentUser?.photoUrl?.let{
+        userData?.userPhoto?.let{
             Spacer(modifier = Modifier.height(12.dp))
             AsyncImage(
                 model = ImageRequest.Builder(context = context)
@@ -163,7 +176,7 @@ fun ProfileTopBar(
             )
         }
 
-        ProfileCurrentUser?.displayName?.let{
+        userData?.name?.let{
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = it,
@@ -174,7 +187,7 @@ fun ProfileTopBar(
             )
         }
 
-        ProfileCurrentUser?.uid?.let{
+        userData?.uid?.let{
             Spacer(modifier = Modifier.height((8.dp)))
             Text(
                 text = "ID:${it}",

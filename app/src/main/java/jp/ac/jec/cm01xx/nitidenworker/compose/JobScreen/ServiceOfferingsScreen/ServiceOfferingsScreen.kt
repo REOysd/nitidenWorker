@@ -1054,7 +1054,7 @@ fun ServiceOfferingsScreen(
 
                                 ) {
                                     Text(
-                                        text = "公開する",
+                                        text = "確認する",
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold
                                         )

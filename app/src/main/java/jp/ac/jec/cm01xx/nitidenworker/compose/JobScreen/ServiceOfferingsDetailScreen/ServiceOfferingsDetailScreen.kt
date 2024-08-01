@@ -90,6 +90,7 @@ fun ServiceOfferingsDetailScreen(
     firebaseViewModel: FirebaseViewModel,
     data:ServiceOfferingData,
     onClickToPopBackStack:() -> Unit,
+    setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     modifier: Modifier,
 ){
     val scope = rememberCoroutineScope()
@@ -110,10 +111,12 @@ fun ServiceOfferingsDetailScreen(
     Scaffold(
         topBar = {
             ServiceOfferingsDetailTopBar(
-                onClickToPopBackStack = onClickToPopBackStack
+                onClickToPopBackStack = onClickToPopBackStack,
+                setServiceOfferingData = setServiceOfferingData
             )
         }
     ) { innerPadding ->
+        
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -127,9 +130,9 @@ fun ServiceOfferingsDetailScreen(
                 images = uiState.images,
                 selectImageAndMovie = selectImageAndMovie,
                 context = context,
-                selectImageAndMoviePageCount = uiState.selectImageAndMoviePageCount
+                selectImageAndMoviePageCount = uiState.selectImageAndMoviePageCount,
             )
-            
+
             TitleAndSubTitleBar(
                 title = uiState.title,
                 subTitle = uiState.subTitle,
@@ -142,7 +145,7 @@ fun ServiceOfferingsDetailScreen(
                         updateTotalNiceCount = firebaseViewModel::updateOnMyProfile,
                         updateNiceCount = firebaseViewModel::updateServiceOfferings
                     )
-                                    },
+                },
                 onChangeFavoriteCount = {
                     viewModel.onChangedFavoriteCount(
                         Swith = it,
@@ -165,7 +168,7 @@ fun ServiceOfferingsDetailScreen(
                 applyingCount = data.applyingCount,
                 checkBoxState = data.checkBoxState,
                 description = data.description,
-                precautions = data.precautions?:"",
+                precautions = data.precautions ?: "",
             )
         }
     }
@@ -372,8 +375,9 @@ fun ImageAndVideoThumbnail(
     images:List<Uri?>,
     selectImageAndMovie:List<Uri?>,
     context: Context,
-    selectImageAndMoviePageCount:Int
+    selectImageAndMoviePageCount:Int,
     ) {
+
     Box(
         modifier = Modifier
             .height(170.dp)
@@ -382,8 +386,7 @@ fun ImageAndVideoThumbnail(
                 onClick = {}
             )
     ){
-
-        if(selectImageAndMovie.isEmpty()== true){
+        if (selectImageAndMovie.isEmpty() == true) {
             Image(
                 painter = painterResource(id = R.drawable.nitiiden_icon),
                 contentDescription = "normalImage",
@@ -400,7 +403,7 @@ fun ImageAndVideoThumbnail(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
             )
-        }else{
+        } else {
             HorizontalPager(
                 state = selectImageAndMoviePagerState,
                 modifier = Modifier
@@ -408,62 +411,65 @@ fun ImageAndVideoThumbnail(
                     .height(200.dp)
             ) { page ->
 
-                if(images.size <= page){
-                    var thumbnail by rememberSaveable { mutableStateOf<Bitmap?>(null) }
+                images.let{
+                    if (it.size <= page) {
+                        var thumbnail by rememberSaveable { mutableStateOf<Bitmap?>(null) }
 
-                    LaunchedEffect(selectImageAndMovie[page]) {
-                        withContext(Dispatchers.IO) {
-                            try {
-                                val uri = Uri.parse(selectImageAndMovie[page].toString())
-                                context.contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
-                                    val retriever = MediaMetadataRetriever()
-                                    retriever.setDataSource(pfd.fileDescriptor)
-                                    thumbnail = retriever.frameAtTime
-                                    retriever.release()
+                        LaunchedEffect(selectImageAndMovie[page]) {
+                            withContext(Dispatchers.IO) {
+                                try {
+                                    val uri = Uri.parse(selectImageAndMovie[page].toString())
+                                    context.contentResolver.openFileDescriptor(uri, "r")
+                                        ?.use { pfd ->
+                                            val retriever = MediaMetadataRetriever()
+                                            retriever.setDataSource(pfd.fileDescriptor)
+                                            thumbnail = retriever.frameAtTime
+                                            retriever.release()
+                                        }
+                                } catch (e: Exception) {
+                                    Log.e("サムネイル", "Error: ${e.message}", e)
                                 }
-                            } catch (e: Exception) {
-                                Log.e("サムネイル", "Error: ${e.message}", e)
                             }
                         }
-                    }
 
-                    thumbnail?.let {
-                        Box(
-                            modifier = Modifier.fillMaxSize()
-                        ){
-                            Image(
-                                bitmap = it.asImageBitmap(),
-                                contentDescription = null,
-                                contentScale = ContentScale.Fit,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                            )
-
-                            IconButton(
-                                onClick = { },
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .size(50.dp),
-                                colors = IconButtonDefaults.iconButtonColors(Color.White)
+                        thumbnail?.let {
+                            Box(
+                                modifier = Modifier.fillMaxSize()
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.PlayArrow,
-                                    contentDescription = "play video",
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Fit,
                                     modifier = Modifier
-                                        .size(40.dp),
-                                    tint = Color.Black
+                                        .fillMaxSize()
                                 )
+
+                                IconButton(
+                                    onClick = { },
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .size(50.dp),
+                                    colors = IconButtonDefaults.iconButtonColors(Color.White)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.PlayArrow,
+                                        contentDescription = "play video",
+                                        modifier = Modifier
+                                            .size(40.dp),
+                                        tint = Color.Black
+                                    )
+                                }
                             }
                         }
+                    } else {
+                        AsyncImage(
+                            model = selectImageAndMovie[page],
+                            contentDescription = "selectImageAndMovie",
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
                     }
-                }else{
-                    AsyncImage(
-                        model =  selectImageAndMovie[page],
-                        contentDescription = "selectImageAndMovie",
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
                 }
             }
             Row(
@@ -640,7 +646,7 @@ fun BottomItemBar(
     applyingCount:Int,
     checkBoxState:Boolean,
     description:String,
-    precautions:String,
+    precautions:String?,
 ){
     Column {
         Spacer(modifier = Modifier.height(20.dp))
@@ -805,7 +811,7 @@ fun BottomItemBar(
 
         }
 
-        if(precautions.isNotEmpty()){
+        if(precautions?.isNotEmpty() == true){
             Spacer(modifier = Modifier.height(24.dp))
 
             Column(
@@ -867,5 +873,6 @@ fun ServiceOfferingsDetailScreenPreview(){
         onClickToPopBackStack = { /*TODO*/ },
         modifier = Modifier,
         firebaseViewModel = FirebaseViewModel(),
+        setServiceOfferingData = {}
     )
 }

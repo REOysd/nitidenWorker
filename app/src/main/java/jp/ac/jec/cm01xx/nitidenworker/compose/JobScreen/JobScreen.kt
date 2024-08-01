@@ -80,7 +80,8 @@ fun JobScreen(
     startLeadingUserData:(String) -> Unit,
     myServiceOfferings:StateFlow<List<publishData?>>,
     getMyServiceOfferings:() -> Unit,
-    onClickToServiceOfferingsDetailScreen:(String) -> Unit
+    onClickToServiceOfferingsDetailScreen:(String) -> Unit,
+    cleanServiceOfferingData:() -> Unit
 ){
     val state = rememberPagerState(
         pageCount = {2},
@@ -147,7 +148,10 @@ fun JobScreen(
                             .background(Color.White)
                             .height(90.dp)
                             .combinedClickable(
-                                onClick = onClickToProfile
+                                onClick = {
+                                    cleanServiceOfferingData()
+                                    onClickToProfile()
+                                }
                             )
                     ) {
                         Row(

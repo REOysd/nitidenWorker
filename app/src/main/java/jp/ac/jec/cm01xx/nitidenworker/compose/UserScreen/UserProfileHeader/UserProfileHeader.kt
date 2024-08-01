@@ -55,6 +55,7 @@ fun UserProfileScreen(
     onClickCheckButton:(String,String) -> Unit,
     SwitchProfileCurrentUser:() -> Unit,
     userData:UserDocument?,
+    uid:String?
 ){
     var openBottomSheetOfDepartment by rememberSaveable { mutableStateOf(false) }
     val DepartmentSheetState = rememberModalBottomSheetState(
@@ -101,8 +102,8 @@ fun UserProfileScreen(
                 )
             }
 
-            Divider(
-                color = Color.Gray,
+            HorizontalDivider(
+                color = Color.Gray.copy(alpha = 0.5f),
                 modifier = Modifier
                     .width(0.2.dp)
             )
@@ -148,7 +149,7 @@ fun UserProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             HorizontalDivider(
-                color = Color.Gray,
+                color = Color.Gray.copy(alpha = 0.3f),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(0.2.dp)
@@ -185,113 +186,127 @@ fun UserProfileScreen(
                         textAlign = TextAlign.Start,
                         fontSize = 10.sp
                     )
-                    Text(
-                        text = if(userData?.job == "--")"＜例＞モバイルアプリケーション開発科" else "${userData?.job}",
-                        color = if(userData?.job == "--")Color.Gray.copy(alpha = 0.5f) else Color.Black,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.W600
-                    )
+                    if(userData?.uid == uid){
+                        Text(
+                            text = if (userData?.job == "--") "＜例＞モバイルアプリケーション開発科" else "${userData?.job}",
+                            color = if (userData?.job == "--") Color.Gray.copy(alpha = 0.5f) else Color.Black,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.W600
+                        )
+                    }else{
+                        Text(
+                            text = "${userData?.job}",
+                            color = Color.Black,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.W600
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
-                
-                IconButton(
-                    onClick = { scope.launch { openBottomSheetOfDepartment = true } },
-                    modifier = Modifier
-                        .size(70.dp)
-                        .align(Alignment.Top)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "編集")
+
+                if(uid == userData?.uid){
+                    IconButton(
+                        onClick = { scope.launch { openBottomSheetOfDepartment = true } },
+                        modifier = Modifier
+                            .size(70.dp)
+                            .align(Alignment.Top)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "編集"
+                        )
+                    }
                 }
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
 
-        Column(
-            modifier = Modifier
-                .background(Color.White)
-                .fillMaxWidth()
-                .height(90.dp)
-        ) {
-            Text(
-                text = "設定",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W900,
+        if(uid == userData?.uid){
+            Column(
                 modifier = Modifier
-                    .padding(start = 10.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            HorizontalDivider(
-                color = Color.Gray,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.2.dp)
-                    .padding(start = 10.dp, end = 10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
                     .background(Color.White)
+                    .fillMaxWidth()
+                    .height(90.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.push_notification_icon_by_icons8),
-                    contentDescription = "department",
+                Text(
+                    text = "設定",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W900,
                     modifier = Modifier
                         .padding(start = 10.dp)
-                        .size(24.dp)
-                        .align(Alignment.CenterVertically),
-                    colorFilter = ColorFilter.tint(Color.Gray)
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "プッシュ通知",
-                    color = Color.Black,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.W600,
+                HorizontalDivider(
+                    color = Color.Gray.copy(alpha = 0.3f),
                     modifier = Modifier
-                        .align(Alignment.CenterVertically)
+                        .fillMaxWidth()
+                        .height(0.2.dp)
+                        .padding(start = 10.dp, end = 10.dp)
                 )
-            }
-        }
-        Spacer(modifier = Modifier.height(150.dp))
 
-        Column(
-            modifier = Modifier
-                .background(Color.White)
-                .fillMaxWidth()
-                .height(90.dp)
-                .drawWithContent {
-                    drawContent()
-                    drawLine(
-                        color = Color.Gray,
-                        start = Offset(0f, 0f),
-                        end = Offset(size.width, 0f),
-                        strokeWidth = 0.3.dp.toPx()
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .background(Color.White)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.push_notification_icon_by_icons8),
+                        contentDescription = "department",
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .size(24.dp)
+                            .align(Alignment.CenterVertically),
+                        colorFilter = ColorFilter.tint(Color.Gray)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Text(
+                        text = "プッシュ通知",
+                        color = Color.Black,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.W600,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
                     )
                 }
-        ) {
-            TextButton(
-                onClick = {
-                    onClickLogoutButton()
-                    SwitchProfileCurrentUser()
-                },
+            }
+            Spacer(modifier = Modifier.height(150.dp))
+
+            Column(
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .background(Color.White)
+                    .fillMaxWidth()
+                    .height(90.dp)
+                    .drawWithContent {
+                        drawContent()
+                        drawLine(
+                            color = Color.Gray,
+                            start = Offset(0f, 0f),
+                            end = Offset(size.width, 0f),
+                            strokeWidth = 0.3.dp.toPx()
+                        )
+                    }
             ) {
-                Text(
-                    text = "ログアウト",
-                    color = MaterialTheme.colorScheme.error,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W600,
-                )
+                TextButton(
+                    onClick = {
+                        onClickLogoutButton()
+                        SwitchProfileCurrentUser()
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        text = "ログアウト",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W600,
+                    )
+                }
             }
         }
     }

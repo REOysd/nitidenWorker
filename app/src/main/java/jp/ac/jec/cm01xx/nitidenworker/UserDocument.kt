@@ -6,6 +6,7 @@ data class UserDocument(
     val uid:String = "",
     val mail:String = "",
     val name:String = "",
+    val userPhoto:String = "",
     val numberOfAchievement:String = "--",
     val completionRate:String = "--",
     val job:String = "--",

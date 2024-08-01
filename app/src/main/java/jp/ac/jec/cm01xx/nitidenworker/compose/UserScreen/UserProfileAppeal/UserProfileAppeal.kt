@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +56,7 @@ import kotlinx.coroutines.launch
 fun UserProfileAppeal(
     modifier: Modifier,
     userData:UserDocument?,
+    uid:String?,
     updateOnMyProfile:(String,Any) -> Unit,
     updateUrlOnMyProfile:(List<String>) -> Unit
 ){
@@ -94,30 +96,33 @@ fun UserProfileAppeal(
             )
             
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        openBottomSheetOfText = true
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.Bottom)
-                    .padding(end = 20.dp)
-                    .size(30.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "編集",
-                    modifier = Modifier
 
-                )
+            if(uid == userData?.uid){
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            openBottomSheetOfText = true
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.Bottom)
+                        .padding(end = 20.dp)
+                        .size(30.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "編集",
+                        modifier = Modifier
+
+                    )
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Divider(
-            color = Color.Gray,
+        HorizontalDivider(
+            color = Color.Gray.copy(alpha = 0.3f),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.2.dp)
@@ -132,30 +137,47 @@ fun UserProfileAppeal(
                 .wrapContentHeight()
                 .background(Color.White)
                 .padding(start = 10.dp, end = 10.dp)
-                .clickable(
-                    onClick = {
-                        scope.launch {
-                            openBottomSheetOfText = true
-                        }
-                    },
+                .then(
+                    if (uid == userData?.uid) {
+                        Modifier
+                            .clickable(
+                                onClick = {
+                                    scope.launch {
+                                        openBottomSheetOfText = true
+                                    }
+                                },
+                            )
+                    } else {
+                        Modifier
+                    }
                 )
 
         ) {
-            Text(
-                text = if(userData?.selfPresentation == "") {
-                    stringResource(id = R.string.UserProfileAppealExample)
-                } else userData?.selfPresentation?:"--",
-                modifier = Modifier
-                    .fillMaxWidth(),
-                fontSize = 14.sp,
-                color = if(userData?.selfPresentation == "")Color.Gray.copy(alpha = 0.5F) else Color.Black
-            )
+            if(uid == userData?.uid){
+                Text(
+                    text = if (userData?.selfPresentation == "") {
+                        stringResource(id = R.string.UserProfileAppealExample)
+                    } else userData?.selfPresentation ?: "--",
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    fontSize = 14.sp,
+                    color = if (userData?.selfPresentation == "") Color.Gray.copy(alpha = 0.5F) else Color.Black
+                )
+            }else{
+                Text(
+                    text =  "${userData?.selfPresentation}",
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Divider(
-            color = Color.Gray,
+        HorizontalDivider(
+            color = Color.Gray.copy(alpha = 0.3f),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.2.dp)
@@ -177,31 +199,34 @@ fun UserProfileAppeal(
                     .padding(start = 20.dp)
                     .align(Alignment.Bottom)
             )
+
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        openBottomSheetOfUrl = true
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.Bottom)
-                    .padding(end = 20.dp)
-                    .size(30.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "編集",
+            if(uid == userData?.uid){
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            openBottomSheetOfUrl = true
+                        }
+                    },
                     modifier = Modifier
+                        .align(Alignment.Bottom)
+                        .padding(end = 20.dp)
+                        .size(30.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "編集",
+                        modifier = Modifier
 
-                )
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        Divider(
-            color = Color.Gray,
+        HorizontalDivider(
+            color = Color.Gray.copy(alpha = 0.3f),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.2.dp)
@@ -216,22 +241,31 @@ fun UserProfileAppeal(
                 .wrapContentHeight()
                 .background(Color.White)
                 .padding(start = 10.dp, end = 10.dp)
-                .combinedClickable(
-                    onClick = {
-                        scope.launch {
-                            openBottomSheetOfUrl = true
-                        }
+                .then(
+                    if (uid == userData?.uid) {
+                        Modifier
+                            .combinedClickable(
+                                onClick = {
+                                    scope.launch {
+                                        openBottomSheetOfUrl = true
+                                    }
+                                }
+                            )
+                    } else {
+                        Modifier
                     }
                 )
         ) {
             if(userData?.urls?.isEmpty() == true){
-                Text(
-                    text = stringResource(id = R.string.UserProfileAppealUrlExample),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    fontSize = 14.sp,
-                    color = Color.Gray.copy(alpha = 0.5F),
-                )
+                if(uid == userData.uid){
+                    Text(
+                        text = stringResource(id = R.string.UserProfileAppealUrlExample),
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        fontSize = 14.sp,
+                        color = Color.Gray.copy(alpha = 0.5F),
+                    )
+                }
             }else{
                 userData?.urls?.forEach{ url ->
                     if(CheckURL(url)){

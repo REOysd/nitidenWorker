@@ -1,6 +1,7 @@
 package jp.ac.jec.cm01xx.nitidenworker
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
@@ -18,6 +19,7 @@ import kotlinx.coroutines.tasks.await
 fun CredentialManagerAuthentication(
     firebaseAuth:FirebaseAuth,
     navHostController: NavHostController,
+    uploadUserPhoto:suspend (Uri?) -> String,
     context:Context,
     scope:CoroutineScope,
     credentialManager: CredentialManager
@@ -54,7 +56,8 @@ fun CredentialManagerAuthentication(
 
             if (user != null) {
                 val userDocument = FirebaseFirestore.getInstance()
-                    .collection("Users").document(user.uid)
+                    .collection("Users")
+                    .document(user.uid)
 
                 if (!userDocument.get().await().exists()) {
                     val newUser = user.let {
@@ -62,6 +65,7 @@ fun CredentialManagerAuthentication(
                             uid = it.uid,
                             mail = it.email.toString(),
                             name = it.displayName.toString(),
+                            userPhoto = uploadUserPhoto(it.photoUrl)
                         )
                     }
                     userDocument.set(newUser).await()

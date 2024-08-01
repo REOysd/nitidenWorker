@@ -103,12 +103,15 @@ class FirebaseViewModel:ViewModel() {
                     movieThumbnail = uploadMovieThumbnail(_movieThumbnail)
                 }
 
-
-
                 val publishData = publishData(
-                    myUid = auth.currentUser?.uid.toString(),
+                    thisUid = auth.currentUser?.uid.toString(),
+                    email = auth.currentUser?.email.toString(),
                     name = userData.value?.name.toString(),
+                    displayName = auth.currentUser?.displayName.toString(),
                     job = userData.value?.job.toString(),
+                    totalLikes = userData.value?.completionRate.toString(),
+                    numberOfAchievement = userData.value?.numberOfAchievement.toString(),
+                    completionRate = userData.value?.completionRate.toString(),
                     photoUrl = authPhotoUrl,
                     category = serviceOfferingData.category,
                     title = serviceOfferingData.title,
@@ -157,7 +160,7 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
-    private suspend fun uploadUserPhoto(photoUrl:Uri?):String{
+    suspend fun uploadUserPhoto(photoUrl:Uri?):String{
         return withContext(Dispatchers.IO) {
             try {
                 val inputStream = URL(photoUrl.toString()).openStream()
@@ -205,7 +208,7 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
-    private suspend fun createThumbnail(videoUri:String?):Bitmap?{
+    suspend fun createThumbnail(videoUri:String?):Bitmap?{
        return withContext(Dispatchers.IO) {
              videoUri.let { movieUri ->
                 try {
@@ -269,7 +272,7 @@ class FirebaseViewModel:ViewModel() {
                 auth.currentUser?.let { user ->
                     val querySnapshot = fireStore
                         .collection("ServiceOfferings")
-                        .whereEqualTo("myUid",user.uid)
+                        .whereEqualTo("thisUid",user.uid)
                         .get()
                         .await()
 
@@ -283,7 +286,9 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
-    fun getServiceOfferingData(id:String){
+    fun getServiceOfferingData(
+        id:String,
+    ){
         viewModelScope.launch {
             try{
                 auth.currentUser?.let {
@@ -296,12 +301,16 @@ class FirebaseViewModel:ViewModel() {
                     querySnapshot.documents.firstOrNull()?.let {
                          _serviceOfferingData.value= it.toObject(publishData::class.java)
                     }
-                    Log.d("getServiceOfferingData",serviceOfferingData.value.toString())
                 }
             }catch (e:Exception){
                 Log.d("getServiceOfferingDataError",e.message.toString())
             }
         }
+    }
+
+    fun cleanServiceOfferingData(
+    ){
+        _serviceOfferingData.value = null
     }
 
     fun updateServiceOfferings(key:String,value:Any?,offeringId:String){
@@ -323,9 +332,14 @@ class FirebaseViewModel:ViewModel() {
 
 data class publishData(
     val id:String = UUID.randomUUID().toString(),
-    val myUid:String = "",
+    val thisUid:String = "",
+    val email:String = "",
     val name:String = "",
+    val displayName:String = "",
     val job:String = "",
+    val totalLikes:String = "",
+    val numberOfAchievement:String = "--",
+    val completionRate:String = "--",
     val photoUrl:String? = "",
     val category: String = "",
     val title:String = "",

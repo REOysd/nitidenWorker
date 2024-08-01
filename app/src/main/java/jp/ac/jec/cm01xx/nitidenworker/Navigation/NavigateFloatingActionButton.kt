@@ -23,6 +23,7 @@ import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.S
 @Composable
 fun NavigateFloatingActionButtonOnBottom(
     publishServiceOfferings:(ServiceOfferingData,Context) -> Unit,
+    setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     data:ServiceOfferingData?,
     userData: UserDocument?,
     onClickToMyJob:() -> Unit,
@@ -40,6 +41,7 @@ fun NavigateFloatingActionButtonOnBottom(
                 if(data != null && userData != null){
                     publishServiceOfferings(data,context)
                 }
+                setServiceOfferingData(null)
                 onClickToMyJob()
             },
             modifier = Modifier

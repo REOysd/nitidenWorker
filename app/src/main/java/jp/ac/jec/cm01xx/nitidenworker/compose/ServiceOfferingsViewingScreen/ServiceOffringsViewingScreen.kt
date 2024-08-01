@@ -149,7 +149,7 @@ fun ServiceOfferingsViewingTitle(
 fun PreviewServiceOfferingsViewingScreen(){
     ServiceOfferingsViewingScreen(
         serviceOfferings = publishData(
-            myUid = "auth.currentUser?.uid.toString()",
+            thisUid = "auth.currentUser?.uid.toString()",
             name = "よしだ　れお　さん",
             job = "モバイルアプリケーション開発科",
             photoUrl =

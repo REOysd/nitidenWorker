@@ -27,13 +27,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import jp.ac.jec.cm01xx.nitidenworker.CredentialManagerAuthentication
 import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.compose.FavoriteScreen
-import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen.HomeScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.JobScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.RequestServiceScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingsScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.MessageScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.SearchScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailViewingScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserScreen
 import kotlinx.coroutines.launch
 
@@ -59,15 +60,11 @@ fun Navigation(
             if(
                 currentBackStackEntry != NavigationScreen.User.name &&
                 currentBackStackEntry != NavigationScreen.MyJob.name &&
-                currentBackStackEntry != NavigationScreen.serviceOfferings.name
+                currentBackStackEntry != NavigationScreen.Home.name
                 ){
                 TopBarContext(
-                    backStack = NavigationScreen
-                        .valueOf(backStack?.destination?.route?: NavigationScreen.Home.name),
-                    navHostController = navHostController,
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        .fillMaxWidth()
+                    onClickToPopBackStack = { navHostController.popBackStack() },
+                    backStackEntry = currentBackStackEntry
                 )
             }
         },
@@ -85,13 +82,20 @@ fun Navigation(
                         navHostController = navHostController
                     )
                 }else{
-                    NavigateFloatingActionButtonOnBottom(
-                        publishServiceOfferings = firebaseViewModel::publishServiceOfferings,
-                        data = serviceOfferingData,
-                        userData = userData,
-                        onClickToMyJob = { navHostController.navigate(NavigationScreen.MyJob.name) },
-                        context = LocalContext.current
-                    )
+                    if(serviceOfferingData != null){
+                        serviceOfferingData?.let {
+                            NavigateFloatingActionButtonOnBottom(
+                                publishServiceOfferings = firebaseViewModel::publishServiceOfferings,
+                                setServiceOfferingData = navigationViewModel::setServiceOfferingData,
+                                data = serviceOfferingData,
+                                userData = userData,
+                                onClickToMyJob = { navHostController.navigate(NavigationScreen.MyJob.name) },
+                                context = LocalContext.current
+                            )
+                        }
+                    }else{
+
+                    }
                 }
             }
         }
@@ -104,9 +108,13 @@ fun Navigation(
                 HomeScreen(
                     getServiceOfferings = firebaseViewModel::getServiceOfferings,
                     serviceOfferings_ = firebaseViewModel.serviceOfferings,
-                    onClickToServiceOfferingsDetailScreen = firebaseViewModel::getServiceOfferingData,
+                    getServiceOfferingData = firebaseViewModel::getServiceOfferingData,
+                    onClickToServiceOfferingDetailScreen = {
+                        navHostController.navigate(NavigationScreen.serviceOfferingsDetail.name)
+                    },
+                    cleanServiceOfferingData = firebaseViewModel::cleanServiceOfferingData,
+                    onClickTOProfile = {navHostController.navigate(NavigationScreen.User.name)},
                     modifier = Modifier
-                        .padding(innerPadding)
                         .nestedScroll(navigationViewModel.nestScrollConnection),
                 )
             }
@@ -147,7 +155,8 @@ fun Navigation(
                     },
                     onClickToServiceOfferingsDetailScreen = { firebaseViewModel.getServiceOfferingData(it) },
                     getMyServiceOfferings = { firebaseViewModel.getMyServiceOfferings() },
-                    myServiceOfferings = firebaseViewModel.myServiceOfferings
+                    myServiceOfferings = firebaseViewModel.myServiceOfferings,
+                    cleanServiceOfferingData = firebaseViewModel::cleanServiceOfferingData
                 )
 
             }
@@ -161,6 +170,7 @@ fun Navigation(
                         CredentialManagerAuthentication(
                             firebaseAuth = firebaseViewModel.auth,
                             navHostController = navHostController,
+                            uploadUserPhoto = firebaseViewModel::uploadUserPhoto,
                             context = context,
                             credentialManager = credentialManager,
                             scope = scope
@@ -191,13 +201,26 @@ fun Navigation(
                 )
             }
             composable(NavigationScreen.serviceOfferingsDetail.name){
-                serviceOfferingData?.let{
-                    ServiceOfferingsDetailScreen(
-                        firebaseViewModel = firebaseViewModel,
-                        data = it,
+                if(serviceOfferingData != null){
+                    serviceOfferingData?.let{
+                        ServiceOfferingsDetailScreen(
+                            firebaseViewModel = firebaseViewModel,
+                            data = it,
+                            onClickToPopBackStack = { navHostController.popBackStack() },
+                            setServiceOfferingData = navigationViewModel::setServiceOfferingData,
+                            modifier = Modifier
+                                .nestedScroll(navigationViewModel.nestScrollConnection),
+                        )
+                    }
+                }else{
+                    ServiceOfferingsDetailViewingScreen(
+                        serviceOfferingData = firebaseViewModel.serviceOfferingData,
                         onClickToPopBackStack = { navHostController.popBackStack() },
+                        setServiceOfferingData = navigationViewModel::setServiceOfferingData,
+                        createThumbnail = { firebaseViewModel.createThumbnail(it) },
+                        onClickToProfile = { navHostController.navigate(NavigationScreen.User.name) },
                         modifier = Modifier
-                            .nestedScroll(navigationViewModel.nestScrollConnection),
+                            .nestedScroll(navigationViewModel.nestScrollConnection)
                     )
                 }
             }

@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.Navigation
+package jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,25 +29,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import jp.ac.jec.cm01xx.nitidenworker.Navigation.NavigationScreen
 import jp.ac.jec.cm01xx.nitidenworker.R
 
 @Composable
-fun TopBarContext(
-    onClickToPopBackStack:() -> Unit,
-    backStackEntry: String?,
+fun HomeScreenTopBar(
+    cleanServiceOfferingData:() -> Unit,
+    onClickToProfile:() -> Unit,
+    modifier: Modifier
 ){
-    val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
-    val height = systemBarsPadding.calculateTopPadding()
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        systemUiController.setStatusBarColor(Color.White)
+    }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(top = height)
             .height(60.dp)
             .background(Color.White)
             .drawWithContent {
                 drawContent()
-                // 下部にのみボーダーを描画
                 drawLine(
                     color = Color.Gray,
                     start = Offset(0f, size.height),
@@ -57,27 +58,48 @@ fun TopBarContext(
                 )
             }
     ){
-        IconButton(
-            onClick = {
-                onClickToPopBackStack()
-            },
+
+        Image(
+            painter = painterResource(id = R.drawable.nitiiden_icon),
+            contentDescription = null,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(top = 18.dp)
+                .size(200.dp)
+                .padding(start = 16.dp)
+
+        )
+        IconButton(
+            onClick = {
+                cleanServiceOfferingData()
+                onClickToProfile()
+                      },
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 10.dp)
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = "backToScreen"
+                painter = painterResource(id = R.drawable.user_icon_by_icons8),
+                contentDescription = "Person",
+                modifier = Modifier
+                    .size(28.dp),
+                tint = Color.Gray
             )
         }
-        Text(
-            text = "${backStackEntry}",
+        IconButton(
+            onClick = {  },
             modifier = Modifier
-                .padding(top = 12.dp)
-                .align(Alignment.Center),
-            fontSize = 24.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.W500
-        )
+                .align(Alignment.CenterEnd)
+                .padding(end = 60.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Notifications,
+                contentDescription = "Notifications",
+                modifier = Modifier
+                    .size(28.dp),
+                tint = Color.Gray
+            )
+        }
+
     }
+
 }
