@@ -79,6 +79,11 @@ fun ServiceOfferingsViewingSubItems(
 
 @Composable
 fun FavoriteIconAndNiceIcon(
+    uid:String?,
+    likedUsers:List<String?>?,
+    updateLikedUsers:() -> Unit,
+    onClickHeartIcon:(Int) -> Unit,
+    onClickFavoriteIcon:() -> Unit,
     modifier: Modifier
 ){
     Row(
@@ -86,13 +91,20 @@ fun FavoriteIconAndNiceIcon(
             .background(Color.White)
     ) {
         HeartIcon(
-            onChangeNiceCount = {},
+            uid = uid,
+            likedUsers = likedUsers,
+            updateLikedUsers = updateLikedUsers,
+            onChangeNiceCount = {
+                onClickHeartIcon(it)
+            },
             modifier = modifier.size(40.dp)
         )
 
 
         FavoriteIcon(
-            onChangeFavoriteCount = {},
+            onChangeFavoriteCount = {
+                onClickFavoriteIcon()
+            },
             modifier = modifier.size(40.dp)
         )
     }

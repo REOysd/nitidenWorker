@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.toObject
@@ -31,21 +32,26 @@ import java.util.UUID
 class FirebaseViewModel:ViewModel() {
     val auth:FirebaseAuth = FirebaseAuth.getInstance()
     val fireStore = FirebaseFirestore.getInstance()
+
     private val _userData = MutableStateFlow<UserDocument?>(null)
     val userData:StateFlow<UserDocument?> = _userData.asStateFlow()
+
     private val _myServiceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
     val myServiceOfferings = _myServiceOfferings.asStateFlow()
+
     private val _serviceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
     val serviceOfferings = _serviceOfferings.asStateFlow()
+
     private val _serviceOfferingData = MutableStateFlow<publishData?>(null)
     val serviceOfferingData = _serviceOfferingData.asStateFlow()
+
     private var listenerRegistration: ListenerRegistration? = null
 
     fun startLeadingUserData(userId:String){
         listenerRegistration = fireStore
             .collection("Users")
             .document(userId)
-            .addSnapshotListener{snapshot,error ->
+            .addSnapshotListener{ snapshot,error ->
                 if(error != null){
                     return@addSnapshotListener
                 }
@@ -87,61 +93,12 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
-    fun publishServiceOfferings(
-        serviceOfferingData: ServiceOfferingData,
+
+    private suspend fun uploadFiles(
+        uris:List<Uri?>,
+        folder:String,
         context: Context
-    ){
-        viewModelScope.launch{
-            try{
-                val images = uploadFiles(serviceOfferingData.selectImages, "images",context)
-                val authPhotoUrl = uploadUserPhoto(auth.currentUser?.photoUrl)
-                val movies = uploadFiles(serviceOfferingData.selectMovies, "movies",context)
-                var movieThumbnail:String? = null
-
-                if(movies.isNotEmpty()){
-                    val _movieThumbnail = createThumbnail(movies.firstOrNull())
-                    movieThumbnail = uploadMovieThumbnail(_movieThumbnail)
-                }
-
-                val publishData = publishData(
-                    thisUid = auth.currentUser?.uid.toString(),
-                    email = auth.currentUser?.email.toString(),
-                    name = userData.value?.name.toString(),
-                    displayName = auth.currentUser?.displayName.toString(),
-                    job = userData.value?.job.toString(),
-                    totalLikes = userData.value?.completionRate.toString(),
-                    numberOfAchievement = userData.value?.numberOfAchievement.toString(),
-                    completionRate = userData.value?.completionRate.toString(),
-                    photoUrl = authPhotoUrl,
-                    category = serviceOfferingData.category,
-                    title = serviceOfferingData.title,
-                    subTitle = serviceOfferingData.subTitle,
-                    description = serviceOfferingData.description,
-                    deliveryDays = serviceOfferingData.deliveryDays,
-                    precautions = serviceOfferingData.precautions,
-                    selectImages = images,
-                    selectMovies = movies,
-                    selectImageThumbnail = movieThumbnail,
-                    checkBoxState = serviceOfferingData.checkBoxState,
-                    niceCount = serviceOfferingData.niceCount,
-                    favoriteCount = serviceOfferingData.favoriteCount,
-                    applyingCount = serviceOfferingData.applyingCount,
-                )
-
-                auth.currentUser?.let {
-                    fireStore
-                        .collection("ServiceOfferings")
-                        .add(publishData)
-                        .await()
-                }
-
-            }catch (e:Exception){
-                Log.d("publishServiceOfferingsError",e.message.toString())
-            }
-        }
-    }
-
-    private suspend fun uploadFiles(uris:List<Uri?>,folder:String,context: Context):List<String?>{
+    ):List<String?>{
         return withContext(Dispatchers.IO){
             uris.filterNotNull().map { file ->
                 val reference = Firebase.storage.reference.child("$folder/${UUID.randomUUID()}")
@@ -247,6 +204,64 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
+    fun publishServiceOfferings(
+        serviceOfferingData: ServiceOfferingData,
+        context: Context
+    ){
+        viewModelScope.launch{
+            try{
+                val id:String = UUID.randomUUID().toString()
+                val images = uploadFiles(serviceOfferingData.selectImages, "images",context)
+                val authPhotoUrl = uploadUserPhoto(auth.currentUser?.photoUrl)
+                val movies = uploadFiles(serviceOfferingData.selectMovies, "movies",context)
+                var movieThumbnail:String? = null
+
+                if(movies.isNotEmpty()){
+                    val _movieThumbnail = createThumbnail(movies.firstOrNull())
+                    movieThumbnail = uploadMovieThumbnail(_movieThumbnail)
+                }
+
+                val publishData = publishData(
+                    id = id,
+                    thisUid = auth.currentUser?.uid.toString(),
+                    email = auth.currentUser?.email.toString(),
+                    name = userData.value?.name.toString(),
+                    displayName = auth.currentUser?.displayName.toString(),
+                    job = userData.value?.job.toString(),
+                    totalLikes = userData.value?.completionRate.toString(),
+                    numberOfAchievement = userData.value?.numberOfAchievement.toString(),
+                    completionRate = userData.value?.completionRate.toString(),
+                    photoUrl = authPhotoUrl,
+                    category = serviceOfferingData.category,
+                    title = serviceOfferingData.title,
+                    subTitle = serviceOfferingData.subTitle,
+                    description = serviceOfferingData.description,
+                    deliveryDays = serviceOfferingData.deliveryDays,
+                    precautions = serviceOfferingData.precautions,
+                    selectImages = images,
+                    selectMovies = movies,
+                    selectImageThumbnail = movieThumbnail,
+                    checkBoxState = serviceOfferingData.checkBoxState,
+                    niceCount = serviceOfferingData.niceCount,
+                    favoriteCount = serviceOfferingData.favoriteCount,
+                    applyingCount = serviceOfferingData.applyingCount,
+                )
+
+
+                auth.currentUser?.let {
+                    fireStore
+                        .collection("ServiceOfferings")
+                        .document(id)
+                        .set(publishData)
+                        .await()
+                }
+
+            }catch (e:Exception){
+                Log.d("publishServiceOfferingsError",e.message.toString())
+            }
+        }
+    }
+
     fun getServiceOfferings(){
         viewModelScope.launch {
             try{
@@ -281,14 +296,63 @@ class FirebaseViewModel:ViewModel() {
                     }
                 }
             }catch (e:Exception){
-                Log.d("getMyServiceOfferingsError", e.message.toString())
+                Log.d("getMyServiceOfferingsError", e.toString())
             }
+        }
+    }
+
+    fun updateServiceOffering(key:String,value:Any?,id:String){
+        viewModelScope.launch {
+            try{
+                auth.currentUser?.let {
+                    fireStore
+                        .collection("ServiceOfferings")
+                        .document(id)
+                        .update(key,value)
+                        .await()
+
+                    getServiceOfferings()
+                    Log.d("updateServiceOffering",value.toString())
+                }
+            }catch (e:Exception){
+                Log.d("updateOnMyProfileError",e.message.toString())
+            }
+        }
+    }
+    fun updateLikedUsers(id:String?){
+        if (auth.currentUser == null || id == null) {
+            Log.d("updateLikedUsersError", "UID or ID is null")
+            return
+        }
+
+        viewModelScope.launch{
+            try {
+                auth.currentUser?.let { currentUser ->
+                    val Ref = fireStore.collection("ServiceOfferings").document(id)
+
+                    fireStore.runTransaction { transaction ->
+                        val snapshot = transaction.get(Ref)
+                        val currentLikedUsers =
+                            snapshot.get("likedUserIds") as? List<String> ?: emptyList()
+
+                        if (currentUser.uid in currentLikedUsers) {
+                            transaction.update(Ref, "likedUserIds", FieldValue.arrayRemove(currentUser.uid))
+                        } else {
+                            transaction.update(Ref, "likedUserIds", FieldValue.arrayUnion(currentUser.uid))
+                        }
+                    }.await()
+                }
+            } catch (e: Exception) {
+                Log.d("updateLikedUsersError", e.toString())
+            }
+
+            getServiceOfferings()
         }
     }
 
     fun getServiceOfferingData(
         id:String,
-    ){
+    ) {
         viewModelScope.launch {
             try{
                 auth.currentUser?.let {
@@ -312,26 +376,10 @@ class FirebaseViewModel:ViewModel() {
     ){
         _serviceOfferingData.value = null
     }
-
-    fun updateServiceOfferings(key:String,value:Any?,offeringId:String){
-        viewModelScope.launch {
-            try{
-                auth.currentUser?.let {
-                    fireStore
-                        .collection("ServiceOfferings")
-                        .document(offeringId)
-                        .update(key,value)
-                        .await()
-                }
-            }catch (e:Exception){
-                Log.d("updateOnMyProfileError",e.message.toString())
-            }
-        }
-    }
 }
 
 data class publishData(
-    val id:String = UUID.randomUUID().toString(),
+    val id:String = "",
     val thisUid:String = "",
     val email:String = "",
     val name:String = "",
@@ -352,6 +400,7 @@ data class publishData(
     val selectImageThumbnail:String? = null,
     val checkBoxState:Boolean = false,
     val niceCount:Int = 0,
+    val likedUserIds:List<String> = listOf(),
     val favoriteCount:Int = 0,
     val applyingCount:Int = 0,
     val timestamp: Timestamp = Timestamp.now(),

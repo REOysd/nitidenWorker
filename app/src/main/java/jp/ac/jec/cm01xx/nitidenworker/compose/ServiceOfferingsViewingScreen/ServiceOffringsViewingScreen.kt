@@ -25,11 +25,16 @@ import jp.ac.jec.cm01xx.nitidenworker.publishData
 
 @Composable
 fun ServiceOfferingsViewingScreen(
+    uid:String?,
+    likedUsers:List<String?>?,
     serviceOfferings:publishData?,
     isAuthDataVisible:Boolean,
     serviceOfferingsViewingViewModel:ServiceOfferingsViewingViewModel =
         ServiceOfferingsViewingViewModel(serviceOfferings),
     onClickToServiceOfferingsDetailScreen:() -> Unit,
+    updateLikedUsers:() -> Unit,
+    onClickHeartIcon:(Int) -> Unit,
+    onClickFavoriteIcon:() -> Unit
 ){
     val context = LocalContext.current
 
@@ -84,10 +89,15 @@ fun ServiceOfferingsViewingScreen(
 
             if (isAuthDataVisible){
                 AuthData(
+                    uid = uid,
+                    likedUsers = likedUsers,
                     photoUrl = serviceOfferings?.photoUrl,
                     context = context,
                     name = serviceOfferings?.name,
-                    job = serviceOfferings?.job
+                    job = serviceOfferings?.job,
+                    updateLikedUsers = updateLikedUsers,
+                    onClickHeartIcon = onClickHeartIcon,
+                    onClickFavoriteIcon = onClickFavoriteIcon
                 )
             }
         }
@@ -140,36 +150,6 @@ fun ServiceOfferingsViewingTitle(
         fontSize = 14.sp,
         modifier = Modifier
             .padding(horizontal = 8.dp)
-    )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewServiceOfferingsViewingScreen(){
-    ServiceOfferingsViewingScreen(
-        serviceOfferings = publishData(
-            thisUid = "auth.currentUser?.uid.toString()",
-            name = "よしだ　れお　さん",
-            job = "モバイルアプリケーション開発科",
-            photoUrl =
-            "https://firebasestorage.googleapis.com/v0/b/nitidenworker.appspot.com/o/UserPhoto%2Fe39fd015-7c5a-4bf8-86db-e65a7e17b609?alt=media&token=a96dabd8-97bb-414a-bb26-459314c76906",
-            category = "タイピング",
-            title = "これはタイトルです！！よくみていってください",
-            subTitle = "a",
-            description = "",
-            deliveryDays = "12",
-            precautions = "",
-            selectImages = emptyList(),
-            selectMovies = emptyList(),
-            checkBoxState = false,
-            niceCount = 0,
-            favoriteCount = 0,
-            applyingCount = 0,
-            selectImageThumbnail = null,
-        ),
-        isAuthDataVisible = true,
-        onClickToServiceOfferingsDetailScreen = {}
     )
 }
 

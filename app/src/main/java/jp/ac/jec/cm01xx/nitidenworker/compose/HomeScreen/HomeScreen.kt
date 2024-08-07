@@ -23,12 +23,15 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun HomeScreen(
+    uid:String?,
     modifier: Modifier,
     getServiceOfferings:() -> Unit,
     serviceOfferings_:StateFlow<List<publishData?>>,
     getServiceOfferingData:(String) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
     onClickTOProfile:() -> Unit,
+    updateLikedUsers:(String) -> Unit,
+    onClickHeartAndFavoriteIcon:(String,Int,String) -> Unit,
     cleanServiceOfferingData:() -> Unit,
 ){
     val serviceOfferings = serviceOfferings_.collectAsState()
@@ -55,19 +58,34 @@ fun HomeScreen(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            items(items = serviceOfferings.value) {
+            items(items = serviceOfferings.value) {item ->
                 Spacer(modifier = Modifier.height(6.dp))
 
-                it?.let {
+                item?.let { serviceOffering ->
                     ServiceOfferingsViewingScreen(
-                        serviceOfferings = it,
+                        uid = uid,
+                        likedUsers = serviceOffering.likedUserIds,
+                        serviceOfferings = serviceOffering,
                         isAuthDataVisible = true,
                         onClickToServiceOfferingsDetailScreen =
                         {
-                            getServiceOfferingData(it.id)
-                            Log.d("onClick", it.title)
+                            getServiceOfferingData(serviceOffering.id)
                             onClickToServiceOfferingDetailScreen()
-                        }
+                        },
+                        updateLikedUsers = {
+                            updateLikedUsers(
+                                serviceOffering.id
+                            )
+                        },
+                        onClickHeartIcon =
+                        {
+                            onClickHeartAndFavoriteIcon(
+                                "niceCount",
+                                serviceOffering.niceCount + it,
+                                serviceOffering.id
+                            )
+                        },
+                        onClickFavoriteIcon = {}
                     )
                 }
 

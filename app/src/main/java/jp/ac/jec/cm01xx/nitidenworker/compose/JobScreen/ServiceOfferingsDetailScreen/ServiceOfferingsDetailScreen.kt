@@ -44,6 +44,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -80,6 +81,7 @@ import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -139,19 +141,8 @@ fun ServiceOfferingsDetailScreen(
                 niceCount = uiState.niceCount,
                 favoriteCount = uiState.favoriteCount,
                 onChangeNiceCount = {
-                    viewModel.onChangedNiceCount(
-                        Swith = it,
-                        data = data,
-                        updateTotalNiceCount = firebaseViewModel::updateOnMyProfile,
-                        updateNiceCount = firebaseViewModel::updateServiceOfferings
-                    )
                 },
                 onChangeFavoriteCount = {
-                    viewModel.onChangedFavoriteCount(
-                        Swith = it,
-                        data = data,
-                        updateTotalNiceCount = firebaseViewModel::updateOnMyProfile
-                    )
                 }
             )
 
@@ -231,11 +222,10 @@ fun TitleAndSubTitleBar(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
             ){
-                HeartIcon(
-                    onChangeNiceCount = {
-                        onChangeNiceCount(it)
-                    }
-                )
+//                HeartIcon(
+//                    onChangeNiceCount = {
+//                    }
+//                )
 
                 Text(
                     text = niceCount.toString(),
@@ -306,24 +296,37 @@ fun RatingStar(
 
 @Composable
 fun HeartIcon(
-    onChangeNiceCount:(Boolean) -> Unit,
+    uid:String?,
+    likedUsers:List<String?>?,
+    updateLikedUsers:() -> Unit,
+    onChangeNiceCount:(Int) -> Unit,
     modifier: Modifier = Modifier
 ){
+    val scope = rememberCoroutineScope()
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.heart_lottie))
     var isLiked by remember { mutableStateOf(false) }
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (isLiked) 0.6f else 0f,
-        animationSpec = tween(durationMillis = 900)
+        animationSpec = tween(durationMillis = 500)
     )
+
+    LaunchedEffect(uid,likedUsers) {
+        isLiked = uid != null && likedUsers != null && likedUsers.contains(uid)
+    }
 
     IconButton(
         onClick = {
             isLiked = !isLiked
+
             if(isLiked){
-                onChangeNiceCount(true)
+                onChangeNiceCount(1)
             }else{
-                onChangeNiceCount(false)
+                onChangeNiceCount(-1)
+            }
+            scope.launch {
+                delay(100)  // UIの更新が完了するのを待つ
+                updateLikedUsers()
             }
         },
         modifier = modifier.size(50.dp)
@@ -360,6 +363,7 @@ fun FavoriteIcon(
         },
         modifier = modifier.size(50.dp)
     ) {
+        
         LottieAnimation(
             composition = heart,
             progress = { animatedProgress }

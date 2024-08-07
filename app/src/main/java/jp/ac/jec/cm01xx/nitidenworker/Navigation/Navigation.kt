@@ -106,6 +106,7 @@ fun Navigation(
         ) {
             composable(NavigationScreen.Home.name){
                 HomeScreen(
+                    uid = firebaseViewModel.auth.currentUser?.uid,
                     getServiceOfferings = firebaseViewModel::getServiceOfferings,
                     serviceOfferings_ = firebaseViewModel.serviceOfferings,
                     getServiceOfferingData = firebaseViewModel::getServiceOfferingData,
@@ -114,6 +115,8 @@ fun Navigation(
                     },
                     cleanServiceOfferingData = firebaseViewModel::cleanServiceOfferingData,
                     onClickTOProfile = {navHostController.navigate(NavigationScreen.User.name)},
+                    onClickHeartAndFavoriteIcon = firebaseViewModel::updateServiceOffering,
+                    updateLikedUsers = firebaseViewModel::updateLikedUsers,
                     modifier = Modifier
                         .nestedScroll(navigationViewModel.nestScrollConnection),
                 )
@@ -154,9 +157,14 @@ fun Navigation(
                         navHostController.navigate(NavigationScreen.requestService.name)
                     },
                     onClickToServiceOfferingsDetailScreen = { firebaseViewModel.getServiceOfferingData(it) },
+                    updateLikedUsers = {
+                        firebaseViewModel.updateLikedUsers(
+                            id = null
+                        )
+                    },
                     getMyServiceOfferings = { firebaseViewModel.getMyServiceOfferings() },
                     myServiceOfferings = firebaseViewModel.myServiceOfferings,
-                    cleanServiceOfferingData = firebaseViewModel::cleanServiceOfferingData
+                    cleanServiceOfferingData = firebaseViewModel::cleanServiceOfferingData,
                 )
 
             }
@@ -230,7 +238,12 @@ fun Navigation(
                     myServiceOfferings = firebaseViewModel.myServiceOfferings,
                     modifier = Modifier
                         .nestedScroll(navigationViewModel.nestScrollConnection),
-                    onClickToServiceOfferingsDetailScreen = firebaseViewModel::getServiceOfferingData
+                    onClickToServiceOfferingsDetailScreen = firebaseViewModel::getServiceOfferingData,
+                    updateLikedUsers = {
+                        firebaseViewModel.updateLikedUsers(
+                            id = firebaseViewModel.serviceOfferingData.value?.id
+                        )
+                    }
                 )
             }
         }

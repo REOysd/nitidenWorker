@@ -22,6 +22,7 @@ fun RequestServiceScreen(
     modifier: Modifier,
     myServiceOfferings:StateFlow<List<publishData?>>,
     getMyServiceOfferings:() -> Unit,
+    updateLikedUsers:() -> Unit,
     onClickToServiceOfferingsDetailScreen:(String) -> Unit
     ){
     val serviceOffering = myServiceOfferings.collectAsState()
@@ -40,10 +41,15 @@ fun RequestServiceScreen(
             Spacer(modifier = Modifier.height(6.dp))
             item?.let{
                 ServiceOfferingsViewingScreen(
+                    uid = item.thisUid,
+                    likedUsers = item.likedUserIds,
                     serviceOfferings = item,
                     isAuthDataVisible = false,
                     onClickToServiceOfferingsDetailScreen =
-                    { onClickToServiceOfferingsDetailScreen(item.id) }
+                    { onClickToServiceOfferingsDetailScreen(item.id) },
+                    updateLikedUsers = updateLikedUsers,
+                    onClickHeartIcon = {},
+                    onClickFavoriteIcon = {}
                 )
             }
             Spacer(modifier = Modifier.height(6.dp))
