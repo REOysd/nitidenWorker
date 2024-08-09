@@ -28,14 +28,17 @@ import coil.request.ImageRequest
 @Composable
 fun AuthData(
     uid:String?,
+    itemUid:String,
     likedUsers:List<String?>?,
+    favoriteUsers:List<String?>?,
     photoUrl:String?,
     context:Context,
     name:String?,
     job:String?,
     updateLikedUsers:() -> Unit,
+    updateFavoriteUsers:() -> Unit,
     onClickHeartIcon:(Int) -> Unit,
-    onClickFavoriteIcon:() -> Unit
+    onClickFavoriteIcon:(Int) -> Unit
 ){
     Spacer(modifier = Modifier.height(6.dp))
 
@@ -46,7 +49,6 @@ fun AuthData(
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
     )
-
 
     Row(
         modifier = Modifier
@@ -101,13 +103,16 @@ fun AuthData(
 
         FavoriteIconAndNiceIcon(
             uid = uid,
+            itemUid = itemUid,
             likedUsers = likedUsers,
+            favoriteUsers = favoriteUsers,
             updateLikedUsers = updateLikedUsers,
+            updateFavoriteUsers = updateFavoriteUsers,
             onClickHeartIcon = {
                 onClickHeartIcon(it)
             },
             onClickFavoriteIcon = {
-                onClickFavoriteIcon()
+                onClickFavoriteIcon(it)
             },
             modifier = Modifier
                 .align(Alignment.Top)

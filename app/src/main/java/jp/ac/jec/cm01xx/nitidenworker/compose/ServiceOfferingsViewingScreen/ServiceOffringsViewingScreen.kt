@@ -26,15 +26,18 @@ import jp.ac.jec.cm01xx.nitidenworker.publishData
 @Composable
 fun ServiceOfferingsViewingScreen(
     uid:String?,
+    itemUid:String,
     likedUsers:List<String?>?,
+    favoriteUsers:List<String?>?,
     serviceOfferings:publishData?,
     isAuthDataVisible:Boolean,
     serviceOfferingsViewingViewModel:ServiceOfferingsViewingViewModel =
         ServiceOfferingsViewingViewModel(serviceOfferings),
     onClickToServiceOfferingsDetailScreen:() -> Unit,
     updateLikedUsers:() -> Unit,
+    updateFavoriteUsers: () -> Unit,
     onClickHeartIcon:(Int) -> Unit,
-    onClickFavoriteIcon:() -> Unit
+    onClickFavoriteIcon:(Int) -> Unit
 ){
     val context = LocalContext.current
 
@@ -90,12 +93,15 @@ fun ServiceOfferingsViewingScreen(
             if (isAuthDataVisible){
                 AuthData(
                     uid = uid,
+                    itemUid = itemUid,
                     likedUsers = likedUsers,
+                    favoriteUsers = favoriteUsers,
                     photoUrl = serviceOfferings?.photoUrl,
                     context = context,
                     name = serviceOfferings?.name,
                     job = serviceOfferings?.job,
                     updateLikedUsers = updateLikedUsers,
+                    updateFavoriteUsers = updateFavoriteUsers,
                     onClickHeartIcon = onClickHeartIcon,
                     onClickFavoriteIcon = onClickFavoriteIcon
                 )

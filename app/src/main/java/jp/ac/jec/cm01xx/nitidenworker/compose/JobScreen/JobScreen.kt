@@ -39,7 +39,6 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,7 +74,7 @@ fun JobScreen(
     onClickToProfile:() -> Unit,
     onClickToServiceOfferingsScreen:() -> Unit,
     onClickToRequestServiceScreen:() -> Unit,
-    userData_:StateFlow<UserDocument?>,
+    userData:UserDocument?,
     auth_:FirebaseAuth?,
     startLeadingUserData:(String) -> Unit,
     myServiceOfferings:StateFlow<List<publishData?>>,
@@ -88,7 +87,6 @@ fun JobScreen(
         pageCount = {2},
         initialPage = 0
     )
-    val userData by userData_.collectAsState()
     val currentUser = auth_?.currentUser
     val context = LocalContext.current
     var isProfileLinkVisible by remember{ mutableStateOf(true) }
@@ -300,6 +298,7 @@ fun JobScreen(
                         myServiceOfferings = myServiceOfferings,
                         getMyServiceOfferings = getMyServiceOfferings,
                         updateLikedUsers = updateLikedUsers,
+                        updateFavoriteUsers = updateLikedUsers,
                         onClickToServiceOfferingsDetailScreen = onClickToServiceOfferingsDetailScreen
                     )
 

@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import jp.ac.jec.cm01xx.nitidenworker.R
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.publishData
 import kotlinx.coroutines.CoroutineScope
@@ -69,14 +70,16 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ServiceOfferingsDetailViewingScreen(
-    serviceOfferingData:StateFlow<publishData?>,
+    startLeadingUserData:(String) -> Unit,
+    serviceOfferingData_:StateFlow<publishData?>,
+    userData:UserDocument?,
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     onClickToProfile: () -> Unit,
     createThumbnail: suspend (String?) -> Bitmap?,
     modifier: Modifier
 ){
-    val serviceOfferingData = serviceOfferingData.collectAsState()
+    val serviceOfferingData = serviceOfferingData_.collectAsState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val selectedImageAndMovie = serviceOfferingData.value?.let {
@@ -86,6 +89,12 @@ fun ServiceOfferingsDetailViewingScreen(
         pageCount = {selectedImageAndMovie.size},
         initialPage = 0
     )
+
+    LaunchedEffect(key1 = serviceOfferingData.value?.thisUid) {
+        serviceOfferingData.value?.thisUid?.let { uid ->
+            startLeadingUserData(uid)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -119,20 +128,20 @@ fun ServiceOfferingsDetailViewingScreen(
                     subTitle = it.subTitle,
                     niceCount = it.niceCount,
                     favoriteCount = it.favoriteCount,
-                    onChangeNiceCount = {},
-                    onChangeFavoriteCount = {}
                 )
 
-                ViewingMyProfileItems(
-                    photoUrl = it.photoUrl,
-                    email = it.email,
-                    job = it.job,
-                    numberOfAchievement = it.numberOfAchievement,
-                    totalLikes = it.totalLikes,
-                    completionRate = it.completionRate,
-                    onClickToProfile = onClickToProfile,
-                    context = context,
-                )
+                userData?.let{
+                    ViewingMyProfileItems(
+                        photoUrl = it.userPhoto,
+                        email = it.mail,
+                        job = it.job,
+                        numberOfAchievement = it.numberOfAchievement,
+                        totalLikes = it.totalLikes,
+                        completionRate = it.completionRate,
+                        onClickToProfile = onClickToProfile,
+                        context = context,
+                    )
+                }
 
                 BottomItemBar(
                     category = it.category,
@@ -292,7 +301,7 @@ fun ViewingMyProfileItems(
     email:String?,
     job:String?,
     numberOfAchievement:String?,
-    totalLikes:String?,
+    totalLikes:Int?,
     completionRate:String?,
     onClickToProfile:() -> Unit,
     context:Context,

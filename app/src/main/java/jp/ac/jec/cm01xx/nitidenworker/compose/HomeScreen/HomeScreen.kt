@@ -30,7 +30,8 @@ fun HomeScreen(
     getServiceOfferingData:(String) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
     onClickTOProfile:() -> Unit,
-    updateLikedUsers:(String) -> Unit,
+    updateLikedUsers:(String,String) -> Unit,
+    updateFavoriteUsers:(String,String) -> Unit,
     onClickHeartAndFavoriteIcon:(String,Int,String) -> Unit,
     cleanServiceOfferingData:() -> Unit,
 ){
@@ -64,7 +65,9 @@ fun HomeScreen(
                 item?.let { serviceOffering ->
                     ServiceOfferingsViewingScreen(
                         uid = uid,
+                        itemUid = item.thisUid,
                         likedUsers = serviceOffering.likedUserIds,
+                        favoriteUsers = serviceOffering.favoriteUserIds,
                         serviceOfferings = serviceOffering,
                         isAuthDataVisible = true,
                         onClickToServiceOfferingsDetailScreen =
@@ -74,7 +77,14 @@ fun HomeScreen(
                         },
                         updateLikedUsers = {
                             updateLikedUsers(
-                                serviceOffering.id
+                                serviceOffering.id,
+                                "likedUserIds"
+                            )
+                        },
+                        updateFavoriteUsers = {
+                            updateFavoriteUsers(
+                                serviceOffering.id,
+                                "favoriteUserIds"
                             )
                         },
                         onClickHeartIcon =
@@ -85,7 +95,13 @@ fun HomeScreen(
                                 serviceOffering.id
                             )
                         },
-                        onClickFavoriteIcon = {}
+                        onClickFavoriteIcon = {
+                            onClickHeartAndFavoriteIcon(
+                                "favoriteCount",
+                                serviceOffering.favoriteCount + it,
+                                serviceOffering.id
+                            )
+                        }
                     )
                 }
 

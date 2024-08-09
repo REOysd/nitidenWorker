@@ -13,7 +13,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
@@ -39,6 +38,9 @@ class FirebaseViewModel:ViewModel() {
     private val _myServiceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
     val myServiceOfferings = _myServiceOfferings.asStateFlow()
 
+    private val _myFavoriteServiceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
+    val myFavoriteServiceOfferings = _myFavoriteServiceOfferings.asStateFlow()
+
     private val _serviceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
     val serviceOfferings = _serviceOfferings.asStateFlow()
 
@@ -48,17 +50,21 @@ class FirebaseViewModel:ViewModel() {
     private var listenerRegistration: ListenerRegistration? = null
 
     fun startLeadingUserData(userId:String){
-        listenerRegistration = fireStore
-            .collection("Users")
-            .document(userId)
-            .addSnapshotListener{ snapshot,error ->
-                if(error != null){
-                    return@addSnapshotListener
+        try{
+            listenerRegistration = fireStore
+                .collection("Users")
+                .document(userId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        return@addSnapshotListener
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        _userData.value = snapshot.toObject(UserDocument::class.java)
+                    }
                 }
-                if(snapshot != null && snapshot.exists()){
-                    _userData.value = snapshot.toObject(UserDocument::class.java)
-                }
-            }
+        }catch (e:Exception){
+            Log.d("startLeadingUserDataError",e.message.toString())
+        }
     }
 
     fun updateOnMyProfile(key:String,value:Any?){
@@ -73,6 +79,22 @@ class FirebaseViewModel:ViewModel() {
                 }
             }catch (e:Exception){
                 Log.d("updateOnMyProfileError",e.message.toString())
+            }
+        }
+    }
+
+    fun updateOnOtherProfile(key: String,value: Any?,uid:String){
+        viewModelScope.launch {
+            try {
+                auth.currentUser?.let {
+                    fireStore
+                        .collection("Users")
+                        .document(uid)
+                        .update(key,value)
+                        .await()
+                }
+            } catch (e:Exception){
+                Log.d("updateUonOtherProfileError",e.message.toString())
             }
         }
     }
@@ -108,7 +130,6 @@ class FirebaseViewModel:ViewModel() {
 
                     reference.putBytes(compressedBytes).await()
                 }else{
-
                     reference.putFile(file).await()
                 }
 
@@ -274,7 +295,6 @@ class FirebaseViewModel:ViewModel() {
                     document.toObject(publishData::class.java)
                 }
 
-                Log.d("serviceOfferings",serviceOfferings.value.toString())
             }catch (e:Exception){
                 Log.d("getServiceOfferingsError", e.message.toString())
             }
@@ -301,6 +321,28 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
+    fun getMyFavoriteServiceOfferings(){
+        viewModelScope.launch {
+            try {
+                auth.currentUser?.let { user ->
+                    val querySnapshot = fireStore
+                        .collection("ServiceOfferings")
+                        .whereArrayContains("favoriteUserIds",user.uid)
+                        .get()
+                        .await()
+
+                    _myFavoriteServiceOfferings.value = querySnapshot.documents.mapNotNull { document ->
+                        document.toObject(publishData::class.java)
+                    }
+                }
+
+                Log.d("getMyFavoriteServiceOfferings",_myFavoriteServiceOfferings.value.toString())
+            } catch (e:Exception){
+                Log.d("getMyFavoriteServiceOfferingsError",e.message.toString())
+            }
+        }
+    }
+
     fun updateServiceOffering(key:String,value:Any?,id:String){
         viewModelScope.launch {
             try{
@@ -319,7 +361,8 @@ class FirebaseViewModel:ViewModel() {
             }
         }
     }
-    fun updateLikedUsers(id:String?){
+
+    fun updateListType(id:String?,listType:String){
         if (auth.currentUser == null || id == null) {
             Log.d("updateLikedUsersError", "UID or ID is null")
             return
@@ -332,13 +375,22 @@ class FirebaseViewModel:ViewModel() {
 
                     fireStore.runTransaction { transaction ->
                         val snapshot = transaction.get(Ref)
-                        val currentLikedUsers =
-                            snapshot.get("likedUserIds") as? List<String> ?: emptyList()
+                        val thisUid = snapshot.get("thisUid").toString()
+                        val currentList =
+                            snapshot.get(listType) as? List<String> ?: emptyList()
 
-                        if (currentUser.uid in currentLikedUsers) {
-                            transaction.update(Ref, "likedUserIds", FieldValue.arrayRemove(currentUser.uid))
+                        if (currentUser.uid in currentList) {
+                            transaction.update(Ref, listType, FieldValue.arrayRemove(currentUser.uid))
+
+                            if(listType == "likedUserIds"){
+                                updateOnOtherProfile("totalLikes", FieldValue.increment(-1), thisUid)
+                            }
                         } else {
-                            transaction.update(Ref, "likedUserIds", FieldValue.arrayUnion(currentUser.uid))
+                            transaction.update(Ref, listType, FieldValue.arrayUnion(currentUser.uid))
+
+                            if(listType == "likedUserIds"){
+                                updateOnOtherProfile("totalLikes", FieldValue.increment(1), thisUid)
+                            }
                         }
                     }.await()
                 }
@@ -350,9 +402,7 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
-    fun getServiceOfferingData(
-        id:String,
-    ) {
+    fun getServiceOfferingData(id:String) {
         viewModelScope.launch {
             try{
                 auth.currentUser?.let {
@@ -401,6 +451,7 @@ data class publishData(
     val checkBoxState:Boolean = false,
     val niceCount:Int = 0,
     val likedUserIds:List<String> = listOf(),
+    val favoriteUserIds:List<String> = listOf(),
     val favoriteCount:Int = 0,
     val applyingCount:Int = 0,
     val timestamp: Timestamp = Timestamp.now(),

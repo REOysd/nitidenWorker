@@ -44,7 +44,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -140,10 +139,6 @@ fun ServiceOfferingsDetailScreen(
                 subTitle = uiState.subTitle,
                 niceCount = uiState.niceCount,
                 favoriteCount = uiState.favoriteCount,
-                onChangeNiceCount = {
-                },
-                onChangeFavoriteCount = {
-                }
             )
 
             MyProfileItems(
@@ -172,8 +167,6 @@ fun TitleAndSubTitleBar(
     subTitle:String,
     niceCount:Int,
     favoriteCount:Int,
-    onChangeNiceCount:(Boolean) -> Unit,
-    onChangeFavoriteCount: (Boolean) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -224,6 +217,7 @@ fun TitleAndSubTitleBar(
             ){
 //                HeartIcon(
 //                    onChangeNiceCount = {
+//                        onChangeNiceCount(it)
 //                    }
 //                )
 
@@ -235,11 +229,11 @@ fun TitleAndSubTitleBar(
                         .align(Alignment.CenterVertically)
                 )
 
-                FavoriteIcon(
-                    onChangeFavoriteCount = {
-                        onChangeFavoriteCount(it)
-                    }
-                )
+//                FavoriteIcon(
+//                    onChangeFavoriteCount = {
+//                        onChangeFavoriteCount(it)
+//                    }
+//                )
 
                 Text(
                     text = favoriteCount.toString(),
@@ -325,7 +319,7 @@ fun HeartIcon(
                 onChangeNiceCount(-1)
             }
             scope.launch {
-                delay(100)  // UIの更新が完了するのを待つ
+                delay(100)
                 updateLikedUsers()
             }
         },
@@ -341,9 +335,13 @@ fun HeartIcon(
 
 @Composable
 fun FavoriteIcon(
-    onChangeFavoriteCount:(Boolean) -> Unit,
+    uid:String?,
+    favoriteUsers:List<String?>?,
+    updateFavoriteUsers:() -> Unit,
+    onChangeFavoriteCount:(Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.favorite_lottie))
     var isLiked by remember { mutableStateOf(false) }
 
@@ -352,18 +350,26 @@ fun FavoriteIcon(
         animationSpec = tween(durationMillis = 900)
     )
 
+    LaunchedEffect(uid,favoriteUsers) {
+        isLiked = uid != null && favoriteUsers != null && favoriteUsers.contains(uid)
+    }
+
     IconButton(
         onClick = {
             isLiked = !isLiked
             if(isLiked){
-                onChangeFavoriteCount(true)
+                onChangeFavoriteCount(1)
             }else{
-                onChangeFavoriteCount(false)
+                onChangeFavoriteCount(-1)
+            }
+
+            scope.launch {
+                delay(100)
+                updateFavoriteUsers()
             }
         },
         modifier = modifier.size(50.dp)
     ) {
-        
         LottieAnimation(
             composition = heart,
             progress = { animatedProgress }
