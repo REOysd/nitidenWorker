@@ -63,7 +63,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseAuth
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
-import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.publishData
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 

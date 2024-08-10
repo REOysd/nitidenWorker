@@ -23,7 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import jp.ac.jec.cm01xx.nitidenworker.CredentialManagerAuthentication
-import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
+import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.compose.FavoriteScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen.HomeScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.JobScreen

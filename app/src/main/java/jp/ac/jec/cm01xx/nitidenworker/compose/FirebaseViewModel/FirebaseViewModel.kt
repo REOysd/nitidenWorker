@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker
+package jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
