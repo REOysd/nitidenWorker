@@ -76,8 +76,8 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.firebase.auth.FirebaseUser
 import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.DataModel
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -135,6 +135,8 @@ fun ServiceOfferingsDetailScreen(
             )
 
             TitleAndSubTitleBar(
+                uid = currentUser?.uid,
+                serviceUid = userData?.uid,
                 title = uiState.title,
                 subTitle = uiState.subTitle,
                 niceCount = uiState.niceCount,
@@ -163,8 +165,17 @@ fun ServiceOfferingsDetailScreen(
 
 @Composable
 fun TitleAndSubTitleBar(
+    uid:String?,
+    serviceUid:String?,
     title:String,
     subTitle:String,
+    likedUsers: List<String?>? = null,
+    favoriteUsers: List<String?>? = null,
+    startLeadingUserData:() -> Unit = {},
+    updateLikedUsers: () -> Unit = {},
+    updateFavoriteUsers: () -> Unit = {},
+    onClickHeartIcon:(Boolean) -> Unit = {},
+    onClickFavoriteIcon:(Boolean) -> Unit = {},
     niceCount:Int,
     favoriteCount:Int,
 ){
@@ -214,12 +225,16 @@ fun TitleAndSubTitleBar(
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-            ){
-//                HeartIcon(
-//                    onChangeNiceCount = {
-//                        onChangeNiceCount(it)
-//                    }
-//                )
+            ) {
+                HeartIcon(
+                    uid = uid,
+                    serviceUid = serviceUid,
+                    likedUsers = likedUsers,
+                    updateLikedUsers = updateLikedUsers,
+                    onChangeNiceCount = {
+                        onClickHeartIcon(it)
+                    }
+                )
 
                 Text(
                     text = niceCount.toString(),
@@ -229,11 +244,15 @@ fun TitleAndSubTitleBar(
                         .align(Alignment.CenterVertically)
                 )
 
-//                FavoriteIcon(
-//                    onChangeFavoriteCount = {
-//                        onChangeFavoriteCount(it)
-//                    }
-//                )
+                FavoriteIcon(
+                    uid = uid,
+                    serviceUid = serviceUid,
+                    favoriteUsers = favoriteUsers,
+                    updateFavoriteUsers = updateFavoriteUsers,
+                    onChangeFavoriteCount = {
+                        onClickFavoriteIcon(it)
+                    }
+                )
 
                 Text(
                     text = favoriteCount.toString(),
@@ -291,9 +310,10 @@ fun RatingStar(
 @Composable
 fun HeartIcon(
     uid:String?,
+    serviceUid: String?,
     likedUsers:List<String?>?,
     updateLikedUsers:() -> Unit,
-    onChangeNiceCount:(Int) -> Unit,
+    onChangeNiceCount:(Boolean) -> Unit,
     modifier: Modifier = Modifier
 ){
     val scope = rememberCoroutineScope()
@@ -311,16 +331,18 @@ fun HeartIcon(
 
     IconButton(
         onClick = {
-            isLiked = !isLiked
+            if(uid != serviceUid){
+                isLiked = !isLiked
 
-            if(isLiked){
-                onChangeNiceCount(1)
-            }else{
-                onChangeNiceCount(-1)
-            }
-            scope.launch {
-                delay(100)
-                updateLikedUsers()
+                if (isLiked) {
+                    onChangeNiceCount(true)
+                } else {
+                    onChangeNiceCount(false)
+                }
+                scope.launch {
+                    delay(100)
+                    updateLikedUsers()
+                }
             }
         },
         modifier = modifier.size(50.dp)
@@ -336,9 +358,10 @@ fun HeartIcon(
 @Composable
 fun FavoriteIcon(
     uid:String?,
+    serviceUid: String?,
     favoriteUsers:List<String?>?,
     updateFavoriteUsers:() -> Unit,
-    onChangeFavoriteCount:(Int) -> Unit,
+    onChangeFavoriteCount:(Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -356,16 +379,18 @@ fun FavoriteIcon(
 
     IconButton(
         onClick = {
-            isLiked = !isLiked
-            if(isLiked){
-                onChangeFavoriteCount(1)
-            }else{
-                onChangeFavoriteCount(-1)
-            }
+            if(uid != serviceUid){
+                isLiked = !isLiked
+                if (isLiked) {
+                    onChangeFavoriteCount(true)
+                } else {
+                    onChangeFavoriteCount(false)
+                }
 
-            scope.launch {
-                delay(100)
-                updateFavoriteUsers()
+                scope.launch {
+                    delay(100)
+                    updateFavoriteUsers()
+                }
             }
         },
         modifier = modifier.size(50.dp)
@@ -520,7 +545,7 @@ fun ImageAndVideoThumbnail(
 fun MyProfileItems(
     currentUser:FirebaseUser?,
     context:Context,
-    userData:DataModel?,
+    userData:userDocument?,
 ){
     Row(
         modifier = Modifier

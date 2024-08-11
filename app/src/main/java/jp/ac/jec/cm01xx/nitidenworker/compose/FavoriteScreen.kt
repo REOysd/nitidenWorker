@@ -68,14 +68,14 @@ fun FavoriteScreen(
                     {
                         onClickHeartAndFavoriteIcon(
                             "niceCount",
-                            serviceOffering.niceCount + it,
+                            if (it) 1 else -1,
                             serviceOffering.id
                         )
                     },
                     onClickFavoriteIcon = {
                         onClickHeartAndFavoriteIcon(
                             "favoriteCount",
-                            serviceOffering.favoriteCount + it,
+                            if (it) 1 else -1,
                             serviceOffering.id
                         )
                     }

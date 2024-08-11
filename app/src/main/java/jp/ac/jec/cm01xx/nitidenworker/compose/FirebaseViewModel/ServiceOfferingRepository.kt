@@ -10,9 +10,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import jp.ac.jec.cm01xx.nitidenworker.DataModel
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
@@ -31,7 +31,7 @@ class ServiceOfferingRepository(
     suspend fun publishServiceOfferings(
         serviceOfferingData: ServiceOfferingData,
         context: Context,
-        userData:StateFlow<DataModel?>
+        userData:StateFlow<userDocument?>
     ){
         try{
             val id:String = UUID.randomUUID().toString()

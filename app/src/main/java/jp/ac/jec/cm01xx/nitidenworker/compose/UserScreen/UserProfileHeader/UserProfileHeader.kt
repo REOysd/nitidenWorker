@@ -42,7 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.DataModel
+
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.launch
 
 
@@ -53,7 +54,7 @@ fun UserProfileScreen(
     onClickLogoutButton: () -> Unit,
     onClickCheckButton:(String,String) -> Unit,
     SwitchProfileCurrentUser:() -> Unit,
-    userData:DataModel?,
+    userData:userDocument?,
     uid:String?
 ){
     var openBottomSheetOfDepartment by rememberSaveable { mutableStateOf(false) }

@@ -47,14 +47,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.DataModel
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun UserProfileAppeal(
     modifier: Modifier,
-    userData:DataModel?,
+    userData:userDocument?,
     uid:String?,
     updateOnMyProfile:(String,Any) -> Unit,
     updateUrlOnMyProfile:(List<String>) -> Unit

@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jp.ac.jec.cm01xx.nitidenworker.DataModel
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 
 @Composable
@@ -24,7 +24,7 @@ fun NavigateFloatingActionButtonOnBottom(
     publishServiceOfferings:(ServiceOfferingData,Context) -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     data:ServiceOfferingData?,
-    userData: DataModel?,
+    userData: userDocument?,
     onClickToMyJob:() -> Unit,
     context: Context
 ){

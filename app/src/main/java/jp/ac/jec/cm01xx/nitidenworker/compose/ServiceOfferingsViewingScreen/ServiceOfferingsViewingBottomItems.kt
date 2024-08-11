@@ -84,8 +84,8 @@ fun FavoriteIconAndNiceIcon(
     likedUsers:List<String?>?,
     updateLikedUsers:() -> Unit,
     updateFavoriteUsers: () -> Unit,
-    onClickHeartIcon:(Int) -> Unit,
-    onClickFavoriteIcon:(Int) -> Unit,
+    onClickHeartIcon:(Boolean) -> Unit,
+    onClickFavoriteIcon:(Boolean) -> Unit,
     modifier: Modifier
 ){
     if(uid != itemUid){
@@ -95,6 +95,7 @@ fun FavoriteIconAndNiceIcon(
         ) {
             HeartIcon(
                 uid = uid,
+                serviceUid = itemUid,
                 likedUsers = likedUsers,
                 updateLikedUsers = updateLikedUsers,
                 onChangeNiceCount = {
@@ -105,6 +106,7 @@ fun FavoriteIconAndNiceIcon(
 
             FavoriteIcon(
                 uid = uid,
+                serviceUid = itemUid,
                 favoriteUsers = favoriteUsers,
                 updateFavoriteUsers = updateFavoriteUsers,
                 onChangeFavoriteCount = {

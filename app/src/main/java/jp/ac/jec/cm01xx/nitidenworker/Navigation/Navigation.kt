@@ -113,7 +113,7 @@ fun Navigation(
                     },
                     cleanServiceOfferingData = firebaseViewModel::cleanServiceOfferingData,
                     onClickTOProfile = {navHostController.navigate(NavigationScreen.User.name)},
-                    onClickHeartAndFavoriteIcon = firebaseViewModel::updateServiceOffering,
+                    onClickHeartAndFavoriteIcon = firebaseViewModel::onClickHeartAndFavoriteIcon,
                     updateLikedUsers = firebaseViewModel::updateListTypeOfServiceOffering,
                     updateFavoriteUsers = firebaseViewModel::updateListTypeOfServiceOffering,
                     modifier = Modifier
@@ -134,7 +134,7 @@ fun Navigation(
                     getServiceOfferingData = firebaseViewModel::getServiceOfferingData,
                     updateLikedUsers = firebaseViewModel::updateListTypeOfServiceOffering,
                     updateFavoriteUsers = firebaseViewModel::updateListTypeOfServiceOffering,
-                    onClickHeartAndFavoriteIcon = firebaseViewModel::updateServiceOffering,
+                    onClickHeartAndFavoriteIcon = firebaseViewModel::onClickHeartAndFavoriteIcon,
                     onClickToServiceOfferingDetailScreen = {
                         navHostController.navigate(NavigationScreen.serviceOfferingsDetail.name)
                     },
@@ -232,6 +232,7 @@ fun Navigation(
                     }
                 }else{
                     ServiceOfferingsDetailViewingScreen(
+                        uid = firebaseViewModel.auth.currentUser?.uid,
                         startLeadingUserData = firebaseViewModel::startLeadingUserData,
                         serviceOfferingData_ = firebaseViewModel.serviceOfferingData,
                         userData = userData,
@@ -239,6 +240,9 @@ fun Navigation(
                         setServiceOfferingData = navigationViewModel::setServiceOfferingData,
                         createThumbnail = { firebaseViewModel.createThumbnail(it) },
                         onClickToProfile = { navHostController.navigate(NavigationScreen.User.name) },
+                        updateLikedUsers = firebaseViewModel::updateListTypeOfServiceOffering,
+                        updateFavoriteUsers = firebaseViewModel::updateListTypeOfServiceOffering,
+                        onClickHeartAndFavoriteIcon = firebaseViewModel::onClickHeartAndFavoriteIcon,
                         modifier = Modifier
                             .nestedScroll(navigationViewModel.nestScrollConnection)
                     )

@@ -35,8 +35,8 @@ fun ServiceOfferingsViewingScreen(
     onClickToServiceOfferingsDetailScreen:() -> Unit,
     updateLikedUsers:() -> Unit,
     updateFavoriteUsers: () -> Unit,
-    onClickHeartIcon:(Int) -> Unit,
-    onClickFavoriteIcon:(Int) -> Unit
+    onClickHeartIcon:(Boolean) -> Unit,
+    onClickFavoriteIcon:(Boolean) -> Unit
 ){
     val context = LocalContext.current
 

@@ -3,7 +3,7 @@ package jp.ac.jec.cm01xx.nitidenworker
 import android.net.Uri
 import com.google.firebase.Timestamp
 
-data class DataModel(
+data class userDocument(
     val uid:String = "",
     val mail:String = "",
     val name:String = "",

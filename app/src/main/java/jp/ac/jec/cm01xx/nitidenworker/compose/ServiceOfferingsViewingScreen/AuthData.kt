@@ -37,8 +37,8 @@ fun AuthData(
     job:String?,
     updateLikedUsers:() -> Unit,
     updateFavoriteUsers:() -> Unit,
-    onClickHeartIcon:(Int) -> Unit,
-    onClickFavoriteIcon:(Int) -> Unit
+    onClickHeartIcon:(Boolean) -> Unit,
+    onClickFavoriteIcon:(Boolean) -> Unit
 ){
     Spacer(modifier = Modifier.height(6.dp))
 

@@ -4,7 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import jp.ac.jec.cm01xx.nitidenworker.DataModel
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -17,7 +17,7 @@ class UserDataRepository(
 ) {
 
 
-    fun startLeadingUserData(userId: String): Flow<DataModel?> = callbackFlow {
+    fun startLeadingUserData(userId: String): Flow<userDocument?> = callbackFlow {
         val listenerRegistration = fireStore
             .collection("Users")
             .document(userId)
@@ -27,7 +27,7 @@ class UserDataRepository(
                     return@addSnapshotListener
                 }
                 if (snapshot != null && snapshot.exists()) {
-                    trySend(snapshot.toObject(DataModel::class.java))
+                    trySend(snapshot.toObject(userDocument::class.java))
                 }
             }
 

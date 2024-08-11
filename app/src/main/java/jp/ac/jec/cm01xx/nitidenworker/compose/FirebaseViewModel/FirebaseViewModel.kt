@@ -7,15 +7,17 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import jp.ac.jec.cm01xx.nitidenworker.DataModel
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class FirebaseViewModel:ViewModel() {
     val auth:FirebaseAuth = FirebaseAuth.getInstance()
@@ -24,8 +26,8 @@ class FirebaseViewModel:ViewModel() {
     val userDataRepository = UserDataRepository(auth, fireStore, fireStorage)
     val serviceOfferingRepository = ServiceOfferingRepository(auth,fireStore, fireStorage)
 
-    private val _userData = MutableStateFlow<DataModel?>(null)
-    val userData:StateFlow<DataModel?> = _userData.asStateFlow()
+    private val _userData = MutableStateFlow<userDocument?>(null)
+    val userData:StateFlow<userDocument?> = _userData.asStateFlow()
 
     private val _myServiceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
     val myServiceOfferings = _myServiceOfferings.asStateFlow()
@@ -93,6 +95,24 @@ class FirebaseViewModel:ViewModel() {
     fun updateServiceOffering(key:String,value:Any?,id:String){
         viewModelScope.launch {
             serviceOfferingRepository.updateServiceOffering(key, value, id)
+        }
+    }
+
+    fun onClickHeartAndFavoriteIcon(key: String, incrementValue: Int, id: String){
+        try {
+            viewModelScope.launch {
+                auth.currentUser?.let {
+                    fireStore
+                        .collection("ServiceOfferings")
+                        .document(id)
+                        .update(key, FieldValue.increment(incrementValue.toLong()))
+                        .await()
+
+                    getServiceOfferings()
+                }
+            }
+        } catch (e:Exception){
+            Log.d("onClickHeartAndFavoriteIconError",e.message.toString())
         }
     }
 

@@ -61,7 +61,7 @@ fun CredentialManagerAuthentication(
 
                 if (!userDocument.get().await().exists()) {
                     val newUser = user.let {
-                        DataModel(
+                        userDocument(
                             uid = it.uid,
                             mail = it.email.toString(),
                             name = it.displayName.toString(),
@@ -71,7 +71,7 @@ fun CredentialManagerAuthentication(
                     userDocument.set(newUser).await()
                 }
                 val userDocumentUpdate = userDocument.get().await()
-                val userData = userDocumentUpdate.toObject(DataModel::class.java)
+                val userData = userDocumentUpdate.toObject(userDocument::class.java)
 
                 if (userData != null) {
                     println(userData)

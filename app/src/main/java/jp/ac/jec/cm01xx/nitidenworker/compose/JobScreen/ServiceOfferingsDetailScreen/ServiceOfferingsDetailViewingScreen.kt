@@ -58,9 +58,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.DataModel
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -70,13 +70,17 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ServiceOfferingsDetailViewingScreen(
-    startLeadingUserData:(String) -> Unit,
+    uid:String?,
+    userData:userDocument?,
     serviceOfferingData_:StateFlow<publishData?>,
-    userData:DataModel?,
+    startLeadingUserData:(String) -> Unit,
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     onClickToProfile: () -> Unit,
     createThumbnail: suspend (String?) -> Bitmap?,
+    updateLikedUsers:(String,String) -> Unit,
+    updateFavoriteUsers:(String,String) -> Unit,
+    onClickHeartAndFavoriteIcon:(String,Int,String) -> Unit,
     modifier: Modifier
 ){
     val serviceOfferingData = serviceOfferingData_.collectAsState()
@@ -113,21 +117,52 @@ fun ServiceOfferingsDetailViewingScreen(
                 .padding(innerPadding)
         ){
 
-            serviceOfferingData.value?.let{
+            serviceOfferingData.value?.let{ data ->
                 ViewingImageAndVideoThumbnail(
                     scope = scope,
                     selectedImageAndMoviePagerState = selectedImageAndMoviePagerState,
-                    image = it.selectImages,
+                    image = data.selectImages,
                     selectedImageAndMovie = selectedImageAndMovie,
                     selectImageAndMoviePageCount = selectedImageAndMovie.size,
                     createThumbnail = createThumbnail
                 )
 
                 TitleAndSubTitleBar(
-                    title = it.title,
-                    subTitle = it.subTitle,
-                    niceCount = it.niceCount,
-                    favoriteCount = it.favoriteCount,
+                    uid = uid,
+                    serviceUid = data.thisUid,
+                    title = data.title,
+                    subTitle = data.subTitle,
+                    niceCount = data.niceCount,
+                    favoriteCount = data.favoriteCount,
+                    likedUsers = data.likedUserIds,
+                    favoriteUsers = data.favoriteUserIds,
+                    startLeadingUserData = { startLeadingUserData(data.thisUid) },
+                    updateLikedUsers = {
+                        updateLikedUsers(
+                            data.id,
+                            "likedUserIds"
+                        )
+                    },
+                    updateFavoriteUsers = {
+                        updateFavoriteUsers(
+                            data.id,
+                            "favoriteUserIds"
+                        )
+                    },
+                    onClickHeartIcon = {
+                        onClickHeartAndFavoriteIcon(
+                            "niceCount",
+                            if (it) 1 else -1,
+                            data.id
+                        )
+                    },
+                    onClickFavoriteIcon = {
+                        onClickHeartAndFavoriteIcon(
+                            "favoriteCount",
+                            if (it) 1 else -1,
+                            data.id
+                        )
+                    },
                 )
 
                 userData?.let{
@@ -144,12 +179,12 @@ fun ServiceOfferingsDetailViewingScreen(
                 }
 
                 BottomItemBar(
-                    category = it.category,
-                    deliveryDays = it.deliveryDays,
-                    applyingCount = it.applyingCount,
-                    checkBoxState = it.checkBoxState,
-                    description = it.description,
-                    precautions = it.precautions
+                    category = data.category,
+                    deliveryDays = data.deliveryDays,
+                    applyingCount = data.applyingCount,
+                    checkBoxState = data.checkBoxState,
+                    description = data.description,
+                    precautions = data.precautions
                 )
             }
         }
