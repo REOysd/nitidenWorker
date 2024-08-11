@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.publishData
+import jp.ac.jec.cm01xx.nitidenworker.publishData
 
 @Composable
 fun ServiceOfferingsViewingScreen(

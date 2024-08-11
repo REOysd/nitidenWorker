@@ -71,6 +71,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import coil.compose.rememberAsyncImagePainter
 import jp.ac.jec.cm01xx.nitidenworker.R
+import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)

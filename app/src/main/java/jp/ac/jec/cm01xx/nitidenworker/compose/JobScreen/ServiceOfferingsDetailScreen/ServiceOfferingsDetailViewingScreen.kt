@@ -58,9 +58,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.UserDocument
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
-import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.publishData
+import jp.ac.jec.cm01xx.nitidenworker.DataModel
+import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.publishData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -72,7 +72,7 @@ import kotlinx.coroutines.withContext
 fun ServiceOfferingsDetailViewingScreen(
     startLeadingUserData:(String) -> Unit,
     serviceOfferingData_:StateFlow<publishData?>,
-    userData:UserDocument?,
+    userData:DataModel?,
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     onClickToProfile: () -> Unit,

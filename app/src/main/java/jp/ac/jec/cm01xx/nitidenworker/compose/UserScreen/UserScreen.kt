@@ -47,7 +47,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseUser
 import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
-import jp.ac.jec.cm01xx.nitidenworker.UserDocument
+import jp.ac.jec.cm01xx.nitidenworker.DataModel
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal.UserProfileAppeal
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileHeader.UserProfileScreen
 import kotlinx.coroutines.CoroutineScope
@@ -144,7 +144,7 @@ import kotlinx.coroutines.launch
 fun ProfileTopBar(
     height:Dp,
     context: Context,
-    userData:UserDocument?,
+    userData:DataModel?,
     state:PagerState,
     scrollPage:List<String>,
     scope:CoroutineScope

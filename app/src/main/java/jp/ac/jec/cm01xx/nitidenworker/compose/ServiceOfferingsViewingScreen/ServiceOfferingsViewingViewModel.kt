@@ -2,7 +2,7 @@ package jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
-import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.publishData
+import jp.ac.jec.cm01xx.nitidenworker.publishData
 import java.text.SimpleDateFormat
 import java.util.Locale
 

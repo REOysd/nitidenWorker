@@ -16,7 +16,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,7 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.UserDocument
+import jp.ac.jec.cm01xx.nitidenworker.DataModel
 import kotlinx.coroutines.launch
 
 
@@ -54,7 +53,7 @@ fun UserProfileScreen(
     onClickLogoutButton: () -> Unit,
     onClickCheckButton:(String,String) -> Unit,
     SwitchProfileCurrentUser:() -> Unit,
-    userData:UserDocument?,
+    userData:DataModel?,
     uid:String?
 ){
     var openBottomSheetOfDepartment by rememberSaveable { mutableStateOf(false) }

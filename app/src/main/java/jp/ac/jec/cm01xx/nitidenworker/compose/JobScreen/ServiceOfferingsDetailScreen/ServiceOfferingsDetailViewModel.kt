@@ -2,7 +2,7 @@ package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailS
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -13,7 +13,7 @@ class ServiceOfferingsDetailViewModel:ViewModel() {
     private val _selectImageAndMovie = MutableStateFlow<List<Uri>>(emptyList())
     val selectImageAndMovie = _selectImageAndMovie.asStateFlow()
 
-    fun initializeData(data:ServiceOfferingData){
+    fun initializeData(data: ServiceOfferingData){
         val images = data.selectImages.filterNotNull()
         val movies = data.selectMovies.filterNotNull()
 

@@ -76,8 +76,8 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.firebase.auth.FirebaseUser
 import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.UserDocument
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.DataModel
+import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -89,7 +89,7 @@ import kotlinx.coroutines.withContext
 fun ServiceOfferingsDetailScreen(
     viewModel:ServiceOfferingsDetailViewModel = viewModel(),
     firebaseViewModel: FirebaseViewModel,
-    data:ServiceOfferingData,
+    data: ServiceOfferingData,
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     modifier: Modifier,
@@ -520,7 +520,7 @@ fun ImageAndVideoThumbnail(
 fun MyProfileItems(
     currentUser:FirebaseUser?,
     context:Context,
-    userData:UserDocument?,
+    userData:DataModel?,
 ){
     Row(
         modifier = Modifier

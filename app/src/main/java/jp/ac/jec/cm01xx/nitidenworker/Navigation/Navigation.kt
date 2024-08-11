@@ -114,8 +114,8 @@ fun Navigation(
                     cleanServiceOfferingData = firebaseViewModel::cleanServiceOfferingData,
                     onClickTOProfile = {navHostController.navigate(NavigationScreen.User.name)},
                     onClickHeartAndFavoriteIcon = firebaseViewModel::updateServiceOffering,
-                    updateLikedUsers = firebaseViewModel::updateListType,
-                    updateFavoriteUsers = firebaseViewModel::updateListType,
+                    updateLikedUsers = firebaseViewModel::updateListTypeOfServiceOffering,
+                    updateFavoriteUsers = firebaseViewModel::updateListTypeOfServiceOffering,
                     modifier = Modifier
                         .nestedScroll(navigationViewModel.nestScrollConnection),
                 )
@@ -132,8 +132,8 @@ fun Navigation(
                     uid = firebaseViewModel.auth.currentUser?.uid,
                     getMyFavoriteServiceOfferings = firebaseViewModel::getMyFavoriteServiceOfferings,
                     getServiceOfferingData = firebaseViewModel::getServiceOfferingData,
-                    updateLikedUsers = firebaseViewModel::updateListType,
-                    updateFavoriteUsers = firebaseViewModel::updateListType,
+                    updateLikedUsers = firebaseViewModel::updateListTypeOfServiceOffering,
+                    updateFavoriteUsers = firebaseViewModel::updateListTypeOfServiceOffering,
                     onClickHeartAndFavoriteIcon = firebaseViewModel::updateServiceOffering,
                     onClickToServiceOfferingDetailScreen = {
                         navHostController.navigate(NavigationScreen.serviceOfferingsDetail.name)
@@ -167,7 +167,7 @@ fun Navigation(
                     },
                     onClickToServiceOfferingsDetailScreen = { firebaseViewModel.getServiceOfferingData(it) },
                     updateLikedUsers = {
-                        firebaseViewModel.updateListType(
+                        firebaseViewModel.updateListTypeOfServiceOffering(
                             id = null,
                             listType = "likedUserIds"
                         )
@@ -252,13 +252,13 @@ fun Navigation(
                         .nestedScroll(navigationViewModel.nestScrollConnection),
                     onClickToServiceOfferingsDetailScreen = firebaseViewModel::getServiceOfferingData,
                     updateLikedUsers = {
-                        firebaseViewModel.updateListType(
+                        firebaseViewModel.updateListTypeOfServiceOffering(
                             id = firebaseViewModel.serviceOfferingData.value?.id,
                             listType = ""
                         )
                     },
                     updateFavoriteUsers = {
-                        firebaseViewModel.updateListType(
+                        firebaseViewModel.updateListTypeOfServiceOffering(
                             id = firebaseViewModel.serviceOfferingData.value?.id,
                             listType = ""
                         )

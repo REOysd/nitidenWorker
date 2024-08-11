@@ -62,8 +62,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseAuth
-import jp.ac.jec.cm01xx.nitidenworker.UserDocument
-import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.publishData
+import jp.ac.jec.cm01xx.nitidenworker.DataModel
+import jp.ac.jec.cm01xx.nitidenworker.publishData
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -74,7 +74,7 @@ fun JobScreen(
     onClickToProfile:() -> Unit,
     onClickToServiceOfferingsScreen:() -> Unit,
     onClickToRequestServiceScreen:() -> Unit,
-    userData:UserDocument?,
+    userData:DataModel?,
     auth_:FirebaseAuth?,
     startLeadingUserData:(String) -> Unit,
     myServiceOfferings:StateFlow<List<publishData?>>,
