@@ -21,7 +21,7 @@ fun FavoriteScreen(
     getMyFavoriteServiceOfferings:() -> Unit,
     updateLikedUsers:(String,String) -> Unit,
     updateFavoriteUsers:(String,String) -> Unit,
-    onClickHeartAndFavoriteIcon:(String,Int,String) -> Unit,
+    onClickHeartAndFavoriteIcon:(String,Boolean,String) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
     myFavoriteServiceOfferings:StateFlow<List<publishData?>>,
     modifier: Modifier
@@ -68,14 +68,14 @@ fun FavoriteScreen(
                     {
                         onClickHeartAndFavoriteIcon(
                             "niceCount",
-                            if (it) 1 else -1,
+                            it,
                             serviceOffering.id
                         )
                     },
                     onClickFavoriteIcon = {
                         onClickHeartAndFavoriteIcon(
                             "favoriteCount",
-                            if (it) 1 else -1,
+                            it,
                             serviceOffering.id
                         )
                     }

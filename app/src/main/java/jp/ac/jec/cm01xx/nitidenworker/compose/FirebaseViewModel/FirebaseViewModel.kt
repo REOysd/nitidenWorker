@@ -98,17 +98,41 @@ class FirebaseViewModel:ViewModel() {
         }
     }
 
-    fun onClickHeartAndFavoriteIcon(key: String, incrementValue: Int, id: String){
+    fun onClickHeartAndFavoriteIcon(key: String, increment: Boolean, id: String){
         try {
             viewModelScope.launch {
                 auth.currentUser?.let {
+                    val fieldValue = if(increment){
+                        FieldValue.increment(1)
+                    }else{
+                        FieldValue.increment(-1)
+                    }
+
+                    val serviceDoc = fireStore
+                        .collection("ServiceOfferings")
+                        .document(id)
+                        .get()
+                        .await()
+
+                    val uid = serviceDoc.getString("thisUid")
+
                     fireStore
                         .collection("ServiceOfferings")
                         .document(id)
-                        .update(key, FieldValue.increment(incrementValue.toLong()))
+                        .update(key, fieldValue)
                         .await()
 
-                    getServiceOfferings()
+                    if(key == "niceCount"){
+                        uid?.let{
+                            updateOnOtherProfile(
+                                key = "totalLikes",
+                                value = fieldValue,
+                                uid = uid
+                            )
+                        }
+                    }
+
+                    getServiceOfferingData(id)
                 }
             }
         } catch (e:Exception){
@@ -121,9 +145,6 @@ class FirebaseViewModel:ViewModel() {
             serviceOfferingRepository.updateListTypeOfServiceOffering(
                 id,
                 listType,
-                updateOnOtherProfile = {key, value, uid, ->
-                    updateOnOtherProfile(key, value, uid)
-                }
             )
         }
     }

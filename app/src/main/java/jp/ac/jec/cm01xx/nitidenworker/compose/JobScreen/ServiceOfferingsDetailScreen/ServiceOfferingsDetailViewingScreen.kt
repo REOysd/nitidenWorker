@@ -2,6 +2,7 @@ package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailS
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,6 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,21 +74,19 @@ import kotlinx.coroutines.withContext
 fun ServiceOfferingsDetailViewingScreen(
     uid:String?,
     userData:userDocument?,
-    serviceOfferingData_:StateFlow<publishData?>,
+    serviceOfferingData:publishData?,
     startLeadingUserData:(String) -> Unit,
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     onClickToProfile: () -> Unit,
     createThumbnail: suspend (String?) -> Bitmap?,
-    updateLikedUsers:(String,String) -> Unit,
-    updateFavoriteUsers:(String,String) -> Unit,
-    onClickHeartAndFavoriteIcon:(String,Int,String) -> Unit,
+    updateLikedAndFavoriteUsers:(String,String) -> Unit,
+    onClickHeartAndFavoriteIcon:(String, Boolean, String) -> Unit,
     modifier: Modifier
 ){
-    val serviceOfferingData = serviceOfferingData_.collectAsState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val selectedImageAndMovie = serviceOfferingData.value?.let {
+    val selectedImageAndMovie = serviceOfferingData?.let {
         it.selectImages + it.selectMovies
     }?: emptyList()
     val selectedImageAndMoviePagerState = rememberPagerState(
@@ -94,15 +94,15 @@ fun ServiceOfferingsDetailViewingScreen(
         initialPage = 0
     )
 
-    LaunchedEffect(key1 = serviceOfferingData.value?.thisUid) {
-        serviceOfferingData.value?.thisUid?.let { uid ->
+    LaunchedEffect(key1 = serviceOfferingData?.thisUid) {
+        serviceOfferingData?.thisUid?.let { uid ->
             startLeadingUserData(uid)
         }
     }
 
     Scaffold(
         topBar = {
-            ServiceOfferingsDetailTopBar(
+            ServiceOfferingCreationPreviewTopBar(
                 onClickToPopBackStack = onClickToPopBackStack,
                 setServiceOfferingData = setServiceOfferingData
             )
@@ -117,7 +117,7 @@ fun ServiceOfferingsDetailViewingScreen(
                 .padding(innerPadding)
         ){
 
-            serviceOfferingData.value?.let{ data ->
+            serviceOfferingData?.let{ data ->
                 ViewingImageAndVideoThumbnail(
                     scope = scope,
                     selectedImageAndMoviePagerState = selectedImageAndMoviePagerState,
@@ -136,15 +136,14 @@ fun ServiceOfferingsDetailViewingScreen(
                     favoriteCount = data.favoriteCount,
                     likedUsers = data.likedUserIds,
                     favoriteUsers = data.favoriteUserIds,
-                    startLeadingUserData = { startLeadingUserData(data.thisUid) },
                     updateLikedUsers = {
-                        updateLikedUsers(
+                        updateLikedAndFavoriteUsers(
                             data.id,
                             "likedUserIds"
                         )
                     },
                     updateFavoriteUsers = {
-                        updateFavoriteUsers(
+                        updateLikedAndFavoriteUsers(
                             data.id,
                             "favoriteUserIds"
                         )
@@ -152,14 +151,14 @@ fun ServiceOfferingsDetailViewingScreen(
                     onClickHeartIcon = {
                         onClickHeartAndFavoriteIcon(
                             "niceCount",
-                            if (it) 1 else -1,
+                            it,
                             data.id
                         )
                     },
                     onClickFavoriteIcon = {
                         onClickHeartAndFavoriteIcon(
                             "favoriteCount",
-                            if (it) 1 else -1,
+                            it,
                             data.id
                         )
                     },

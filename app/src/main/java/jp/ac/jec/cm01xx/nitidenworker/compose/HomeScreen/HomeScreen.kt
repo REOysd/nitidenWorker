@@ -37,7 +37,7 @@ fun HomeScreen(
     onClickTOProfile:() -> Unit,
     updateLikedUsers:(String,String) -> Unit,
     updateFavoriteUsers:(String,String) -> Unit,
-    onClickHeartAndFavoriteIcon:(String, Int, String) -> Unit,
+    onClickHeartAndFavoriteIcon:(String, Boolean, String) -> Unit,
     cleanServiceOfferingData:() -> Unit,
 ){
     val serviceOfferings = serviceOfferings_.collectAsState()
@@ -85,7 +85,7 @@ fun BasicHomeScreen(
     onClickToServiceOfferingDetailScreen:() -> Unit,
     updateLikedUsers:(String,String) -> Unit,
     updateFavoriteUsers:(String,String) -> Unit,
-    onClickHeartAndFavoriteIcon:(String,Int,String) -> Unit,
+    onClickHeartAndFavoriteIcon:(String,Boolean,String) -> Unit,
     modifier: Modifier,
 ){
     LazyColumn(
@@ -124,14 +124,14 @@ fun BasicHomeScreen(
                     onClickHeartIcon = {
                         onClickHeartAndFavoriteIcon(
                             "niceCount",
-                            if (it) 1 else -1,
+                            it,
                             serviceOffering.id
                         )
                     },
                     onClickFavoriteIcon = {
                         onClickHeartAndFavoriteIcon(
                             "favoriteCount",
-                            if (it) 1 else -1,
+                            it,
                             serviceOffering.id
                         )
                     }

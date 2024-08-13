@@ -33,10 +33,10 @@ fun ServiceOfferingsViewingScreen(
     serviceOfferingsViewingViewModel:ServiceOfferingsViewingViewModel =
         ServiceOfferingsViewingViewModel(serviceOfferings),
     onClickToServiceOfferingsDetailScreen:() -> Unit,
-    updateLikedUsers:() -> Unit,
-    updateFavoriteUsers: () -> Unit,
-    onClickHeartIcon:(Boolean) -> Unit,
-    onClickFavoriteIcon:(Boolean) -> Unit
+    updateLikedUsers:() -> Unit = {},
+    updateFavoriteUsers: () -> Unit = {},
+    onClickHeartIcon:(Boolean) -> Unit = {},
+    onClickFavoriteIcon:(Boolean) -> Unit = {}
 ){
     val context = LocalContext.current
 

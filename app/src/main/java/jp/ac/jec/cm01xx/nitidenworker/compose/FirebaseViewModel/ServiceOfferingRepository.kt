@@ -9,6 +9,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.storage.FirebaseStorage
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.publishData
@@ -118,41 +119,41 @@ class ServiceOfferingRepository(
     }
 
     suspend fun updateListTypeOfServiceOffering(
-        id:String?,
-        listType:String,
-        updateOnOtherProfile:(String,Any?,String) -> Unit
-    ){
+        id: String?,
+        listType: String,
+        ) {
         if (auth.currentUser == null || id == null) {
-            Log.d("updateLikedUsersError", "UID or ID is null")
+            Log.d("updateListTypeError", "UID or ID is null")
             return
         }
+
         try {
             auth.currentUser?.let { currentUser ->
-                val Ref = fireStore.collection("ServiceOfferings").document(id)
+                val ref = fireStore.collection("ServiceOfferings").document(id)
 
-                fireStore.runTransaction { transaction ->
-                    val snapshot = transaction.get(Ref)
-                    val thisUid = snapshot.get("thisUid").toString()
-                    val currentList =
-                        snapshot.get(listType) as? List<String> ?: emptyList()
+                try {
+                    fireStore.runTransaction { transaction ->
+                        val snapshot = transaction.get(ref)
+                        val currentList = snapshot.get(listType) as? List<String> ?: emptyList()
 
-                    if (currentUser.uid in currentList) {
-                        transaction.update(Ref, listType, FieldValue.arrayRemove(currentUser.uid))
-
-                        if(listType == "likedUserIds"){
-                            updateOnOtherProfile("totalLikes", FieldValue.increment(-1), thisUid)
+                        if (currentUser.uid in currentList) {
+                            transaction.update(ref, listType, FieldValue.arrayRemove(currentUser.uid))
+                        } else {
+                            transaction.update(ref, listType, FieldValue.arrayUnion(currentUser.uid))
                         }
+                    }.await()
+
+                } catch (e: FirebaseFirestoreException) {
+                    if (e.code == FirebaseFirestoreException.Code.ABORTED) {
+                        Log.d("updateListType", e.message.toString())
                     } else {
-                        transaction.update(Ref, listType, FieldValue.arrayUnion(currentUser.uid))
-
-                        if(listType == "likedUserIds"){
-                            updateOnOtherProfile("totalLikes", FieldValue.increment(1), thisUid)
-                        }
+                        throw e
                     }
-                }.await()
+                }
+
             }
         } catch (e: Exception) {
-            Log.d("updateLikedUsersError", e.toString())
+            Log.e("updateListTypeError", "Error updating $listType: ${e.message}")
         }
 
         getServiceOfferings()

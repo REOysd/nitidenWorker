@@ -80,14 +80,13 @@ import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ServiceOfferingsDetailScreen(
-    viewModel:ServiceOfferingsDetailViewModel = viewModel(),
+fun ServiceOfferingCreationPreview(
+    viewModel: ServiceOfferingsDetailViewModel = viewModel(),
     firebaseViewModel: FirebaseViewModel,
     data: ServiceOfferingData,
     onClickToPopBackStack:() -> Unit,
@@ -111,7 +110,7 @@ fun ServiceOfferingsDetailScreen(
 
     Scaffold(
         topBar = {
-            ServiceOfferingsDetailTopBar(
+            ServiceOfferingCreationPreviewTopBar(
                 onClickToPopBackStack = onClickToPopBackStack,
                 setServiceOfferingData = setServiceOfferingData
             )
@@ -139,8 +138,9 @@ fun ServiceOfferingsDetailScreen(
                 serviceUid = userData?.uid,
                 title = uiState.title,
                 subTitle = uiState.subTitle,
-                niceCount = uiState.niceCount,
-                favoriteCount = uiState.favoriteCount,
+                niceCount = 0,
+                favoriteCount = 0,
+
             )
 
             MyProfileItems(
@@ -166,18 +166,17 @@ fun ServiceOfferingsDetailScreen(
 @Composable
 fun TitleAndSubTitleBar(
     uid:String?,
-    serviceUid:String?,
+    serviceUid: String?,
     title:String,
     subTitle:String,
-    likedUsers: List<String?>? = null,
-    favoriteUsers: List<String?>? = null,
-    startLeadingUserData:() -> Unit = {},
-    updateLikedUsers: () -> Unit = {},
-    updateFavoriteUsers: () -> Unit = {},
-    onClickHeartIcon:(Boolean) -> Unit = {},
-    onClickFavoriteIcon:(Boolean) -> Unit = {},
     niceCount:Int,
     favoriteCount:Int,
+    likedUsers:List<String?>? = emptyList(),
+    favoriteUsers: List<String?>? = emptyList(),
+    updateLikedUsers: () -> Unit = {},
+    updateFavoriteUsers: () -> Unit = {},
+    onClickHeartIcon: (Boolean) -> Unit = {},
+    onClickFavoriteIcon: (Boolean) -> Unit = {},
 ){
     Column(
         modifier = Modifier
@@ -233,7 +232,7 @@ fun TitleAndSubTitleBar(
                     updateLikedUsers = updateLikedUsers,
                     onChangeNiceCount = {
                         onClickHeartIcon(it)
-                    }
+                    },
                 )
 
                 Text(
@@ -319,29 +318,38 @@ fun HeartIcon(
     val scope = rememberCoroutineScope()
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.heart_lottie))
     var isLiked by remember { mutableStateOf(false) }
+    var isProgress by remember { mutableStateOf(false) }
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (isLiked) 0.6f else 0f,
         animationSpec = tween(durationMillis = 500)
     )
 
-    LaunchedEffect(uid,likedUsers) {
-        isLiked = uid != null && likedUsers != null && likedUsers.contains(uid)
+    LaunchedEffect(isProgress) {
+        isLiked = uid != null && likedUsers?.contains(uid) == true
     }
 
     IconButton(
         onClick = {
-            if(uid != serviceUid){
-                isLiked = !isLiked
-
-                if (isLiked) {
-                    onChangeNiceCount(true)
-                } else {
-                    onChangeNiceCount(false)
+            if(uid != serviceUid && !isProgress){
+                isProgress = true
+                if(isLiked == true){
+                    isLiked = false
+                }else{
+                    isLiked = true
                 }
-                scope.launch {
-                    delay(100)
-                    updateLikedUsers()
+
+                scope.launch{
+                    try {
+                        onChangeNiceCount(isLiked)
+                        updateLikedUsers()
+                    } catch (e: Exception) {
+                        isLiked = !isLiked
+                        Log.d("FavoriteError", e.message.toString())
+                    } finally {
+                        isProgress = false
+                        Log.d("isProgress", isLiked.toString())
+                    }
                 }
             }
         },
@@ -366,34 +374,44 @@ fun FavoriteIcon(
 ) {
     val scope = rememberCoroutineScope()
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.favorite_lottie))
-    var isLiked by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(false) }
+    var isProgress by remember { mutableStateOf(false) }
 
     val animatedProgress by animateFloatAsState(
-        targetValue = if (isLiked) 1f else 0f,
+        targetValue = if (isFavorite) 1f else 0f,
         animationSpec = tween(durationMillis = 900)
     )
 
-    LaunchedEffect(uid,favoriteUsers) {
-        isLiked = uid != null && favoriteUsers != null && favoriteUsers.contains(uid)
+    LaunchedEffect(isProgress) {
+        isFavorite = uid != null && favoriteUsers != null && favoriteUsers.contains(uid)
     }
 
     IconButton(
         onClick = {
-            if(uid != serviceUid){
-                isLiked = !isLiked
-                if (isLiked) {
-                    onChangeFavoriteCount(true)
-                } else {
-                    onChangeFavoriteCount(false)
-                }
+            if(uid != serviceUid && !isProgress){
+                isProgress = true
+               if(isFavorite == true){
+                   isFavorite = false
+               }else{
+                   isFavorite = true
+               }
 
-                scope.launch {
-                    delay(100)
-                    updateFavoriteUsers()
+                scope.launch{
+                    try {
+                        onChangeFavoriteCount(isFavorite)
+                        updateFavoriteUsers()
+                    } catch (e: Exception) {
+                        isFavorite = !isFavorite
+                        Log.d("FavoriteError", e.message.toString())
+                    } finally {
+                        isProgress = false
+                        Log.d("isProgress", isFavorite.toString())
+                    }
                 }
             }
         },
-        modifier = modifier.size(50.dp)
+        modifier = modifier.size(50.dp),
+        enabled = !isProgress
     ) {
         LottieAnimation(
             composition = heart,
@@ -886,7 +904,7 @@ fun BottomItemBar(
 @Preview(showBackground = true)
 @Composable
 fun ServiceOfferingsDetailScreenPreview(){
-    ServiceOfferingsDetailScreen(
+    ServiceOfferingCreationPreview(
         data = ServiceOfferingData(
             category = "category",
             title = "タイトルはこれです。以上です",

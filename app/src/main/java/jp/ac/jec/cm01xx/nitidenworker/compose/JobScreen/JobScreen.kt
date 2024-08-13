@@ -79,7 +79,6 @@ fun JobScreen(
     startLeadingUserData:(String) -> Unit,
     myServiceOfferings:StateFlow<List<publishData?>>,
     getMyServiceOfferings:() -> Unit,
-    updateLikedUsers:() -> Unit,
     onClickToServiceOfferingsDetailScreen:(String) -> Unit,
     cleanServiceOfferingData:() -> Unit
 ){
@@ -297,8 +296,6 @@ fun JobScreen(
                             .nestedScroll(nestScrollConnection),
                         myServiceOfferings = myServiceOfferings,
                         getMyServiceOfferings = getMyServiceOfferings,
-                        updateLikedUsers = updateLikedUsers,
-                        updateFavoriteUsers = updateLikedUsers,
                         onClickToServiceOfferingsDetailScreen = onClickToServiceOfferingsDetailScreen
                     )
 
