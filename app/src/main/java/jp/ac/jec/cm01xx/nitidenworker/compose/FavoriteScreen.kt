@@ -24,6 +24,7 @@ fun FavoriteScreen(
     onClickHeartAndFavoriteIcon:(String,Boolean,String) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
     myFavoriteServiceOfferings:StateFlow<List<publishData?>>,
+    cleanServiceOfferingCreationPreview:() -> Unit,
     modifier: Modifier
 ){
     val myFavoriteServiceOfferings = myFavoriteServiceOfferings.collectAsState()
@@ -49,6 +50,7 @@ fun FavoriteScreen(
                     isAuthDataVisible = true,
                     onClickToServiceOfferingsDetailScreen =
                     {
+                        cleanServiceOfferingCreationPreview()
                         getServiceOfferingData(serviceOffering.id)
                         onClickToServiceOfferingDetailScreen()
                     },

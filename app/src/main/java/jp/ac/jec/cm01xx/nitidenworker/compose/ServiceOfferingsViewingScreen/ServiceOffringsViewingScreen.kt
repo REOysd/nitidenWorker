@@ -51,7 +51,9 @@ fun ServiceOfferingsViewingScreen(
             ),
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(Color.White),
-            onClick = { onClickToServiceOfferingsDetailScreen() }
+            onClick = {
+                onClickToServiceOfferingsDetailScreen()
+            }
         ) {
             Row(
                 modifier = Modifier

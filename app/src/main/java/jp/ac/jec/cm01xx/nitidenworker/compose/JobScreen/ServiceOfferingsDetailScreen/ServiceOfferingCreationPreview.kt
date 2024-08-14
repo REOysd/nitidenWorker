@@ -46,6 +46,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -317,7 +318,7 @@ fun HeartIcon(
 ){
     val scope = rememberCoroutineScope()
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.heart_lottie))
-    var isLiked by remember { mutableStateOf(false) }
+    var isLiked by  remember { mutableStateOf(false) }
     var isProgress by remember { mutableStateOf(false) }
 
     val animatedProgress by animateFloatAsState(
@@ -325,7 +326,9 @@ fun HeartIcon(
         animationSpec = tween(durationMillis = 500)
     )
 
-    LaunchedEffect(isProgress) {
+    // ここでアイコンタップの誤作動が起きてる（イイね回数がおかしくなる）
+    // 引数をlikedUsers以外にすれば治るが、反映が遅くなる
+    LaunchedEffect (likedUsers) {
         isLiked = uid != null && likedUsers?.contains(uid) == true
     }
 
@@ -382,7 +385,9 @@ fun FavoriteIcon(
         animationSpec = tween(durationMillis = 900)
     )
 
-    LaunchedEffect(isProgress) {
+    // ここでアイコンタップの誤作動が起きてる（お気に入り回数がおかしくなる）
+    // 引数をfavoriteUsers以外にすれば治るが、反映が遅くなる
+    LaunchedEffect(favoriteUsers) {
         isFavorite = uid != null && favoriteUsers != null && favoriteUsers.contains(uid)
     }
 

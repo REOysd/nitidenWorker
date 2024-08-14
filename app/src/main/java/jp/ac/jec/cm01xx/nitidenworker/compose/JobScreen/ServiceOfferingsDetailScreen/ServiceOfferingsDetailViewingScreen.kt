@@ -3,6 +3,15 @@ package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailS
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,10 +21,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,19 +39,34 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -55,8 +81,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import jp.ac.jec.cm01xx.nitidenworker.R
@@ -65,6 +94,7 @@ import jp.ac.jec.cm01xx.nitidenworker.publishData
 import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -86,6 +116,7 @@ fun ServiceOfferingsDetailViewingScreen(
 ){
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    var confirmDialog by rememberSaveable { mutableStateOf(false) }
     val selectedImageAndMovie = serviceOfferingData?.let {
         it.selectImages + it.selectMovies
     }?: emptyList()
@@ -106,6 +137,14 @@ fun ServiceOfferingsDetailViewingScreen(
                 onClickToPopBackStack = onClickToPopBackStack,
                 setServiceOfferingData = setServiceOfferingData
             )
+        },
+
+        bottomBar = {
+            if(uid != serviceOfferingData?.thisUid){
+                NavigateFloatingActionButtonOnViewing(
+                    changeConfirmDialog = {confirmDialog = it}
+                )
+            }
         }
     ){ innerPadding ->
 
@@ -185,6 +224,12 @@ fun ServiceOfferingsDetailViewingScreen(
                     description = data.description,
                     precautions = data.precautions
                 )
+            }
+
+            if(confirmDialog){
+                Dialog(onDismissRequest = { confirmDialog = false }) {
+                    
+                }
             }
         }
     }
@@ -463,6 +508,69 @@ fun ViewingMyProfileItems(
                     .align(Alignment.Center)
                     .size(24.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun NavigateFloatingActionButtonOnViewing(
+    changeConfirmDialog:(Boolean) -> Unit
+){
+
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 12.dp)
+            .padding(top = 20.dp)
+    ){
+        Box(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .padding(bottom = 8.dp)
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    changeConfirmDialog(true)
+                },
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(53.dp)
+                    .padding(horizontal = 8.dp),
+                containerColor = Color(0xFF45c152),
+            ) {
+                Text(
+                    text = "応募する",
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    fontSize = 15.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Box(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .padding(bottom = 8.dp)
+        ) {
+            FloatingActionButton(
+                onClick = {
+                },
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(53.dp)
+                    .padding(horizontal = 8.dp),
+                containerColor = Color(0xFF45c1FF),
+            ) {
+                Text(
+                    text = "話を聞いてみる",
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }

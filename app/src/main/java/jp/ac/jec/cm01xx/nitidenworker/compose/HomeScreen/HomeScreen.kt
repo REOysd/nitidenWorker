@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen.ServiceOfferingsViewingScreen
 import jp.ac.jec.cm01xx.nitidenworker.publishData
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +40,7 @@ fun HomeScreen(
     updateFavoriteUsers:(String,String) -> Unit,
     onClickHeartAndFavoriteIcon:(String, Boolean, String) -> Unit,
     cleanServiceOfferingData:() -> Unit,
+    cleanServiceOfferingCreationPreview: () -> Unit
 ){
     val serviceOfferings = serviceOfferings_.collectAsState()
 
@@ -67,6 +69,7 @@ fun HomeScreen(
                 uid = uid,
                 serviceOfferings = serviceOfferings,
                 getServiceOfferingData = getServiceOfferingData,
+                cleanServiceOfferingCreationPreview = cleanServiceOfferingCreationPreview,
                 onClickToServiceOfferingDetailScreen = onClickToServiceOfferingDetailScreen,
                 updateLikedUsers = updateLikedUsers,
                 updateFavoriteUsers = updateFavoriteUsers,
@@ -82,6 +85,7 @@ fun BasicHomeScreen(
     uid:String?,
     serviceOfferings:State<List<publishData?>>,
     getServiceOfferingData:(String) -> Unit,
+    cleanServiceOfferingCreationPreview:() -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
     updateLikedUsers:(String,String) -> Unit,
     updateFavoriteUsers:(String,String) -> Unit,
@@ -106,6 +110,7 @@ fun BasicHomeScreen(
                     isAuthDataVisible = true,
                     onClickToServiceOfferingsDetailScreen =
                     {
+                        cleanServiceOfferingCreationPreview()
                         getServiceOfferingData(serviceOffering.id)
                         onClickToServiceOfferingDetailScreen()
                     },

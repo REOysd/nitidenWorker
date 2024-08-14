@@ -34,6 +34,7 @@ import jp.ac.jec.cm01xx.nitidenworker.compose.SearchScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailViewingScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.serviceOfferingCreateScreen.ServiceOfferingCreationScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,7 +84,7 @@ fun Navigation(
                 }else{
                     if(serviceOfferingData != null){
                         serviceOfferingData?.let {
-                            NavigateFloatingActionButtonOnBottom(
+                            NavigateFloatingActionButtonOnPreview(
                                 publishServiceOfferings = firebaseViewModel::publishServiceOfferings,
                                 setServiceOfferingData = navigationViewModel::setServiceOfferingData,
                                 data = serviceOfferingData,
@@ -92,13 +93,11 @@ fun Navigation(
                                 context = LocalContext.current
                             )
                         }
-                    }else{
-
                     }
                 }
             }
         }
-    ) {innerPadding ->
+    ) { innerPadding ->
         NavHost(
             navController = navHostController,
             startDestination = NavigationScreen.Home.name
@@ -113,6 +112,7 @@ fun Navigation(
                         navHostController.navigate(NavigationScreen.serviceOfferingsDetail.name)
                     },
                     cleanServiceOfferingData = firebaseViewModel::cleanServiceOfferingData,
+                    cleanServiceOfferingCreationPreview = { navigationViewModel.setServiceOfferingData(null) },
                     onClickTOProfile = {navHostController.navigate(NavigationScreen.User.name)},
                     onClickHeartAndFavoriteIcon = firebaseViewModel::onClickHeartAndFavoriteIcon,
                     updateLikedUsers = firebaseViewModel::updateListTypeOfServiceOffering,
@@ -140,9 +140,14 @@ fun Navigation(
                         navHostController.navigate(NavigationScreen.serviceOfferingsDetail.name)
                     },
                     myFavoriteServiceOfferings = firebaseViewModel.myFavoriteServiceOfferings,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .nestedScroll(navigationViewModel.nestScrollConnection)
+                    cleanServiceOfferingCreationPreview = {
+                        navigationViewModel.setServiceOfferingData(
+                            null
+                        )
+                    },
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
             composable(NavigationScreen.Message.name){
