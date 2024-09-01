@@ -39,7 +39,6 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,8 +62,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseAuth
-import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -75,12 +74,11 @@ fun JobScreen(
     onClickToProfile:() -> Unit,
     onClickToServiceOfferingsScreen:() -> Unit,
     onClickToRequestServiceScreen:() -> Unit,
-    userData_:StateFlow<UserDocument?>,
+    userData:userDocument?,
     auth_:FirebaseAuth?,
     startLeadingUserData:(String) -> Unit,
     myServiceOfferings:StateFlow<List<publishData?>>,
     getMyServiceOfferings:() -> Unit,
-    updateLikedUsers:() -> Unit,
     onClickToServiceOfferingsDetailScreen:(String) -> Unit,
     cleanServiceOfferingData:() -> Unit
 ){
@@ -88,7 +86,6 @@ fun JobScreen(
         pageCount = {2},
         initialPage = 0
     )
-    val userData by userData_.collectAsState()
     val currentUser = auth_?.currentUser
     val context = LocalContext.current
     var isProfileLinkVisible by remember{ mutableStateOf(true) }
@@ -299,7 +296,6 @@ fun JobScreen(
                             .nestedScroll(nestScrollConnection),
                         myServiceOfferings = myServiceOfferings,
                         getMyServiceOfferings = getMyServiceOfferings,
-                        updateLikedUsers = updateLikedUsers,
                         onClickToServiceOfferingsDetailScreen = onClickToServiceOfferingsDetailScreen
                     )
 

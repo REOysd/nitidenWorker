@@ -44,9 +44,9 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,22 +75,21 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.firebase.auth.FirebaseUser
-import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
+import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.UserDocument
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ServiceOfferingsDetailScreen(
-    viewModel:ServiceOfferingsDetailViewModel = viewModel(),
+fun ServiceOfferingCreationPreview(
+    viewModel: ServiceOfferingsDetailViewModel = viewModel(),
     firebaseViewModel: FirebaseViewModel,
-    data:ServiceOfferingData,
+    data: ServiceOfferingData,
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     modifier: Modifier,
@@ -112,7 +111,7 @@ fun ServiceOfferingsDetailScreen(
 
     Scaffold(
         topBar = {
-            ServiceOfferingsDetailTopBar(
+            ServiceOfferingCreationPreviewTopBar(
                 onClickToPopBackStack = onClickToPopBackStack,
                 setServiceOfferingData = setServiceOfferingData
             )
@@ -136,14 +135,13 @@ fun ServiceOfferingsDetailScreen(
             )
 
             TitleAndSubTitleBar(
+                uid = currentUser?.uid,
+                serviceUid = userData?.uid,
                 title = uiState.title,
                 subTitle = uiState.subTitle,
-                niceCount = uiState.niceCount,
-                favoriteCount = uiState.favoriteCount,
-                onChangeNiceCount = {
-                },
-                onChangeFavoriteCount = {
-                }
+                niceCount = 0,
+                favoriteCount = 0,
+
             )
 
             MyProfileItems(
@@ -168,12 +166,18 @@ fun ServiceOfferingsDetailScreen(
 
 @Composable
 fun TitleAndSubTitleBar(
+    uid:String?,
+    serviceUid: String?,
     title:String,
     subTitle:String,
     niceCount:Int,
     favoriteCount:Int,
-    onChangeNiceCount:(Boolean) -> Unit,
-    onChangeFavoriteCount: (Boolean) -> Unit
+    likedUsers:List<String?>? = emptyList(),
+    favoriteUsers: List<String?>? = emptyList(),
+    updateLikedUsers: () -> Unit = {},
+    updateFavoriteUsers: () -> Unit = {},
+    onClickHeartIcon: (Boolean) -> Unit = {},
+    onClickFavoriteIcon: (Boolean) -> Unit = {},
 ){
     Column(
         modifier = Modifier
@@ -221,11 +225,16 @@ fun TitleAndSubTitleBar(
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-            ){
-//                HeartIcon(
-//                    onChangeNiceCount = {
-//                    }
-//                )
+            ) {
+                HeartIcon(
+                    uid = uid,
+                    serviceUid = serviceUid,
+                    likedUsers = likedUsers,
+                    updateLikedUsers = updateLikedUsers,
+                    onChangeNiceCount = {
+                        onClickHeartIcon(it)
+                    },
+                )
 
                 Text(
                     text = niceCount.toString(),
@@ -236,8 +245,12 @@ fun TitleAndSubTitleBar(
                 )
 
                 FavoriteIcon(
+                    uid = uid,
+                    serviceUid = serviceUid,
+                    favoriteUsers = favoriteUsers,
+                    updateFavoriteUsers = updateFavoriteUsers,
                     onChangeFavoriteCount = {
-                        onChangeFavoriteCount(it)
+                        onClickFavoriteIcon(it)
                     }
                 )
 
@@ -297,36 +310,50 @@ fun RatingStar(
 @Composable
 fun HeartIcon(
     uid:String?,
+    serviceUid: String?,
     likedUsers:List<String?>?,
     updateLikedUsers:() -> Unit,
-    onChangeNiceCount:(Int) -> Unit,
+    onChangeNiceCount:(Boolean) -> Unit,
     modifier: Modifier = Modifier
 ){
     val scope = rememberCoroutineScope()
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.heart_lottie))
-    var isLiked by remember { mutableStateOf(false) }
+    var isLiked by  remember { mutableStateOf(false) }
+    var isProgress by remember { mutableStateOf(false) }
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (isLiked) 0.6f else 0f,
         animationSpec = tween(durationMillis = 500)
     )
 
-    LaunchedEffect(uid,likedUsers) {
-        isLiked = uid != null && likedUsers != null && likedUsers.contains(uid)
+    // ここでアイコンタップの誤作動が起きてる（イイね回数がおかしくなる）
+    // 引数をlikedUsers以外にすれば治るが、反映が遅くなる
+    LaunchedEffect (likedUsers) {
+        isLiked = uid != null && likedUsers?.contains(uid) == true
     }
 
     IconButton(
         onClick = {
-            isLiked = !isLiked
+            if(uid != serviceUid && !isProgress){
+                isProgress = true
+                if(isLiked == true){
+                    isLiked = false
+                }else{
+                    isLiked = true
+                }
 
-            if(isLiked){
-                onChangeNiceCount(1)
-            }else{
-                onChangeNiceCount(-1)
-            }
-            scope.launch {
-                delay(100)  // UIの更新が完了するのを待つ
-                updateLikedUsers()
+                scope.launch{
+                    try {
+                        onChangeNiceCount(isLiked)
+                        updateLikedUsers()
+                    } catch (e: Exception) {
+                        isLiked = !isLiked
+                        Log.d("FavoriteError", e.message.toString())
+                    } finally {
+                        isProgress = false
+                        Log.d("isProgress", isLiked.toString())
+                    }
+                }
             }
         },
         modifier = modifier.size(50.dp)
@@ -341,29 +368,56 @@ fun HeartIcon(
 
 @Composable
 fun FavoriteIcon(
+    uid:String?,
+    serviceUid: String?,
+    favoriteUsers:List<String?>?,
+    updateFavoriteUsers:() -> Unit,
     onChangeFavoriteCount:(Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
     val heart by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.favorite_lottie))
-    var isLiked by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(false) }
+    var isProgress by remember { mutableStateOf(false) }
 
     val animatedProgress by animateFloatAsState(
-        targetValue = if (isLiked) 1f else 0f,
+        targetValue = if (isFavorite) 1f else 0f,
         animationSpec = tween(durationMillis = 900)
     )
 
+    // ここでアイコンタップの誤作動が起きてる（お気に入り回数がおかしくなる）
+    // 引数をfavoriteUsers以外にすれば治るが、反映が遅くなる
+    LaunchedEffect(favoriteUsers) {
+        isFavorite = uid != null && favoriteUsers != null && favoriteUsers.contains(uid)
+    }
+
     IconButton(
         onClick = {
-            isLiked = !isLiked
-            if(isLiked){
-                onChangeFavoriteCount(true)
-            }else{
-                onChangeFavoriteCount(false)
+            if(uid != serviceUid && !isProgress){
+                isProgress = true
+               if(isFavorite == true){
+                   isFavorite = false
+               }else{
+                   isFavorite = true
+               }
+
+                scope.launch{
+                    try {
+                        onChangeFavoriteCount(isFavorite)
+                        updateFavoriteUsers()
+                    } catch (e: Exception) {
+                        isFavorite = !isFavorite
+                        Log.d("FavoriteError", e.message.toString())
+                    } finally {
+                        isProgress = false
+                        Log.d("isProgress", isFavorite.toString())
+                    }
+                }
             }
         },
-        modifier = modifier.size(50.dp)
+        modifier = modifier.size(50.dp),
+        enabled = !isProgress
     ) {
-        
         LottieAnimation(
             composition = heart,
             progress = { animatedProgress }
@@ -514,7 +568,7 @@ fun ImageAndVideoThumbnail(
 fun MyProfileItems(
     currentUser:FirebaseUser?,
     context:Context,
-    userData:UserDocument?,
+    userData:userDocument?,
 ){
     Row(
         modifier = Modifier
@@ -855,7 +909,7 @@ fun BottomItemBar(
 @Preview(showBackground = true)
 @Composable
 fun ServiceOfferingsDetailScreenPreview(){
-    ServiceOfferingsDetailScreen(
+    ServiceOfferingCreationPreview(
         data = ServiceOfferingData(
             category = "category",
             title = "タイトルはこれです。以上です",

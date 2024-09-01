@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,35 +79,43 @@ fun ServiceOfferingsViewingSubItems(
 @Composable
 fun FavoriteIconAndNiceIcon(
     uid:String?,
+    itemUid:String,
+    favoriteUsers:List<String?>?,
     likedUsers:List<String?>?,
     updateLikedUsers:() -> Unit,
-    onClickHeartIcon:(Int) -> Unit,
-    onClickFavoriteIcon:() -> Unit,
+    updateFavoriteUsers: () -> Unit,
+    onClickHeartIcon:(Boolean) -> Unit,
+    onClickFavoriteIcon:(Boolean) -> Unit,
     modifier: Modifier
 ){
-    Row(
-        modifier = modifier
-            .background(Color.White)
-    ) {
-        HeartIcon(
-            uid = uid,
-            likedUsers = likedUsers,
-            updateLikedUsers = updateLikedUsers,
-            onChangeNiceCount = {
-                onClickHeartIcon(it)
-            },
-            modifier = modifier.size(40.dp)
-        )
+    if(uid != itemUid){
+        Row(
+            modifier = modifier
+                .background(Color.White)
+        ) {
+            HeartIcon(
+                uid = uid,
+                serviceUid = itemUid,
+                likedUsers = likedUsers,
+                updateLikedUsers = updateLikedUsers,
+                onChangeNiceCount = {
+                    onClickHeartIcon(it)
+                },
+                modifier = modifier.size(40.dp)
+            )
 
-
-        FavoriteIcon(
-            onChangeFavoriteCount = {
-                onClickFavoriteIcon()
-            },
-            modifier = modifier.size(40.dp)
-        )
+            FavoriteIcon(
+                uid = uid,
+                serviceUid = itemUid,
+                favoriteUsers = favoriteUsers,
+                updateFavoriteUsers = updateFavoriteUsers,
+                onChangeFavoriteCount = {
+                    onClickFavoriteIcon(it)
+                },
+                modifier = modifier.size(40.dp)
+            )
+        }
     }
-
 }
 
 @Composable

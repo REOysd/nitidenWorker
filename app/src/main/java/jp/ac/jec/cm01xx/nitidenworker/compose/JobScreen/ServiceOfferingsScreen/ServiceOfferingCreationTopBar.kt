@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen
+package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,12 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
 
 @Composable
-fun ServiceOfferingsDetailTopBar(
-    onClickToPopBackStack:() -> Unit,
-    setServiceOfferingData:(ServiceOfferingData?) -> Unit,
+fun ServiceOfferingCreationTopBar(
+    onClickToPopBackStack:() -> Unit
 ){
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
     val height = systemBarsPadding.calculateTopPadding()
@@ -52,7 +50,6 @@ fun ServiceOfferingsDetailTopBar(
         IconButton(
             onClick = {
                 onClickToPopBackStack()
-                setServiceOfferingData(null)
             },
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -64,7 +61,7 @@ fun ServiceOfferingsDetailTopBar(
             )
         }
         Text(
-            text = "ServiceOfferingsDetail",
+            text = "serviceOfferings",
             modifier = Modifier
                 .padding(top = 12.dp)
                 .align(Alignment.Center),

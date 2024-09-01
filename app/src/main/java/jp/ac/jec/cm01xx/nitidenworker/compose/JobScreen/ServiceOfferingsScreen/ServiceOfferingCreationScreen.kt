@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen
+package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.serviceOfferingCreateScreen
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -71,11 +71,13 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import coil.compose.rememberAsyncImagePainter
 import jp.ac.jec.cm01xx.nitidenworker.R
+import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingCreationTopBar
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ServiceOfferingsScreen(
+fun ServiceOfferingCreationScreen(
     modifier: Modifier,
     onClickToPopBackStack:() -> Unit,
     publishServiceOfferingsData:(ServiceOfferingData) -> Unit,
@@ -136,7 +138,7 @@ fun ServiceOfferingsScreen(
 
     Scaffold(
         topBar = {
-            ServiceOfferingsTopBar(onClickToPopBackStack = onClickToPopBackStack)
+            ServiceOfferingCreationTopBar(onClickToPopBackStack = onClickToPopBackStack)
         }
     ) { innerPadding ->
 

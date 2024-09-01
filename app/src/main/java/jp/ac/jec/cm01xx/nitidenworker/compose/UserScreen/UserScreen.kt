@@ -1,7 +1,6 @@
 package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -47,12 +46,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseUser
-import jp.ac.jec.cm01xx.nitidenworker.FirebaseViewModel
-import jp.ac.jec.cm01xx.nitidenworker.UserDocument
-import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsScreen.ServiceOfferingData
+import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal.UserProfileAppeal
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileHeader.UserProfileScreen
-import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -60,7 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
     fun UserScreen(
     modifier: Modifier,
-    firebaseViewModel:FirebaseViewModel,
+    firebaseViewModel: FirebaseViewModel,
     currentUser:FirebaseUser?,
     onClickLoginButton:() -> Unit,
     onClickLogoutButton:() -> Unit,
@@ -147,7 +144,7 @@ import kotlinx.coroutines.launch
 fun ProfileTopBar(
     height:Dp,
     context: Context,
-    userData:UserDocument?,
+    userData:userDocument?,
     state:PagerState,
     scrollPage:List<String>,
     scope:CoroutineScope

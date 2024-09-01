@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.publishData
@@ -26,15 +25,18 @@ import jp.ac.jec.cm01xx.nitidenworker.publishData
 @Composable
 fun ServiceOfferingsViewingScreen(
     uid:String?,
+    itemUid:String,
     likedUsers:List<String?>?,
-    serviceOfferings:publishData?,
+    favoriteUsers:List<String?>?,
+    serviceOfferings: publishData?,
     isAuthDataVisible:Boolean,
     serviceOfferingsViewingViewModel:ServiceOfferingsViewingViewModel =
         ServiceOfferingsViewingViewModel(serviceOfferings),
     onClickToServiceOfferingsDetailScreen:() -> Unit,
-    updateLikedUsers:() -> Unit,
-    onClickHeartIcon:(Int) -> Unit,
-    onClickFavoriteIcon:() -> Unit
+    updateLikedUsers:() -> Unit = {},
+    updateFavoriteUsers: () -> Unit = {},
+    onClickHeartIcon:(Boolean) -> Unit = {},
+    onClickFavoriteIcon:(Boolean) -> Unit = {}
 ){
     val context = LocalContext.current
 
@@ -49,7 +51,9 @@ fun ServiceOfferingsViewingScreen(
             ),
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(Color.White),
-            onClick = { onClickToServiceOfferingsDetailScreen() }
+            onClick = {
+                onClickToServiceOfferingsDetailScreen()
+            }
         ) {
             Row(
                 modifier = Modifier
@@ -90,12 +94,15 @@ fun ServiceOfferingsViewingScreen(
             if (isAuthDataVisible){
                 AuthData(
                     uid = uid,
+                    itemUid = itemUid,
                     likedUsers = likedUsers,
+                    favoriteUsers = favoriteUsers,
                     photoUrl = serviceOfferings?.photoUrl,
                     context = context,
                     name = serviceOfferings?.name,
                     job = serviceOfferings?.job,
                     updateLikedUsers = updateLikedUsers,
+                    updateFavoriteUsers = updateFavoriteUsers,
                     onClickHeartIcon = onClickHeartIcon,
                     onClickFavoriteIcon = onClickFavoriteIcon
                 )
