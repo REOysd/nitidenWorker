@@ -556,3 +556,116 @@ fun NavigateFloatingActionButtonOnViewing(
         }
     }
 }
+
+@Composable
+fun ConfirmDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    var showConfirmation by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = stringResource(id = R.string.IconDescriptionOnConfirmDialog),
+                    modifier = Modifier
+                        .size(64.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = stringResource(id = R.string.TitleOnConfirmDialog),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(id = R.string.SubTextOnConfirmDialog),
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(36.dp))
+
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Gray
+                            ),
+                        modifier = Modifier
+                            .width(88.dp)
+                            .height(52.dp)
+                    ) {
+                        Text(
+                            stringResource(id = R.string.cancelButtonTextOnConfirmDialog),
+                            color = Color.LightGray,
+                            fontSize = 17.sp
+                            )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                showConfirmation = true
+                                delay(600)
+                                onConfirm()
+                                showConfirmation = false
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF45c152)
+                        ),
+                        modifier = Modifier
+                            .width(88.dp)
+                            .height(52.dp)
+                    ) {
+                        AnimatedContent(
+                            targetState = showConfirmation
+                        ) { isConfirmed ->
+                            if (isConfirmed) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Confirmed",
+                                    tint = Color.White
+                                )
+                            } else {
+                                Text(
+                                    stringResource(id = R.string.confirmButtonTextOnConfirmDialog),
+                                    fontSize = 17.sp
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
+    }
+}
