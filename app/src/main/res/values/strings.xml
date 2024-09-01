@@ -11,4 +11,11 @@
         ＜例＞https://github.com/REOysd\n
         ＜例＞https://x.com/7qT59sJGCPLRkUA
     </string>
+    <string name="IconDescriptionOnConfirmDialog">Confirmation icon</string>
+    <string name="TitleOnConfirmDialog">確認</string>
+    <string name="SubTextOnConfirmDialog">
+        このサービスへの応募は取り消せません。応募を進めてよろしいですか？
+    </string>
+    <string name="cancelButtonTextOnConfirmDialog">No</string>
+    <string name="confirmButtonTextOnConfirmDialog">Yes</string>
 </resources>

@@ -2,16 +2,8 @@ package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailS
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,31 +30,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,9 +62,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -95,7 +77,6 @@ import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -116,7 +97,7 @@ fun ServiceOfferingsDetailViewingScreen(
 ){
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    var confirmDialog by rememberSaveable { mutableStateOf(false) }
+    var isShowConfirmDialog by rememberSaveable { mutableStateOf(false) }
     val selectedImageAndMovie = serviceOfferingData?.let {
         it.selectImages + it.selectMovies
     }?: emptyList()
@@ -142,7 +123,7 @@ fun ServiceOfferingsDetailViewingScreen(
         bottomBar = {
             if(uid != serviceOfferingData?.thisUid){
                 NavigateFloatingActionButtonOnViewing(
-                    changeConfirmDialog = {confirmDialog = it}
+                    changeConfirmDialog = {isShowConfirmDialog = it}
                 )
             }
         }
@@ -226,10 +207,11 @@ fun ServiceOfferingsDetailViewingScreen(
                 )
             }
 
-            if(confirmDialog){
-                Dialog(onDismissRequest = { confirmDialog = false }) {
-                    
-                }
+            if(isShowConfirmDialog){
+                ConfirmDialog(
+                    onDismiss = {isShowConfirmDialog = false},
+                    onConfirm = {isShowConfirmDialog = false},
+                )
             }
         }
     }
@@ -570,6 +552,119 @@ fun NavigateFloatingActionButtonOnViewing(
                     textAlign = TextAlign.Center,
                     fontSize = 15.sp
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun ConfirmDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    var showConfirmation by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = stringResource(id = R.string.IconDescriptionOnConfirmDialog),
+                    modifier = Modifier
+                        .size(64.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = stringResource(id = R.string.TitleOnConfirmDialog),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(id = R.string.SubTextOnConfirmDialog),
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(36.dp))
+
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Gray
+                            ),
+                        modifier = Modifier
+                            .width(88.dp)
+                            .height(52.dp)
+                    ) {
+                        Text(
+                            stringResource(id = R.string.cancelButtonTextOnConfirmDialog),
+                            color = Color.LightGray,
+                            fontSize = 17.sp
+                            )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                showConfirmation = true
+                                delay(600)
+                                onConfirm()
+                                showConfirmation = false
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF45c152)
+                        ),
+                        modifier = Modifier
+                            .width(88.dp)
+                            .height(52.dp)
+                    ) {
+                        AnimatedContent(
+                            targetState = showConfirmation
+                        ) { isConfirmed ->
+                            if (isConfirmed) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Confirmed",
+                                    tint = Color.White
+                                )
+                            } else {
+                                Text(
+                                    stringResource(id = R.string.confirmButtonTextOnConfirmDialog),
+                                    fontSize = 17.sp
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
