@@ -24,6 +24,7 @@ fun CredentialManagerAuthentication(
     scope:CoroutineScope,
     credentialManager: CredentialManager
 ){
+    //secretGradleにあとで記述する
     val WEB_CLIENT_ID = "899480932485-vq9dkp81a41l1kargodov0ld004sndsi.apps.googleusercontent.com"
 
     val googleIdOption = GetGoogleIdOption.Builder()

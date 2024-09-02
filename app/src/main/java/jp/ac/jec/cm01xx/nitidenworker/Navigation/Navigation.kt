@@ -34,7 +34,6 @@ import jp.ac.jec.cm01xx.nitidenworker.compose.SearchScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailViewingScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.serviceOfferingCreateScreen.ServiceOfferingCreationScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserScreen
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable

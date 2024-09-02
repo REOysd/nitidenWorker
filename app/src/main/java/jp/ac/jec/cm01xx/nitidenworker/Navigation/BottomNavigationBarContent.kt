@@ -10,9 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import jp.ac.jec.cm01xx.nitidenworker.R
 
 @Composable
 fun BottomNavigationBarContext(
@@ -47,7 +49,7 @@ fun BottomNavigationBarContext(
                             contentDescription = bottomNavigationItems.title,
                             modifier = Modifier
                                 .size(20.dp),
-                            tint = Color(0xFF00B900)
+                            tint = colorResource(id = R.color.bottomNavigationBarColor)
                         )
                     }else{
                         Icon(
@@ -63,7 +65,7 @@ fun BottomNavigationBarContext(
                     if(index == selectedItemIndex){
                         Text(
                             text = bottomNavigationItems.title,
-                            color = Color(0xFF00C000)
+                            color = colorResource(id = R.color.bottomNavigationBarColor)
                         )
                     }else{
                         Text(text = bottomNavigationItems.title)
