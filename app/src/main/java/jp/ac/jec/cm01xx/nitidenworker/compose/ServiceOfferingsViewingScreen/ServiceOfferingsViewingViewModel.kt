@@ -16,6 +16,4 @@ class ServiceOfferingsViewingViewModel(serviceOfferings: publishData?): ViewMode
         val formatter = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
         return formatter.format(data)
     }
-
-
 }

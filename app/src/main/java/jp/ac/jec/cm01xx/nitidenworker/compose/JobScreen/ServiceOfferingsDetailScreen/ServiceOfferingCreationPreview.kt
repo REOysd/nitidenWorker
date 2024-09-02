@@ -63,6 +63,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -281,7 +282,7 @@ fun RatingStar(
                         Icon(
                             imageVector = Icons.Filled.Star,
                             contentDescription = null,
-                            tint = Color(0xFFFFD700),
+                            tint = colorResource(id = R.color.RatingStarYellow),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -728,11 +729,11 @@ fun BottomItemBar(
                 text = category,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = Color(0xFF45c152),
+                color = colorResource(id = R.color.nitidenGreen),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .border(
-                        color = Color(0xFF45c152),
+                        color = colorResource(id = R.color.nitidenGreen),
                         width = 1.dp,
                         shape = RoundedCornerShape(5.dp),
                     )

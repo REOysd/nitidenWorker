@@ -61,6 +61,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -517,7 +518,7 @@ fun NavigateFloatingActionButtonOnViewing(
                     .width(200.dp)
                     .height(53.dp)
                     .padding(horizontal = 8.dp),
-                containerColor = Color(0xFF45c152),
+                containerColor = colorResource(id = R.color.nitidenGreen),
             ) {
                 Text(
                     text = "応募する",
@@ -543,7 +544,7 @@ fun NavigateFloatingActionButtonOnViewing(
                     .width(200.dp)
                     .height(53.dp)
                     .padding(horizontal = 8.dp),
-                containerColor = Color(0xFF45c1FF),
+                containerColor = colorResource(id = R.color.nitidenBlue),
             ) {
                 Text(
                     text = "話を聞いてみる",
@@ -639,7 +640,7 @@ fun ConfirmDialog(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF45c152)
+                            containerColor = colorResource(id = R.color.nitidenGreen)
                         ),
                         modifier = Modifier
                             .width(88.dp)

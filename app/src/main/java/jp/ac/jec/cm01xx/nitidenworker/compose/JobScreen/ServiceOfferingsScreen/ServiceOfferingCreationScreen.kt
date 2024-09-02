@@ -60,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -210,7 +211,7 @@ fun ServiceOfferingCreationScreen(
                             disabledContainerColor = Color.White,
                             focusedTextColor = Color.Black,
                             unfocusedTextColor = Color.Black,
-                            focusedIndicatorColor = Color(0xFF00B900),
+                            focusedIndicatorColor = colorResource(id = R.color.bottomNavigationBarColor),
                             unfocusedIndicatorColor = Color.Gray,
                         ),
                         placeholder = {
@@ -321,9 +322,9 @@ fun ServiceOfferingCreationScreen(
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
-                            focusedIndicatorColor = Color(0xFF00B900),
+                            focusedIndicatorColor = colorResource(id = R.color.bottomNavigationBarColor),
                             unfocusedIndicatorColor = Color.Gray,
-                            cursorColor = Color(0xFF00B900)
+                            cursorColor = colorResource(id = R.color.bottomNavigationBarColor)
                         ),
                         isError = titleTextIsError,
                         modifier = Modifier
@@ -399,9 +400,9 @@ fun ServiceOfferingCreationScreen(
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
-                            focusedIndicatorColor = Color(0xFF00B900),
+                            focusedIndicatorColor = colorResource(id = R.color.bottomNavigationBarColor),
                             unfocusedIndicatorColor = Color.Gray,
-                            cursorColor = Color(0xFF00B900)
+                            cursorColor = colorResource(id = R.color.bottomNavigationBarColor)
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -481,9 +482,9 @@ fun ServiceOfferingCreationScreen(
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
-                            focusedIndicatorColor = Color(0xFF00B900),
+                            focusedIndicatorColor = colorResource(id = R.color.bottomNavigationBarColor),
                             unfocusedIndicatorColor = Color.Gray,
-                            cursorColor = Color(0xFF00B900)
+                            cursorColor = colorResource(id = R.color.bottomNavigationBarColor)
                         ),
                         isError = descriptionTextIsError,
                         modifier = Modifier
@@ -573,9 +574,9 @@ fun ServiceOfferingCreationScreen(
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
-                            focusedIndicatorColor = Color(0xFF00B900),
+                            focusedIndicatorColor = colorResource(id = R.color.bottomNavigationBarColor),
                             unfocusedIndicatorColor = Color.Gray,
-                            cursorColor = Color(0xFF00B900)
+                            cursorColor = colorResource(id = R.color.bottomNavigationBarColor)
                         ),
                         isError = deliveryDaysTextIsError,
                         modifier = Modifier
@@ -639,9 +640,9 @@ fun ServiceOfferingCreationScreen(
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
-                        focusedIndicatorColor = Color(0xFF00B900),
+                        focusedIndicatorColor = colorResource(id = R.color.bottomNavigationBarColor),
                         unfocusedIndicatorColor = Color.Gray,
-                        cursorColor = Color(0xFF00B900)
+                        cursorColor = colorResource(id = R.color.bottomNavigationBarColor)
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -992,7 +993,7 @@ fun ServiceOfferingCreationScreen(
                                             .align(Alignment.CenterVertically)
                                             .padding(start = 20.dp),
                                         colors = CheckboxDefaults.colors(
-                                            checkedColor = Color(0xFF00B900),
+                                            colorResource(id = R.color.bottomNavigationBarColor),
                                         )
                                     )
 
@@ -1052,7 +1053,7 @@ fun ServiceOfferingCreationScreen(
                                         .fillMaxWidth()
                                         .height(50.dp)
                                         .padding(start = 20.dp, end = 20.dp),
-                                    containerColor = Color(0xFF45c152)
+                                    containerColor = colorResource(id = R.color.nitidenGreen)
 
                                 ) {
                                     Text(
