@@ -37,6 +37,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -77,7 +78,6 @@ fun UserProfileScreen(
                 .height(60.dp)
                 .fillMaxWidth(),
         ) {
-
             Column(
                 modifier = Modifier
                     .background(Color.White)
@@ -85,7 +85,7 @@ fun UserProfileScreen(
                     .fillMaxHeight()
             ) {
                 Text(
-                    text = "実績数",
+                    text = stringResource(id = R.string.UserProfileScreen_achievements),
                     color = Color.Gray,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -114,7 +114,7 @@ fun UserProfileScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "完了率",
+                    text = stringResource(id = R.string.UserProfileScreen_completionRate),
                     color = Color.Gray,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -140,7 +140,7 @@ fun UserProfileScreen(
                 .height(90.dp)
         ) {
             Text(
-                text = "基本情報",
+                text = stringResource(id = R.string.UserProfileScreen_basicInformation),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W900,
                 modifier = Modifier
@@ -166,7 +166,7 @@ fun UserProfileScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.icons8__60___),
-                    contentDescription = "department",
+                    contentDescription = stringResource(id = R.string.UserProfileScreen_department_description),
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .size(24.dp)
@@ -181,14 +181,15 @@ fun UserProfileScreen(
                         .height(80.dp)
                 ) {
                     Text(
-                        text = "学科",
+                        text = stringResource(id = R.string.UserProfileScreen_department),
                         color = Color.Gray,
                         textAlign = TextAlign.Start,
                         fontSize = 10.sp
                     )
                     if(userData?.uid == uid){
                         Text(
-                            text = if (userData?.job == "--") "＜例＞モバイルアプリケーション開発科" else "${userData?.job}",
+                            text = if (userData?.job == "--") stringResource(id = R.string.UserProfileScreen_department_example)
+                            else "${userData?.job}",
                             color = if (userData?.job == "--") Color.Gray.copy(alpha = 0.5f) else Color.Black,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.W600
@@ -214,7 +215,7 @@ fun UserProfileScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "編集"
+                            contentDescription = stringResource(id = R.string.UserProfileScreen_department_IconButton_description)
                         )
                     }
                 }
@@ -230,7 +231,7 @@ fun UserProfileScreen(
                     .height(90.dp)
             ) {
                 Text(
-                    text = "設定",
+                    text = stringResource(id = R.string.UserProfileScreen_setting),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W900,
                     modifier = Modifier
@@ -256,7 +257,7 @@ fun UserProfileScreen(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.push_notification_icon_by_icons8),
-                        contentDescription = "department",
+                        contentDescription = stringResource(id = R.string.UserProfileScreen_pushNotification_description),
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .size(24.dp)
@@ -266,7 +267,7 @@ fun UserProfileScreen(
                     Spacer(modifier = Modifier.width(10.dp))
 
                     Text(
-                        text = "プッシュ通知",
+                        text = stringResource(id = R.string.UserProfileScreen_pushNotification),
                         color = Color.Black,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W600,
@@ -301,7 +302,7 @@ fun UserProfileScreen(
                         .align(Alignment.CenterHorizontally)
                 ) {
                     Text(
-                        text = "ログアウト",
+                        text = stringResource(id = R.string.UserProfileScreen_logout),
                         color = MaterialTheme.colorScheme.error,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600,
@@ -313,8 +314,8 @@ fun UserProfileScreen(
 
     if(openBottomSheetOfDepartment){
         ModalBottomSheetOnProfileHeader(
-            bottomSheetTitle = "学科",
-            placeholderOnTextField = "自分の所属する学科を記入してください",
+            bottomSheetTitle = stringResource(id = R.string.UserProfileScreen_department),
+            placeholderOnTextField = stringResource(id = R.string.ModalBottomSheetOnProfileHeader_placeholder),
             onDismiss = { openBottomSheetOfDepartment = false },
             sheetState = DepartmentSheetState,
             onClickCheckButton = onClickCheckButton

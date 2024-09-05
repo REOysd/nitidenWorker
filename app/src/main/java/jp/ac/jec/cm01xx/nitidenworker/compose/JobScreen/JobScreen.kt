@@ -357,7 +357,7 @@ fun JobTopBarContent(
                 )
             }
         ) {
-            scrollPage.forEachIndexed{ index, PageName ->
+            scrollPage.forEachIndexed{ index,_ ->
                 Tab(
                     selected = index == state.currentPage,
                     onClick = {

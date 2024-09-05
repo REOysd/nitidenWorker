@@ -35,7 +35,6 @@ fun BottomNavigationBarContext(
             )
     ) {
         navigationItems.forEachIndexed { index, bottomNavigationItems ->
-
             NavigationBarItem(
                 selected = index == selectedItemIndex,
                 onClick = {

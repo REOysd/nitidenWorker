@@ -62,10 +62,10 @@ fun UserProfileAppeal(
     val context = LocalContext.current
     var openBottomSheetOfText by rememberSaveable { mutableStateOf(false) }
     var openBottomSheetOfUrl by rememberSaveable { mutableStateOf(false) }
-    val TextsheetState = rememberModalBottomSheetState(
+    val textSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = false,
     )
-    val UrlSheetState = rememberModalBottomSheetState(
+    val urlSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = false
     )
     val scope = rememberCoroutineScope()
@@ -86,7 +86,7 @@ fun UserProfileAppeal(
                 .fillMaxWidth()
         ){
             Text(
-                text = "自己PR",
+                text = stringResource(id = R.string.UserProfileAppeal_selfPromotion),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.W900,
                 modifier = Modifier
@@ -110,9 +110,8 @@ fun UserProfileAppeal(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "編集",
+                        contentDescription = stringResource(id = R.string.UserProfileAppeal_selfPromotion_IconButton_description),
                         modifier = Modifier
-
                     )
                 }
             }
@@ -191,7 +190,7 @@ fun UserProfileAppeal(
                 .height(30.dp)
         ){
             Text(
-                text = "URL",
+                text = stringResource(id = R.string.UserProfileAppeal_URL),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.W900,
                 modifier = Modifier
@@ -215,7 +214,7 @@ fun UserProfileAppeal(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "編集",
+                        contentDescription = stringResource(id = R.string.UserProfileAppeal_URL_IconButton_description),
                         modifier = Modifier
 
                     )
@@ -266,8 +265,8 @@ fun UserProfileAppeal(
                     )
                 }
             }else{
-                userData?.urls?.forEach{ url ->
-                    if(CheckURL(url)){
+                userData?.urls?.forEach { url ->
+                    if(checkURL(url)){
                         ClickableText(
                             text = AnnotatedString(
                                 text = url,
@@ -295,7 +294,7 @@ fun UserProfileAppeal(
 
     if(openBottomSheetOfText) ModalBottomSheetOnProfileAppealText(
         onDismiss = {openBottomSheetOfText = false},
-        sheetState = TextsheetState,
+        sheetState = textSheetState,
         changeText = {text = it},
         text = text ,
         onClickCheckButton = {
@@ -305,13 +304,13 @@ fun UserProfileAppeal(
 
     if(openBottomSheetOfUrl) ModalBottomSheetOnProfileAppealURL(
         onDismiss = { openBottomSheetOfUrl = false },
-        sheetState = UrlSheetState,
+        sheetState = urlSheetState,
         userData = userData,
         updateUrlOnMyProfile = updateUrlOnMyProfile
     )
 }
 
-fun CheckURL(url:String):Boolean{
+fun checkURL(url:String):Boolean{
     return Patterns.WEB_URL.matcher(url).matches()
 }
 
