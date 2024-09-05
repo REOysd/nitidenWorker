@@ -138,7 +138,7 @@ fun Navigation(
                     onClickToServiceOfferingDetailScreen = {
                         navHostController.navigate(NavigationScreen.serviceOfferingsDetail.name)
                     },
-                    myFavoriteServiceOfferings = firebaseViewModel.myFavoriteServiceOfferings,
+                    _myFavoriteServiceOfferings = firebaseViewModel.myFavoriteServiceOfferings,
                     cleanServiceOfferingCreationPreview = {
                         navigationViewModel.setServiceOfferingData(
                             null

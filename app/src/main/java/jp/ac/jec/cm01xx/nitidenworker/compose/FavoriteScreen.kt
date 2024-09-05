@@ -23,11 +23,11 @@ fun FavoriteScreen(
     updateFavoriteUsers:(String,String) -> Unit,
     onClickHeartAndFavoriteIcon:(String,Boolean,String) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
-    myFavoriteServiceOfferings:StateFlow<List<publishData?>>,
+    _myFavoriteServiceOfferings:StateFlow<List<publishData?>>,
     cleanServiceOfferingCreationPreview:() -> Unit,
     modifier: Modifier
 ){
-    val myFavoriteServiceOfferings = myFavoriteServiceOfferings.collectAsState()
+    val myFavoriteServiceOfferings = _myFavoriteServiceOfferings.collectAsState()
 
     LaunchedEffect(Unit) {
         getMyFavoriteServiceOfferings()

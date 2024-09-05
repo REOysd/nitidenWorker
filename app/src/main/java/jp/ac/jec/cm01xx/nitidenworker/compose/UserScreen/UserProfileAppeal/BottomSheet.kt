@@ -1,6 +1,5 @@
 package jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal
 
-import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,10 +19,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,10 +40,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.userDocument
 
 
@@ -59,7 +60,7 @@ fun ModalBottomSheetOnProfileAppealText(
 ){
     val isExpanded = sheetState.currentValue == SheetValue.Expanded
     val fabOffsetY by animateDpAsState(
-        targetValue = if(isExpanded) -30.dp else -390.dp,
+        targetValue = if(isExpanded) (-30).dp else (-390).dp, label = "",
     )
 
     ModalBottomSheet(
@@ -82,7 +83,7 @@ fun ModalBottomSheetOnProfileAppealText(
                     .background(Color.White)
             ) {
                 Text(
-                    text = "自己PR",
+                    text = stringResource(id = R.string.UserProfileAppeal_selfPromotion),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.W900,
                     modifier = Modifier
@@ -92,7 +93,7 @@ fun ModalBottomSheetOnProfileAppealText(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Divider(
+                HorizontalDivider(
                     color = Color.Gray,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -105,7 +106,7 @@ fun ModalBottomSheetOnProfileAppealText(
                     onValueChange = changeText,
                     placeholder = {
                         Text(
-                            text = "自分のアピールを入力",
+                            text = stringResource(id = R.string.ModalBottomSheetOnProfileAppealText_selfPromotion_placeholder),
                             color = Color.Gray.copy(alpha = 0.5f)
                         )
                     },
@@ -121,7 +122,7 @@ fun ModalBottomSheetOnProfileAppealText(
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .offset(y = fabOffsetY, x = -20.dp)
+                    .offset(y = fabOffsetY, x = (-20).dp)
             ) {
                 FloatingActionButton(
                     onClick = {
@@ -155,10 +156,10 @@ fun ModalBottomSheetOnProfileAppealURL(
 ){
     val isExpanded = sheetState.currentValue == SheetValue.Expanded
     val fabOffsetY by animateDpAsState(
-        targetValue = if(isExpanded) -10.dp else -360.dp,
+        targetValue = if(isExpanded) (-10).dp else (-360).dp, label = "",
     )
     var urlInputs by remember { mutableStateOf(userData?.urls?: listOf(""))}
-    var urlErrors by remember { mutableStateOf(urlInputs.map { !CheckURL(it) }) }
+    var urlErrors by remember { mutableStateOf(urlInputs.map { !checkURL(it) }) }
     var addingButton by remember { mutableStateOf(false) }
 
 
@@ -182,7 +183,7 @@ fun ModalBottomSheetOnProfileAppealURL(
                     .fillMaxSize()
             ) {
                 Text(
-                    text = "URL",
+                    text = stringResource(id = R.string.UserProfileAppeal_URL),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.W900,
                     modifier = Modifier
@@ -191,7 +192,7 @@ fun ModalBottomSheetOnProfileAppealURL(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Divider(
+                HorizontalDivider(
                     color = Color.Gray,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -211,8 +212,6 @@ fun ModalBottomSheetOnProfileAppealURL(
                                 addingButton = true
                             }
                         }
-                        Log.d("urlInputs",urlInputs.toString())
-                        Log.d("urlSize",urlInputs.size.toString())
                     },
                     containerColor = if(addingButton)Color.Gray else Color.White,
                     modifier = Modifier
@@ -238,12 +237,12 @@ fun ModalBottomSheetOnProfileAppealURL(
                             value = url,
                             onValueChange = { newText ->
                                 urlInputs = urlInputs.toMutableList().also { it[index] = newText }
-                                urlErrors = urlErrors.toMutableList().also { it[index] = !CheckURL(newText) }
+                                urlErrors = urlErrors.toMutableList().also { it[index] = !checkURL(newText) }
                             },
                             maxLines = 1,
                             placeholder = {
                                 Text(
-                                    text = "URLを記入",
+                                    text = stringResource(id = R.string.ModalBottomSheetOnProfileAppealText_URL_placeholder),
                                     color = Color.Gray.copy(alpha = 0.5f),
                                     fontSize = 14.sp
                                 )
@@ -272,13 +271,13 @@ fun ModalBottomSheetOnProfileAppealURL(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "delete"
+                                contentDescription = stringResource(id = R.string.ModalBottomSheetOnProfileAppealText_URL_IconButton_description)
                             )
                         }
                     }
                     if (urlErrors[index]) {
                         Text(
-                            text = "入力されたURLは正しくありません",
+                            text = stringResource(id = R.string.ModalBottomSheetOnProfileAppealText_URL_ErrorText),
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(start = 26.dp)
                         )
@@ -293,7 +292,7 @@ fun ModalBottomSheetOnProfileAppealURL(
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .offset(y = fabOffsetY, x = -20.dp)
+                    .offset(y = fabOffsetY, x = (-20).dp)
             ) {
                 FloatingActionButton(
                     onClick = {
