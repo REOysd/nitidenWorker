@@ -73,8 +73,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
-import jp.ac.jec.cm01xx.nitidenworker.publishData
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -85,8 +85,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun ServiceOfferingsDetailViewingScreen(
     uid:String?,
-    userData:userDocument?,
-    serviceOfferingData:publishData?,
+    userData:UserDocument?,
+    serviceOfferingData:PublishData?,
     startLeadingUserData:(String) -> Unit,
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,

@@ -1,6 +1,5 @@
 package jp.ac.jec.cm01xx.nitidenworker.compose.HomeScreen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -22,9 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen.ServiceOfferingsViewingScreen
-import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -32,7 +30,7 @@ fun HomeScreen(
     uid:String?,
     modifier: Modifier,
     getServiceOfferings:() -> Unit,
-    serviceOfferings_:StateFlow<List<publishData?>>,
+    serviceOfferings_:StateFlow<List<PublishData?>>,
     getServiceOfferingData:(String) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
     onClickTOProfile:() -> Unit,
@@ -83,7 +81,7 @@ fun HomeScreen(
 @Composable
 fun BasicHomeScreen(
     uid:String?,
-    serviceOfferings:State<List<publishData?>>,
+    serviceOfferings:State<List<PublishData?>>,
     getServiceOfferingData:(String) -> Unit,
     cleanServiceOfferingCreationPreview:() -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,

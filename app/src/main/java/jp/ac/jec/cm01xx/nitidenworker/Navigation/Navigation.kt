@@ -120,6 +120,7 @@ fun Navigation(
                         .nestedScroll(navigationViewModel.nestScrollConnection),
                 )
             }
+
             composable(NavigationScreen.Search.name){
                 SearchScreen(
                     modifier = Modifier
@@ -127,6 +128,7 @@ fun Navigation(
                         .nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
+
             composable(NavigationScreen.Favorite.name){
                 FavoriteScreen(
                     uid = firebaseViewModel.auth.currentUser?.uid,
@@ -149,6 +151,7 @@ fun Navigation(
                     .nestedScroll(navigationViewModel.nestScrollConnection)
                 )
             }
+
             composable(NavigationScreen.Message.name){
                 MessageScreen(
                     modifier = Modifier

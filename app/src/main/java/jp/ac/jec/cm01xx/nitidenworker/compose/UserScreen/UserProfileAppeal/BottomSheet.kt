@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -151,7 +151,7 @@ fun ModalBottomSheetOnProfileAppealText(
 fun ModalBottomSheetOnProfileAppealURL(
     onDismiss: () -> Unit,
     sheetState: SheetState,
-    userData: userDocument?,
+    userData: UserDocument?,
     updateUrlOnMyProfile:(List<String>) -> Unit,
 ){
     val isExpanded = sheetState.currentValue == SheetValue.Expanded
