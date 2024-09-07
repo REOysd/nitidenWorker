@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 
 @Composable
@@ -27,7 +27,7 @@ fun NavigateFloatingActionButtonOnPreview(
     publishServiceOfferings:(ServiceOfferingData,Context) -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     data:ServiceOfferingData?,
-    userData: userDocument?,
+    userData: UserDocument?,
     onClickToMyJob:() -> Unit,
     context: Context
 ){

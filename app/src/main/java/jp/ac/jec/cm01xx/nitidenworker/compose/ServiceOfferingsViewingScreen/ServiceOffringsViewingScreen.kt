@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
 
 @Composable
 fun ServiceOfferingsViewingScreen(
@@ -30,7 +30,7 @@ fun ServiceOfferingsViewingScreen(
     itemUid:String,
     likedUsers:List<String?>?,
     favoriteUsers:List<String?>?,
-    serviceOfferings: publishData?,
+    serviceOfferings: PublishData?,
     isAuthDataVisible:Boolean,
     serviceOfferingsViewingViewModel:ServiceOfferingsViewingViewModel =
         ServiceOfferingsViewingViewModel(serviceOfferings),

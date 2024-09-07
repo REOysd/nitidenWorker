@@ -14,13 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen.ServiceOfferingsViewingScreen
-import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun RequestServiceScreen(
     modifier: Modifier,
-    myServiceOfferings:StateFlow<List<publishData?>>,
+    myServiceOfferings:StateFlow<List<PublishData?>>,
     getMyServiceOfferings:() -> Unit,
     onClickToServiceOfferingsDetailScreen:(String) -> Unit
     ){

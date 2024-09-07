@@ -11,9 +11,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.storage.FirebaseStorage
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
-import jp.ac.jec.cm01xx.nitidenworker.publishData
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
@@ -32,7 +32,7 @@ class ServiceOfferingRepository(
     suspend fun publishServiceOfferings(
         serviceOfferingData: ServiceOfferingData,
         context: Context,
-        userData:StateFlow<userDocument?>
+        userData:StateFlow<UserDocument?>
     ){
         try{
             val id:String = UUID.randomUUID().toString()
@@ -46,7 +46,7 @@ class ServiceOfferingRepository(
                 movieThumbnail = uploadMovieThumbnail(_movieThumbnail)
             }
 
-            val publishData = publishData(
+            val publishData = PublishData(
                 id = id,
                 thisUid = auth.currentUser?.uid.toString(),
                 email = auth.currentUser?.email.toString(),
@@ -85,7 +85,7 @@ class ServiceOfferingRepository(
         }
     }
 
-    suspend fun getServiceOfferings():List<publishData>{
+    suspend fun getServiceOfferings():List<PublishData>{
         return try {
             val querySnapshot = fireStore
                 .collection("ServiceOfferings")
@@ -93,7 +93,7 @@ class ServiceOfferingRepository(
                 .await()
 
             querySnapshot.documents.mapNotNull { document ->
-                document.toObject(publishData::class.java)
+                document.toObject(PublishData::class.java)
             }
 
         } catch (e:Exception) {
@@ -159,7 +159,7 @@ class ServiceOfferingRepository(
         getServiceOfferings()
     }
 
-    suspend fun getMyServiceOfferings():List<publishData>{
+    suspend fun getMyServiceOfferings():List<PublishData>{
         return try{
             auth.currentUser?.let { user ->
                 val querySnapshot = fireStore
@@ -169,7 +169,7 @@ class ServiceOfferingRepository(
                     .await()
 
                 querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(publishData::class.java)
+                    document.toObject(PublishData::class.java)
                 }
             }?: emptyList()
         }catch (e:Exception){
@@ -178,7 +178,7 @@ class ServiceOfferingRepository(
         }
     }
 
-    suspend fun getMyFavoriteServiceOfferings():List<publishData>{
+    suspend fun getMyFavoriteServiceOfferings():List<PublishData>{
         return try {
             auth.currentUser?.let { user ->
                 val querySnapshot = fireStore
@@ -188,7 +188,7 @@ class ServiceOfferingRepository(
                     .await()
 
                 querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(publishData::class.java)
+                    document.toObject(PublishData::class.java)
                 }
             }?: emptyList()
         } catch (e:Exception){
@@ -197,7 +197,7 @@ class ServiceOfferingRepository(
         }
     }
 
-    suspend fun getServiceOfferingData(id:String):publishData? {
+    suspend fun getServiceOfferingData(id:String):PublishData? {
         return try{
             auth.currentUser?.let {
                 val querySnapshot = fireStore
@@ -207,7 +207,7 @@ class ServiceOfferingRepository(
                     .await()
 
                 querySnapshot.documents.firstOrNull()?.let {
-                    it.toObject(publishData::class.java)
+                    it.toObject(PublishData::class.java)
                 }
             }
         }catch (e:Exception){
@@ -216,7 +216,7 @@ class ServiceOfferingRepository(
         }
     }
 
-    fun cleanServiceOfferingData():publishData?{
+    fun cleanServiceOfferingData():PublishData?{
         return null
     }
 

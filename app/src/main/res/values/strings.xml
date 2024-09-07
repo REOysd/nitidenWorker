@@ -23,7 +23,7 @@
     <string name="UserPhoto_description">ProfileImage</string>
     <string name="NoUserProfileHeader_Image_description">No Login Image</string>
     <string name="NoUserProfileHeader_Text">ログインされていません</string>
-    <string name="NoUserProfileHeader_buttonText">ログインされていません</string>
+    <string name="NoUserProfileHeader_buttonText">ログイン</string>
     <string name="UserProfileScreen_achievements">実績数</string>
     <string name="UserProfileScreen_completionRate">完了率</string>
     <string name="UserProfileScreen_basicInformation">基本情報</string>
@@ -101,4 +101,7 @@
     <string name="Apply">応募する</string>
     <string name="ListenToTheStory">話を聞いてみる</string>
     <string name="ServiceOfferingCreationPreview_TopBar">ServiceOfferingsDetail</string>
+    <string name="NumberOfApplying">応募している人数</string>
+    <string name="Yes">あり</string>
+    <string name="No">なし</string>
 </resources>

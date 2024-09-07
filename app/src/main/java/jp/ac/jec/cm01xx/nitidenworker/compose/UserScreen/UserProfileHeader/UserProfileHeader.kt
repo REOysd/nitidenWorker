@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
 
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.launch
 
 
@@ -55,7 +55,7 @@ fun UserProfileScreen(
     onClickLogoutButton: () -> Unit,
     onClickCheckButton:(String,String) -> Unit,
     SwitchProfileCurrentUser:() -> Unit,
-    userData:userDocument?,
+    userData:UserDocument?,
     uid:String?
 ){
     var openBottomSheetOfDepartment by rememberSaveable { mutableStateOf(false) }

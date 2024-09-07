@@ -52,7 +52,7 @@ import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal.UserProfileAppeal
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileHeader.UserProfileScreen
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -65,7 +65,7 @@ import kotlinx.coroutines.launch
     onClickLoginButton:() -> Unit,
     onClickLogoutButton:() -> Unit,
 ){
-    var ProfileCurrentUser by rememberSaveable { mutableStateOf(currentUser) }
+    var profileCurrentUser by rememberSaveable { mutableStateOf(currentUser) }
     val context = LocalContext.current
     val state = rememberPagerState (
         pageCount = {2},
@@ -94,7 +94,7 @@ import kotlinx.coroutines.launch
     }
 
 
-    if(ProfileCurrentUser == null){
+    if(profileCurrentUser == null){
             NoUserProfileHeader(
                 onClickLoginButton = onClickLoginButton
             )
@@ -124,7 +124,7 @@ import kotlinx.coroutines.launch
                                     .padding(innerPadding),
                                 onClickLogoutButton = onClickLogoutButton,
                                 SwitchProfileCurrentUser = {
-                                    ProfileCurrentUser = null
+                                    profileCurrentUser = null
                                 },
                                 userData = userData,
                                 uid = currentUser?.uid,
@@ -145,12 +145,13 @@ import kotlinx.coroutines.launch
             }
         }
 }
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileTopBar(
     height:Dp,
     context: Context,
-    userData:userDocument?,
+    userData:UserDocument?,
     state:PagerState,
     scrollPage:List<String>,
     scope:CoroutineScope

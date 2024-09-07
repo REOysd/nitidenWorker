@@ -11,7 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen.ServiceOfferingsViewingScreen
-import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -23,7 +23,7 @@ fun FavoriteScreen(
     updateFavoriteUsers:(String,String) -> Unit,
     onClickHeartAndFavoriteIcon:(String,Boolean,String) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
-    _myFavoriteServiceOfferings:StateFlow<List<publishData?>>,
+    _myFavoriteServiceOfferings:StateFlow<List<PublishData?>>,
     cleanServiceOfferingCreationPreview:() -> Unit,
     modifier: Modifier
 ){
