@@ -13,9 +13,7 @@
     </string>
     <string name="IconDescriptionOnConfirmDialog">Confirmation icon</string>
     <string name="TitleOnConfirmDialog">確認</string>
-    <string name="SubTextOnConfirmDialog">
-        このサービスへの応募は取り消せません。応募を進めてよろしいですか？
-    </string>
+    <string name="SubTextOnConfirmDialog">このサービスへの応募は取り消せません。応募を進めてよろしいですか？</string>
     <string name="cancelButtonTextOnConfirmDialog">No</string>
     <string name="confirmButtonTextOnConfirmDialog">Yes</string>
     <string name="backIcon">backIcon</string>
@@ -55,4 +53,52 @@
     <string name="deliveryDays_day">日</string>
     <string name="NumberOfApplications">応募人数</string>
     <string name="NumberOfPeople">人</string>
+    <string name="KeyboardArrowRight_icon_description">toProfileIcon</string>
+    <string name="ServiceOfferings">サービスの提供</string>
+    <string name="ServiceRequest">サービスを依頼</string>
+    <string name="ScrollPage_worker">Worker</string>
+    <string name="ScrollPage_client">Client</string>
+    <string name="JobTopBarContent_title">MyJob</string>
+    <string name="ArrowBack_Icon_description">popBackStackIcon</string>
+    <string name="ServiceOfferingCreationTopBar_title">ServiceOfferings</string>
+    <string name="indispensable">＊必須</string>
+    <string name="Category_textField_placeholder">カテゴリを選択してください</string>
+    <string name="Category_textField_AlertText">カテゴリを入力してください</string>
+    <string name="ServiceOfferingCreationScreen_titleText">タイトル</string>
+    <string name="ServiceOfferingCreationScreen_titleText_placeholder">タイトルを入力</string>
+    <string name="ServiceOfferingCreationScreen_titleText_AlertText">タイトルを入力してください</string>
+    <string name="ServiceOfferingCreationScreen_subtitleText">サブタイトル（タイトルの補足説明）</string>
+    <string name="ServiceOfferingCreationScreen_subtitleText_placeholder">サブタイトルを入力</string>
+    <string name="ServiceOfferingCreationScreen_descriptionOfServices">サービス内容の説明</string>
+    <string name="ServiceOfferingCreationScreen_descriptionOfServices_placeholder">提供できるサービス内容の説明</string>
+    <string name="ServiceOfferingCreationScreen_descriptionOfServices_AlertText">サービス内容を入力してください</string>
+    <string name="ServiceOfferingCreationScreen_estimated_delivery_time">予想お届け時間</string>
+    <string name="ServiceOfferingCreationScreen_estimated_delivery_time_AlertText">予想お届け日数を入力してください</string>
+    <string name="ServiceOfferingCreationScreen_precautions">購入を検討している方への注意事項</string>
+    <string name="ServiceOfferingCreationScreen_precautions_placeholder">購入を検討しているクライアントへの注意事項など</string>
+    <string name="ServiceOfferingCreationScreen_Image_sample">画像サンプル</string>
+    <string name="ServiceOfferingCreationScreen_image_limit">（最大５つ）</string>
+    <string name="ServiceOfferingCreationScreen_selectImage_description">selectImage</string>
+    <string name="ServiceOfferingCreationScreen_deleteImageIcon_description">delete Image</string>
+    <string name="ServiceOfferingCreationScreen_addImageIcon_description">add Image</string>
+    <string name="ServiceOfferingCreationScreen_addImage">画像を追加</string>
+    <string name="ServiceOfferingCreationScreen_video_sample">動画サンプル</string>
+    <string name="ServiceOfferingCreationScreen_video_limit">（最大2つ）</string>
+    <string name="ServiceOfferingCreationScreen_deleteVideoIcon_description">delete video</string>
+    <string name="ServiceOfferingCreationScreen_addVideoIcon_description">add video</string>
+    <string name="ServiceOfferingCreationScreen_addVideo">動画を追加</string>
+    <string name="ServiceOfferingCreationScreen_other">その他</string>
+    <string name="ServiceOfferingCreationScreen_videoChat">動画チャット</string>
+    <string name="ServiceOfferingCreationScreen_allowVideoChat">外部サイトでのビデオチャットを許可する</string>
+    <string name="ServiceOfferingCreationScreen_videoChat_example">※Zoom, GoogleMeet,etc.</string>
+    <string name="ServiceOfferingCreationScreen_confirm">確認する</string>
+    <string name="ViewingImage_default_description">defaultImage</string>
+    <string name="ViewingImage_default_text">※画像、動画を選択しなかった場合,こちらの画像がデフォルトで表示されます。</string>
+    <string name="ViewingVideo_playVideoIcon_description">play video</string>
+    <string name="SelectedImageAndMovie_description">selectedImageAndMovie</string>
+    <string name="ProfileImage_description">ProfileImage</string>
+    <string name="TotalLikes">総いいね数</string>
+    <string name="Apply">応募する</string>
+    <string name="ListenToTheStory">話を聞いてみる</string>
+    <string name="ServiceOfferingCreationPreview_TopBar">ServiceOfferingsDetail</string>
 </resources>

@@ -46,7 +46,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +64,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -299,7 +299,7 @@ fun RatingStar(
             }
         }
         Text(
-            text = "（完了率:${completionRate}）",
+            text = "（${stringResource(id = R.string.UserProfileScreen_completionRate)}:${completionRate}）",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
                 .padding(start = 4.dp)
@@ -324,7 +324,7 @@ fun HeartIcon(
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (isLiked) 0.6f else 0f,
-        animationSpec = tween(durationMillis = 500)
+        animationSpec = tween(durationMillis = 500), label = ""
     )
 
     // ここでアイコンタップの誤作動が起きてる（イイね回数がおかしくなる）
@@ -337,10 +337,10 @@ fun HeartIcon(
         onClick = {
             if(uid != serviceUid && !isProgress){
                 isProgress = true
-                if(isLiked == true){
-                    isLiked = false
+                isLiked = if(isLiked){
+                    false
                 }else{
-                    isLiked = true
+                    true
                 }
 
                 scope.launch{
@@ -383,7 +383,7 @@ fun FavoriteIcon(
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (isFavorite) 1f else 0f,
-        animationSpec = tween(durationMillis = 900)
+        animationSpec = tween(durationMillis = 900), label = ""
     )
 
     // ここでアイコンタップの誤作動が起きてる（お気に入り回数がおかしくなる）
@@ -396,11 +396,11 @@ fun FavoriteIcon(
         onClick = {
             if(uid != serviceUid && !isProgress){
                 isProgress = true
-               if(isFavorite == true){
-                   isFavorite = false
-               }else{
-                   isFavorite = true
-               }
+                isFavorite = if(isFavorite){
+                    false
+                }else{
+                    true
+                }
 
                 scope.launch{
                     try {
@@ -448,7 +448,7 @@ fun ImageAndVideoThumbnail(
         if (selectImageAndMovie.isEmpty() == true) {
             Image(
                 painter = painterResource(id = R.drawable.nitiiden_icon),
-                contentDescription = "normalImage",
+                contentDescription = stringResource(id = R.string.ViewingImage_default_description),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxSize()
@@ -456,7 +456,7 @@ fun ImageAndVideoThumbnail(
             )
 
             Text(
-                text = "※画像、動画を選択しなかった場合,こちらの画像がデフォルトで表示されます。",
+                text = stringResource(id = R.string.ViewingImage_default_text),
                 color = Color.White.copy(alpha = 0.5f),
                 fontSize = 13.sp,
                 modifier = Modifier
@@ -512,7 +512,9 @@ fun ImageAndVideoThumbnail(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = "play video",
+                                        contentDescription = stringResource(
+                                            id = R.string.ViewingVideo_playVideoIcon_description
+                                        ),
                                         modifier = Modifier
                                             .size(40.dp),
                                         tint = Color.Black
@@ -523,7 +525,7 @@ fun ImageAndVideoThumbnail(
                     } else {
                         AsyncImage(
                             model = selectImageAndMovie[page],
-                            contentDescription = "selectImageAndMovie",
+                            contentDescription = stringResource(id = R.string.SelectedImageAndMovie_description),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -599,7 +601,7 @@ fun MyProfileItems(
                     .data(it)
                     .crossfade(true)
                     .build(),
-                contentDescription = "ProfileImage",
+                contentDescription = stringResource(id = R.string.ProfileImage_description),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(60.dp)
@@ -632,7 +634,7 @@ fun MyProfileItems(
 
             userData?.job?.let {
                 Text(
-                    text = "学科 : ${it}",
+                    text = "${stringResource(id = R.string.UserProfileScreen_department)} : ${it}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -645,7 +647,7 @@ fun MyProfileItems(
 
             userData?.numberOfAchievement?.let {
                 Text(
-                    text = "実績数 : ${it}",
+                    text = "${stringResource(id = R.string.UserProfileScreen_achievements)} : ${it}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -659,7 +661,7 @@ fun MyProfileItems(
 
             userData?.totalLikes?.let {
                 Text(
-                    text = "総イイね数 : ${it}",
+                    text = "${stringResource(id = R.string.Apply)} : ${it}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -689,7 +691,7 @@ fun MyProfileItems(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                contentDescription = "ToProfile",
+                contentDescription = stringResource(id = R.string.ArrowBack_Icon_description),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(24.dp)
@@ -716,7 +718,7 @@ fun BottomItemBar(
                 .padding(start = 10.dp, end = 20.dp)
         ){
             Text(
-                text = "カテゴリー",
+                text = stringResource(id = R.string.category),
                 fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier

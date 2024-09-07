@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,6 +56,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -62,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseAuth
+import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.publishData
 import jp.ac.jec.cm01xx.nitidenworker.userDocument
 import kotlinx.coroutines.flow.StateFlow
@@ -94,7 +98,7 @@ fun JobScreen(
         targetValue = if (isProfileLinkVisible) profileLinkHeight else 0.dp,
         label = "Profile link height"
     )
-    var lastScrollOffset by remember { mutableStateOf(0f) }
+    var lastScrollOffset by remember { mutableFloatStateOf(0f) }
     val nestScrollConnection = remember {
         object: NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -175,7 +179,7 @@ fun JobScreen(
                                         .data(it)
                                         .crossfade(true)
                                         .build(),
-                                    contentDescription = "ProfileImage",
+                                    contentDescription = stringResource(id = R.string.UserPhoto_description),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .size(60.dp)
@@ -221,7 +225,7 @@ fun JobScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                                    contentDescription = "ToProfile",
+                                    contentDescription = stringResource(id = R.string.KeyboardArrowRight_icon_description),
                                     modifier = Modifier
                                         .align(Alignment.Center)
                                         .size(24.dp)
@@ -252,11 +256,11 @@ fun JobScreen(
                                 .align(Alignment.CenterVertically)
                                 .width(170.dp)
                                 .height(50.dp),
-                            containerColor = Color(0xFF45c152),
+                            containerColor = colorResource(id = R.color.nitidenGreen),
 
                             ) {
                             Text(
-                                text = "サービスの提供",
+                                text = stringResource(id = R.string.ServiceOfferings),
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold
                             )
@@ -273,7 +277,7 @@ fun JobScreen(
                             containerColor = Color(0xFF47c6c6)
                         ) {
                             Text(
-                                text = "サービスを依頼する",
+                                text = stringResource(id = R.string.ServiceRequest),
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold
                             )
@@ -317,7 +321,10 @@ fun JobTopBarContent(
 ) {
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
     val height = systemBarsPadding.calculateTopPadding()
-    val scrollPage = listOf("Worker","Client")
+    val scrollPage = listOf(
+        stringResource(id = R.string.ScrollPage_worker),
+        stringResource(id = R.string.ScrollPage_client)
+    )
     val scope = rememberCoroutineScope()
 
     Column(
@@ -333,7 +340,7 @@ fun JobTopBarContent(
                 .background(Color.White)
         ) {
             Text(
-                text = "MyJob",
+                text = stringResource(id = R.string.JobTopBarContent_title),
                 modifier = Modifier
                     .padding(top = 12.dp)
                     .align(Alignment.Center),
@@ -350,10 +357,10 @@ fun JobTopBarContent(
                 .background(Color.White)
                 .fillMaxWidth(),
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
+                TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(tabPositions[state.currentPage]),
                     height = 3.dp,
-                    color = Color(0xFF00B900)
+                    color = colorResource(id = R.color.bottomNavigationBarColor)
                 )
             }
         ) {
@@ -374,7 +381,8 @@ fun JobTopBarContent(
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        color = if (state.currentPage == index) Color(0xFF00B900) else Color.Gray
+                        color = if (state.currentPage == index) colorResource(id = R.color.bottomNavigationBarColor)
+                        else Color.Gray
                     )
                 }
             }
