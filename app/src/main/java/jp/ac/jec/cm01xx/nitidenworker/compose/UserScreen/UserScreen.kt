@@ -208,7 +208,7 @@ fun ProfileTopBar(
                 .background(Color.Black)
                 .fillMaxWidth(),
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
+                TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(tabPositions[state.currentPage]),
                     height = 3.dp,
                     color = colorResource(id = R.color.bottomNavigationBarColor)

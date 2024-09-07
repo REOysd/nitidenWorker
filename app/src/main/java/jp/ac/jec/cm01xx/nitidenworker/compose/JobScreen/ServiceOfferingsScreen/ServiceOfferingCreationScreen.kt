@@ -62,6 +62,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -142,7 +143,6 @@ fun ServiceOfferingCreationScreen(
             ServiceOfferingCreationTopBar(onClickToPopBackStack = onClickToPopBackStack)
         }
     ) { innerPadding ->
-
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -159,7 +159,7 @@ fun ServiceOfferingCreationScreen(
             ) {
                 Row{
                     Text(
-                        text = "カテゴリ",
+                        text = stringResource(id = R.string.category),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier
@@ -168,7 +168,7 @@ fun ServiceOfferingCreationScreen(
 
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "＊必須",
+                        text = stringResource(id = R.string.indispensable),
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
@@ -216,7 +216,7 @@ fun ServiceOfferingCreationScreen(
                         ),
                         placeholder = {
                             Text(
-                                text = "カテゴリを選択してください",
+                                text = stringResource(id = R.string.Category_textField_placeholder),
                                 color = Color.Gray.copy(alpha = 0.5f),
                             )
                                       },
@@ -250,7 +250,7 @@ fun ServiceOfferingCreationScreen(
 
 
                 AlertText(
-                    alertText = "カテゴリを入力してください",
+                    alertText = stringResource(id = R.string.Category_textField_AlertText),
                     isError = categoryTextIsError,
                     modifier = Modifier.padding(top = 16.dp)
                 )
@@ -268,7 +268,7 @@ fun ServiceOfferingCreationScreen(
             ) {
                 Row{
                     Text(
-                        text = "タイトル",
+                        text = stringResource(id = R.string.ServiceOfferingCreationScreen_titleText),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier
@@ -277,7 +277,7 @@ fun ServiceOfferingCreationScreen(
 
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "＊必須",
+                        text = stringResource(id = R.string.indispensable),
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
@@ -315,7 +315,7 @@ fun ServiceOfferingCreationScreen(
                         maxLines = 2,
                         placeholder = {
                             Text(
-                                text = "タイトルを入力",
+                                text = stringResource(id = R.string.ServiceOfferingCreationScreen_titleText_placeholder),
                                 color = Color.Gray.copy(alpha = 0.5f)
                             )
                                       },
@@ -341,7 +341,7 @@ fun ServiceOfferingCreationScreen(
                     )
                     
                     AlertText(
-                        alertText = "タイトルを入力してください",
+                        alertText = stringResource(id = R.string.ServiceOfferingCreationScreen_titleText_AlertText),
                         isError = titleTextIsError
                     )
                 }
@@ -358,7 +358,7 @@ fun ServiceOfferingCreationScreen(
             ){
                 Row{
                     Text(
-                        text = "サブタイトル（タイトルの補足説明）",
+                        text = stringResource(id = R.string.ServiceOfferingCreationScreen_subtitleText),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier
@@ -392,7 +392,7 @@ fun ServiceOfferingCreationScreen(
                         },
                         placeholder = {
                             Text(
-                                text = "サブタイトルを入力",
+                                text = stringResource(id = R.string.ServiceOfferingCreationScreen_subtitleText_placeholder),
                                 color = Color.Gray.copy(alpha = 0.5f)
                             )
                                       },
@@ -429,7 +429,7 @@ fun ServiceOfferingCreationScreen(
             ){
                 Row{
                     Text(
-                        text = "サービス内容の説明",
+                        text = stringResource(id = R.string.ServiceOfferingCreationScreen_descriptionOfServices),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier
@@ -438,7 +438,7 @@ fun ServiceOfferingCreationScreen(
 
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "＊必須",
+                        text = stringResource(id = R.string.indispensable),
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
@@ -475,7 +475,9 @@ fun ServiceOfferingCreationScreen(
                         },
                         placeholder = {
                             Text(
-                                text = "提供できるサービス内容の説明",
+                                text = stringResource(
+                                    id = R.string.ServiceOfferingCreationScreen_descriptionOfServices_placeholder
+                                ),
                                 color = Color.Gray.copy(alpha = 0.5f)
                             )
                         },
@@ -502,7 +504,9 @@ fun ServiceOfferingCreationScreen(
                 }
 
                 AlertText(
-                    alertText = "サービス内容を入力してください",
+                    alertText = stringResource(
+                        id = R.string.ServiceOfferingCreationScreen_descriptionOfServices_AlertText
+                    ),
                     isError = descriptionTextIsError
                 )
             }
@@ -517,7 +521,9 @@ fun ServiceOfferingCreationScreen(
             ){
                 Row{
                     Text(
-                        text = "予想お届け日数",
+                        text = stringResource(
+                            id = R.string.ServiceOfferingCreationScreen_estimated_delivery_time
+                        ),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier
@@ -527,7 +533,7 @@ fun ServiceOfferingCreationScreen(
                     Spacer(modifier = Modifier.width(10.dp))
 
                     Text(
-                        text = "＊必須",
+                        text = stringResource(id = R.string.indispensable),
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
@@ -570,7 +576,7 @@ fun ServiceOfferingCreationScreen(
                             )
                         },
                         maxLines = 1,
-                        suffix = { Text(text = "日")},
+                        suffix = { Text(stringResource(id = R.string.deliveryDays_day))},
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
@@ -586,7 +592,9 @@ fun ServiceOfferingCreationScreen(
                 }
 
                 AlertText(
-                    alertText = "予想お届け日数を入力してください",
+                    alertText = stringResource(
+                        id = R.string.ServiceOfferingCreationScreen_estimated_delivery_time_AlertText
+                    ),
                     isError = deliveryDaysTextIsError,
                     modifier = Modifier.padding(top = 16.dp)
                 )
@@ -602,7 +610,7 @@ fun ServiceOfferingCreationScreen(
             ){
                 Row{
                     Text(
-                        text = "購入を検討している方への注意事項",
+                        text = stringResource(id = R.string.ServiceOfferingCreationScreen_precautions),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier
@@ -633,7 +641,9 @@ fun ServiceOfferingCreationScreen(
                     },
                     placeholder = {
                         Text(
-                            text = "購入を検討しているクライアントへの注意事項など",
+                            text = stringResource(
+                                id = R.string.ServiceOfferingCreationScreen_precautions_placeholder
+                            ),
                             color = Color.Gray.copy(alpha = 0.5f)
                         )
                     },
@@ -668,7 +678,7 @@ fun ServiceOfferingCreationScreen(
             ){
                 Row{
                     Text(
-                        text = "画像サンプル",
+                        text = stringResource(id = R.string.ServiceOfferingCreationScreen_Image_sample),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier
@@ -676,7 +686,7 @@ fun ServiceOfferingCreationScreen(
                     )
 
                     Text(
-                        text = "（最大５つ）",
+                        text = stringResource(R.string.ServiceOfferingCreationScreen_image_limit),
                         fontWeight = FontWeight.Normal,
                         modifier = Modifier
                             .align(Alignment.Bottom)
@@ -703,7 +713,6 @@ fun ServiceOfferingCreationScreen(
                         modifier = Modifier
                             .background(Color.White)
                     ) { page ->
-
                         Box(
                             modifier = Modifier
                                 .background(Color.White)
@@ -730,7 +739,9 @@ fun ServiceOfferingCreationScreen(
                                 ) {
                                     Image(
                                         painter = rememberAsyncImagePainter(selectImages[page]),
-                                        contentDescription = "selectImage",
+                                        contentDescription = stringResource(
+                                            id = R.string.ServiceOfferingCreationScreen_selectImage_description
+                                        ),
                                         modifier = Modifier
                                             .fillMaxSize()
                                     )
@@ -752,7 +763,9 @@ fun ServiceOfferingCreationScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
-                                            contentDescription = "delete Picture"
+                                            contentDescription = stringResource(
+                                                id = R.string.ServiceOfferingCreationScreen_deleteImageIcon_description
+                                            )
                                         )
                                     }
                                 }
@@ -763,7 +776,9 @@ fun ServiceOfferingCreationScreen(
                                 ) {
                                     Image(
                                         painter = painterResource(id = R.drawable.kamera_icon_by_icons8),
-                                        contentDescription = "add Picture",
+                                        contentDescription = stringResource(
+                                            id = R.string.ServiceOfferingCreationScreen_addImageIcon_description
+                                        ),
                                         modifier = Modifier
                                             .size(60.dp)
                                             .align(Alignment.CenterHorizontally)
@@ -772,7 +787,9 @@ fun ServiceOfferingCreationScreen(
                                     Spacer(modifier = Modifier.height(8.dp))
 
                                     Text(
-                                        text = "画像を追加",
+                                        text = stringResource(
+                                            id = R.string.ServiceOfferingCreationScreen_addImage
+                                        ),
                                         modifier = Modifier
                                             .align(Alignment.CenterHorizontally)
                                     )
@@ -814,7 +831,9 @@ fun ServiceOfferingCreationScreen(
                     ) {
                         Row {
                             Text(
-                                text = "動画サンプル",
+                                text = stringResource(
+                                    id = R.string.ServiceOfferingCreationScreen_video_sample
+                                ),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W900,
                                 modifier = Modifier
@@ -822,7 +841,9 @@ fun ServiceOfferingCreationScreen(
                             )
 
                             Text(
-                                text = "（最大2つ）",
+                                text = stringResource(
+                                    id = R.string.ServiceOfferingCreationScreen_video_limit
+                                ),
                                 fontWeight = FontWeight.Normal,
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
@@ -863,7 +884,9 @@ fun ServiceOfferingCreationScreen(
                                         .combinedClickable(
                                             onClick = {
                                                 moviePiker.launch(
-                                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
+                                                    PickVisualMediaRequest(
+                                                        ActivityResultContracts.PickVisualMedia.VideoOnly
+                                                    )
                                                 )
                                             }
                                         )
@@ -889,7 +912,9 @@ fun ServiceOfferingCreationScreen(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Close,
-                                                    contentDescription = "delete Picture"
+                                                    contentDescription = stringResource(
+                                                        id = R.string.ServiceOfferingCreationScreen_deleteVideoIcon_description
+                                                    )
                                                 )
                                             }
                                         }
@@ -900,7 +925,9 @@ fun ServiceOfferingCreationScreen(
                                         ) {
                                             Image(
                                                 painter = painterResource(id = R.drawable.movie_icon_by_icons8),
-                                                contentDescription = "add Picture",
+                                                contentDescription = stringResource(
+                                                    id = R.string.ServiceOfferingCreationScreen_addVideoIcon_description
+                                                ),
                                                 modifier = Modifier
                                                     .size(60.dp)
                                                     .align(Alignment.CenterHorizontally)
@@ -909,7 +936,9 @@ fun ServiceOfferingCreationScreen(
                                             Spacer(modifier = Modifier.height(8.dp))
 
                                             Text(
-                                                text = "動画を追加",
+                                                text = stringResource(
+                                                    id = R.string.ServiceOfferingCreationScreen_addVideo
+                                                ),
                                                 modifier = Modifier
                                                     .align(Alignment.CenterHorizontally)
                                             )
@@ -952,7 +981,9 @@ fun ServiceOfferingCreationScreen(
                         ){
                             Row {
                                 Text(
-                                    text = "その他",
+                                    text = stringResource(
+                                        id = R.string.ServiceOfferingCreationScreen_other
+                                    ),
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.W900,
                                     modifier = Modifier
@@ -974,7 +1005,9 @@ fun ServiceOfferingCreationScreen(
 
                             Column {
                                 Text(
-                                    text = "ビデオチャット",
+                                    text = stringResource(
+                                        id = R.string.ServiceOfferingCreationScreen_videoChat
+                                    ),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.W800,
                                     modifier = Modifier
@@ -998,13 +1031,17 @@ fun ServiceOfferingCreationScreen(
                                     )
 
                                     Text(
-                                        text = "外部サイトでのビデオチャットを許可する",
+                                        text = stringResource(
+                                            id = R.string.ServiceOfferingCreationScreen_allowVideoChat
+                                        ),
                                         modifier = Modifier
                                             .align(Alignment.CenterVertically)
                                     )
                                 }
                                 Text(
-                                    text = "※Zoom, GoogleMeet,etc.",
+                                    text = stringResource(
+                                        id = R.string.ServiceOfferingCreationScreen_videoChat_example
+                                    ),
                                     fontWeight = FontWeight.Light,
                                     color = Color.Gray,
                                     modifier = Modifier
@@ -1057,7 +1094,9 @@ fun ServiceOfferingCreationScreen(
 
                                 ) {
                                     Text(
-                                        text = "確認する",
+                                        text = stringResource(
+                                            id = R.string.ServiceOfferingCreationScreen_confirm
+                                        ),
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold
                                         )

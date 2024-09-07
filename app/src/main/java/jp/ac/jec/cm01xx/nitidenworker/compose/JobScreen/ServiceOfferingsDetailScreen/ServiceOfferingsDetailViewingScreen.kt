@@ -240,7 +240,7 @@ fun ViewingImageAndVideoThumbnail(
         if (selectedImageAndMovie?.isEmpty() == true) {
             Image(
                 painter = painterResource(id = R.drawable.nitiiden_icon),
-                contentDescription = "defaultImage",
+                contentDescription = stringResource(id = R.string.ViewingImage_default_description),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxSize()
@@ -279,9 +279,9 @@ fun ViewingImageAndVideoThumbnail(
                                     )
 
                                 }else{
-                                    thumbnail?.let { _thumbnail ->
+                                    thumbnail?.let { thumbnail ->
                                         Image(
-                                            bitmap = _thumbnail.asImageBitmap(),
+                                            bitmap = thumbnail.asImageBitmap(),
                                             contentDescription = null,
                                             contentScale = ContentScale.Fit,
                                             modifier = Modifier
@@ -297,7 +297,9 @@ fun ViewingImageAndVideoThumbnail(
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.PlayArrow,
-                                                contentDescription = "play video",
+                                                contentDescription = stringResource(
+                                                    id = R.string.ViewingVideo_playVideoIcon_description
+                                                ),
                                                 modifier = Modifier
                                                     .size(40.dp),
                                                 tint = Color.Black
@@ -311,7 +313,9 @@ fun ViewingImageAndVideoThumbnail(
                         selectedImageAndMovie?.let{ selectImage ->
                             AsyncImage(
                                 model = selectImage[page],
-                                contentDescription = "selectImageAndMovie",
+                                contentDescription = stringResource(
+                                    id = R.string.SelectedImageAndMovie_description
+                                ),
                                 contentScale = ContentScale.Fit,
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -395,7 +399,9 @@ fun ViewingMyProfileItems(
                     .data(it)
                     .crossfade(true)
                     .build(),
-                contentDescription = "ProfileImage",
+                contentDescription = stringResource(
+                    id = R.string.ProfileImage_description
+                ),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(60.dp)
@@ -428,7 +434,7 @@ fun ViewingMyProfileItems(
 
             job?.let {
                 Text(
-                    text = "学科 : ${it}",
+                    text = "${stringResource(id = R.string.UserProfileScreen_department)} : $it",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -441,7 +447,7 @@ fun ViewingMyProfileItems(
 
             numberOfAchievement?.let {
                 Text(
-                    text = "実績数 : ${it}",
+                    text = "${stringResource(id = R.string.UserProfileScreen_achievements)} : $it",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -452,9 +458,9 @@ fun ViewingMyProfileItems(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            totalLikes.let {
+            totalLikes?.let {
                 Text(
-                    text = "総イイね数 : ${it}",
+                    text = "${stringResource(id = R.string.TotalLikes)} : $it",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -486,7 +492,7 @@ fun ViewingMyProfileItems(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                contentDescription = "ToProfile",
+                contentDescription = stringResource(id = R.string.KeyboardArrowRight_icon_description),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(24.dp)
@@ -521,7 +527,7 @@ fun NavigateFloatingActionButtonOnViewing(
                 containerColor = colorResource(id = R.color.nitidenGreen),
             ) {
                 Text(
-                    text = "応募する",
+                    text = stringResource(id = R.string.Apply),
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
@@ -547,7 +553,7 @@ fun NavigateFloatingActionButtonOnViewing(
                 containerColor = colorResource(id = R.color.nitidenBlue),
             ) {
                 Text(
-                    text = "話を聞いてみる",
+                    text = stringResource(id = R.string.ListenToTheStory),
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
@@ -647,7 +653,7 @@ fun ConfirmDialog(
                             .height(52.dp)
                     ) {
                         AnimatedContent(
-                            targetState = showConfirmation
+                            targetState = showConfirmation, label = ""
                         ) { isConfirmed ->
                             if (isConfirmed) {
                                 Icon(
