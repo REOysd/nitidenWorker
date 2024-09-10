@@ -37,11 +37,8 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -92,11 +89,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ServiceOfferingCreationPreview(
-    serviceOfferingsDetailViewModel: ServiceOfferingsDetailViewModel = viewModel(),
+    serviceOfferingsCreationViewModel: ServiceOfferingsCreationViewModel = viewModel(),
     firebaseViewModel: FirebaseViewModel,
     data: ServiceOfferingData,
     onClickToPopBackStack:() -> Unit,
@@ -105,8 +104,8 @@ fun ServiceOfferingCreationPreview(
 ){
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val uiState by serviceOfferingsDetailViewModel.uiState.collectAsState()
-    val selectImageAndMovie by serviceOfferingsDetailViewModel.selectImageAndMovie.collectAsState()
+    val uiState by serviceOfferingsCreationViewModel.uiState.collectAsState()
+    val selectImageAndMovie by serviceOfferingsCreationViewModel.selectImageAndMovie.collectAsState()
     val selectImageAndMoviePagerState = rememberPagerState(
         pageCount = {uiState.selectImageAndMoviePageCount},
         initialPage = 0
@@ -115,7 +114,7 @@ fun ServiceOfferingCreationPreview(
     val userData by firebaseViewModel.userData.collectAsState()
     
     LaunchedEffect(data) {
-        serviceOfferingsDetailViewModel.initializeData(data)
+        serviceOfferingsCreationViewModel.initializeData(data)
     }
 
     Scaffold(
@@ -141,8 +140,8 @@ fun ServiceOfferingCreationPreview(
                 selectImageAndMovie = selectImageAndMovie,
                 context = context,
                 selectImageAndMoviePageCount = uiState.selectImageAndMoviePageCount,
-                changeIsShowSelectedImageAndMovieDialog = serviceOfferingsDetailViewModel::changeIsShowSelectedImageAndMovieDialog,
-                changeImageAndMovieIndex = serviceOfferingsDetailViewModel::changeImageAndMovieIndex
+                changeIsShowSelectedImageAndMovieDialog = serviceOfferingsCreationViewModel::changeIsShowSelectedImageAndMovieDialog,
+                changeImageAndMovieIndex = serviceOfferingsCreationViewModel::changeImageAndMovieIndex
             )
 
             TitleAndSubTitleBar(
@@ -174,7 +173,7 @@ fun ServiceOfferingCreationPreview(
             if(uiState.isShowImageDialog){
                 SelectedImageAndMovieDialog(
                     changeIsShowSelectedImageAndMovieDialog = {
-                        serviceOfferingsDetailViewModel.changeIsShowSelectedImageAndMovieDialog(it)
+                        serviceOfferingsCreationViewModel.changeIsShowSelectedImageAndMovieDialog(it)
                     },
                     images = uiState.images,
                     selectedImageAndMovie = selectImageAndMovie,
@@ -978,20 +977,30 @@ fun SelectedImageAndMovieDialog(
         onDismissRequest = { changeIsShowSelectedImageAndMovieDialog(false) }
     ){
         if (selectedImageAndMovie.isEmpty()){
+            val painter = painterResource(id = R.drawable.nitiiden_icon)
+            val zoomState = rememberZoomState(contentSize = painter.intrinsicSize)
+
             Image(
-                painter = painterResource(id = R.drawable.nitiiden_icon),
+                painter = painter,
                 contentDescription = stringResource(id = R.string.ViewingImage_default_description),
                 contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zoomable(zoomState),
             )
         }else if(images.size <= imageAndMovieIndex){
             selectedImageAndMovie[imageAndMovieIndex]?.let{
                 VideoThumbnail(it)
             }
         }else{
+            val zoomState = rememberZoomState()
+
             AsyncImage(
                 model = selectedImageAndMovie[imageAndMovieIndex],
                 contentDescription = stringResource(id = R.string.SelectedImageAndMovie_description),
                 contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .zoomable(zoomState),
             )
         }
     }

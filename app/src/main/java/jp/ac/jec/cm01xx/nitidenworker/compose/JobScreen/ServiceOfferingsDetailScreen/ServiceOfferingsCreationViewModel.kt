@@ -6,7 +6,7 @@ import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class ServiceOfferingsDetailViewModel:ViewModel() {
+class ServiceOfferingsCreationViewModel:ViewModel() {
     private val _uiState = MutableStateFlow(ServiceOfferingsDetailUiState())
     val uiState = _uiState.asStateFlow()
 

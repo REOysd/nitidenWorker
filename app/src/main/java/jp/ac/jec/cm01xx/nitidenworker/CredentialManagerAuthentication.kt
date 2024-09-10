@@ -24,8 +24,7 @@ fun CredentialManagerAuthentication(
     scope:CoroutineScope,
     credentialManager: CredentialManager
 ){
-    //secretGradleにあとで記述する
-    val WEB_CLIENT_ID = "899480932485-vq9dkp81a41l1kargodov0ld004sndsi.apps.googleusercontent.com"
+    val WEB_CLIENT_ID = BuildConfig.WEB_CLIENT_ID
 
     val googleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
@@ -60,7 +59,7 @@ fun CredentialManagerAuthentication(
                     .collection("Users")
                     .document(user.uid)
 
-                if (userDocument.get().await().exists()) {
+                if (!userDocument.get().await().exists()) {
                     val newUser = user.let {
                         UserDocument(
                             uid = it.uid,
