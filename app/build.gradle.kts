@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -39,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -98,4 +100,7 @@ dependencies {
 
     //lottie
     implementation ("com.airbnb.android:lottie-compose:6.4.1")
+
+    //Zoomable(ライセンスのコピーをアプリに含める必要があります)
+    implementation ("net.engawapg.lib:zoomable:1.6.2")
 }

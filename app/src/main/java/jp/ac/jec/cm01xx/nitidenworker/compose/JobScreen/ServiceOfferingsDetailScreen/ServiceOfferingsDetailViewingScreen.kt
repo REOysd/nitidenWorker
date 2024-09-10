@@ -2,6 +2,7 @@ package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailS
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -58,6 +59,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -75,11 +77,14 @@ import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.serviceOfferingCreateScreen.VideoThumbnail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -233,19 +238,26 @@ fun ViewingImageAndVideoThumbnail(
         modifier = Modifier
             .height(170.dp)
             .background(Color.Black)
-            .clickable(
-                onClick = {}
-            )
     ){
         if (selectedImageAndMovie?.isEmpty() == true) {
-            Image(
-                painter = painterResource(id = R.drawable.nitiiden_icon),
-                contentDescription = stringResource(id = R.string.ViewingImage_default_description),
-                contentScale = ContentScale.Fit,
+            Card(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 10.dp, end = 10.dp)
-            )
+                    .fillMaxSize(),
+                shape = RectangleShape,
+                colors = CardDefaults.cardColors(Color.Black),
+                onClick = {
+
+                }
+            ){
+                Image(
+                    painter = painterResource(id = R.drawable.nitiiden_icon),
+                    contentDescription = stringResource(id = R.string.ViewingImage_default_description),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 10.dp, end = 10.dp)
+                )
+            }
 
         }else{
             HorizontalPager(
@@ -265,7 +277,6 @@ fun ViewingImageAndVideoThumbnail(
                                 withContext(Dispatchers.IO) {
                                     thumbnail = createThumbnail(selectedImageAndMovie[page])
                                 }
-
                                 isLoading = false
                             }
 
@@ -279,31 +290,43 @@ fun ViewingImageAndVideoThumbnail(
                                     )
 
                                 }else{
-                                    thumbnail?.let { thumbnail ->
-                                        Image(
-                                            bitmap = thumbnail.asImageBitmap(),
-                                            contentDescription = null,
-                                            contentScale = ContentScale.Fit,
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                        )
+                                    Card(
+                                        modifier = Modifier
+                                        .fillMaxSize(),
+                                        shape = RectangleShape,
+                                        colors = CardDefaults.cardColors(Color.Black),
+                                        onClick = {
 
-                                        IconButton(
-                                            onClick = { },
-                                            modifier = Modifier
-                                                .align(Alignment.Center)
-                                                .size(50.dp),
-                                            colors = IconButtonDefaults.iconButtonColors(Color.White)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.PlayArrow,
-                                                contentDescription = stringResource(
-                                                    id = R.string.ViewingVideo_playVideoIcon_description
-                                                ),
+                                        }
+                                    ) {
+                                        thumbnail?.let { thumbnail ->
+                                            Image(
+                                                bitmap = thumbnail.asImageBitmap(),
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Fit,
                                                 modifier = Modifier
-                                                    .size(40.dp),
-                                                tint = Color.Black
+                                                    .fillMaxSize()
                                             )
+
+                                            IconButton(
+                                                onClick = {
+
+                                                },
+                                                modifier = Modifier
+                                                    .align(Alignment.CenterHorizontally)
+                                                    .size(50.dp),
+                                                colors = IconButtonDefaults.iconButtonColors(Color.White)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.PlayArrow,
+                                                    contentDescription = stringResource(
+                                                        id = R.string.ViewingVideo_playVideoIcon_description
+                                                    ),
+                                                    modifier = Modifier
+                                                        .size(40.dp),
+                                                    tint = Color.Black
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -311,15 +334,25 @@ fun ViewingImageAndVideoThumbnail(
                         }
                     }else{
                         selectedImageAndMovie?.let{ selectImage ->
-                            AsyncImage(
-                                model = selectImage[page],
-                                contentDescription = stringResource(
-                                    id = R.string.SelectedImageAndMovie_description
-                                ),
-                                contentScale = ContentScale.Fit,
+                            Card(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                            )
+                                .fillMaxSize(),
+                                shape = RectangleShape,
+                                colors = CardDefaults.cardColors(Color.Black),
+                                onClick = {
+
+                                }
+                            ) {
+                                AsyncImage(
+                                    model = selectImage[page],
+                                    contentDescription = stringResource(
+                                        id = R.string.SelectedImageAndMovie_description
+                                    ),
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                )
+                            }
                         }
                     }
                 }
