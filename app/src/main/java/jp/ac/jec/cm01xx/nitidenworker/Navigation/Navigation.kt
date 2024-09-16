@@ -235,7 +235,7 @@ fun Navigation(
                 }else{
                     ServiceOfferingsDetailViewingScreen(
                         uid = firebaseViewModel.auth.currentUser?.uid,
-                        userData = userData,
+                        userDocument = userData,
                         startLeadingUserData = firebaseViewModel::startLeadingUserData,
                         serviceOfferingData = serviceOffering,
                         onClickToPopBackStack = { navHostController.popBackStack() },

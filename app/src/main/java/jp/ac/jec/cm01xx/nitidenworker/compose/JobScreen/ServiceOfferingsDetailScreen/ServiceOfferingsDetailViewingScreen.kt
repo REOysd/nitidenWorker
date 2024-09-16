@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,6 +74,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import jp.ac.jec.cm01xx.nitidenworker.R
@@ -86,12 +90,12 @@ import kotlinx.coroutines.withContext
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ServiceOfferingsDetailViewingScreen(
     uid:String?,
-    userData:UserDocument?,
+    userDocument:UserDocument?,
     serviceOfferingData:PublishData?,
+    viewModel:ServiceOfferingsDetailViewingViewModel = viewModel(),
     startLeadingUserData:(String) -> Unit,
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
@@ -103,19 +107,12 @@ fun ServiceOfferingsDetailViewingScreen(
 ){
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    var isShowConfirmDialog by rememberSaveable { mutableStateOf(false) }
-    val selectedImageAndMovie = serviceOfferingData?.let {
-        it.selectImages + it.selectMovies
-    }?: emptyList()
-    val selectedImageAndMoviePagerState = rememberPagerState(
-        pageCount = {selectedImageAndMovie.size},
-        initialPage = 0
-    )
+    val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(key1 = serviceOfferingData?.thisUid) {
-        serviceOfferingData?.thisUid?.let { uid ->
-            startLeadingUserData(uid)
-        }
+
+    LaunchedEffect(userDocument,serviceOfferingData) {
+        viewModel.initializeData(userDocument, serviceOfferingData)
+        serviceOfferingData?.thisUid?.let { uid -> startLeadingUserData(uid) }
     }
 
     Scaffold(
@@ -127,98 +124,128 @@ fun ServiceOfferingsDetailViewingScreen(
         },
 
         bottomBar = {
-            if(uid != serviceOfferingData?.thisUid){
+            if (uid != serviceOfferingData?.thisUid) {
                 NavigateFloatingActionButtonOnViewing(
-                    changeConfirmDialog = {isShowConfirmDialog = it}
+                    changeConfirmDialog = {
+                        viewModel.changeIsShowConfirmDialog(it)
+                    }
                 )
             }
         }
-    ){ innerPadding ->
+    ) { innerPadding ->
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .background(Color.White)
-                .padding(innerPadding)
-        ){
+        ServiceOfferingsDetailViewingContent(
+            uid = uid,
+            scope = scope,
+            context = context,
+            uiState = uiState,
+            viewModel = viewModel,
+            onClickToProfile = onClickToProfile,
+            createThumbnail = createThumbnail,
+            updateLikedAndFavoriteUsers = updateLikedAndFavoriteUsers,
+            onClickHeartAndFavoriteIcon = onClickHeartAndFavoriteIcon,
+            modifier = modifier.padding(innerPadding)
+        )
 
-            serviceOfferingData?.let{ data ->
-                ViewingImageAndVideoThumbnail(
-                    scope = scope,
-                    selectedImageAndMoviePagerState = selectedImageAndMoviePagerState,
-                    image = data.selectImages,
-                    selectedImageAndMovie = selectedImageAndMovie,
-                    selectImageAndMoviePageCount = selectedImageAndMovie.size,
-                    createThumbnail = createThumbnail
-                )
+        if (uiState.isShowConfirmDialog) {
+            ConfirmDialog(
+                onDismiss = {
+                    viewModel.changeIsShowConfirmDialog(false)
+                },
+                onConfirm = {
+                    viewModel.changeIsShowConfirmDialog(false)
+                },
+            )
+        }
 
-                TitleAndSubTitleBar(
-                    uid = uid,
-                    serviceUid = data.thisUid,
-                    title = data.title,
-                    subTitle = data.subTitle,
-                    niceCount = data.niceCount,
-                    favoriteCount = data.favoriteCount,
-                    likedUsers = data.likedUserIds,
-                    favoriteUsers = data.favoriteUserIds,
-                    updateLikedUsers = {
-                        updateLikedAndFavoriteUsers(
-                            data.id,
-                            "likedUserIds"
-                        )
-                    },
-                    updateFavoriteUsers = {
-                        updateLikedAndFavoriteUsers(
-                            data.id,
-                            "favoriteUserIds"
-                        )
-                    },
-                    onClickHeartIcon = {
-                        onClickHeartAndFavoriteIcon(
-                            "niceCount",
-                            it,
-                            data.id
-                        )
-                    },
-                    onClickFavoriteIcon = {
-                        onClickHeartAndFavoriteIcon(
-                            "favoriteCount",
-                            it,
-                            data.id
-                        )
-                    },
-                )
-
-                userData?.let{
-                    ViewingMyProfileItems(
-                        photoUrl = it.userPhoto,
-                        email = it.mail,
-                        job = it.job,
-                        numberOfAchievement = it.numberOfAchievement,
-                        totalLikes = it.totalLikes,
-                        completionRate = it.completionRate,
-                        onClickToProfile = onClickToProfile,
-                        context = context,
-                    )
+        if (uiState.isShowSelectedImageAndMovieDialog) {
+            SelectedImageAndMovieDialog(
+                images = uiState.serviceOfferingData?.selectImages,
+                imageAndMovieIndex = uiState.imageAndMovieIndex,
+                selectedImageAndMovie = uiState.selectedImageAndMovie,
+                onDismiss = {
+                    viewModel.changeIsShowSelectedImageAndMovieDialog(false)
                 }
+            )
+        }
+    }
+}
 
-                BottomItemBar(
-                    category = data.category,
-                    deliveryDays = data.deliveryDays,
-                    applyingCount = data.applyingCount,
-                    checkBoxState = data.checkBoxState,
-                    description = data.description,
-                    precautions = data.precautions
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun ServiceOfferingsDetailViewingContent(
+    uid:String?,
+    scope: CoroutineScope,
+    uiState: ServiceOfferingsDetailViewingUiState,
+    context:Context,
+    viewModel: ServiceOfferingsDetailViewingViewModel,
+    onClickToProfile: () -> Unit,
+    createThumbnail: suspend (String?) -> Bitmap?,
+    updateLikedAndFavoriteUsers:(String,String) -> Unit,
+    onClickHeartAndFavoriteIcon:(String, Boolean, String) -> Unit,
+    modifier: Modifier
+) {
+    val selectedImageAndMoviePagerState = rememberPagerState(
+        pageCount = {uiState.selectedImageAndMovie.size},
+        initialPage = 0
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .background(Color.White)
+    ) {
+        uiState.serviceOfferingData?.let { offeringData ->
+            ViewingImageAndVideoThumbnail(
+                scope = scope,
+                selectedImageAndMoviePagerState = selectedImageAndMoviePagerState,
+                image = offeringData.selectImages,
+                selectedImageAndMovie = uiState.selectedImageAndMovie,
+                selectImageAndMoviePageCount = uiState.selectedImageAndMovie.size,
+                createThumbnail = createThumbnail,
+                changeIsShowSelectedImageAndMovieDialog =
+                { viewModel.changeIsShowSelectedImageAndMovieDialog(it) },
+                changeImageAndMovieIndex = viewModel::changeImageAndMovieIndex
+            )
+
+            TitleAndSubTitleBar(
+                uid = uid,
+                serviceUid = offeringData.thisUid,
+                title = offeringData.title,
+                subTitle = offeringData.subTitle,
+                niceCount = offeringData.niceCount,
+                favoriteCount = offeringData.favoriteCount,
+                likedUsers = offeringData.likedUserIds,
+                favoriteUsers = offeringData.favoriteUserIds,
+                updateLikedUsers = { updateLikedAndFavoriteUsers(offeringData.id, "likedUserIds") },
+                updateFavoriteUsers = { updateLikedAndFavoriteUsers(offeringData.id, "favoriteUserIds") },
+                onClickHeartIcon = { onClickHeartAndFavoriteIcon("niceCount", it, offeringData.id) },
+                onClickFavoriteIcon = { onClickHeartAndFavoriteIcon("favoriteCount", it, offeringData.id) },
+            )
+
+            uiState.userDocument?.let {
+                ViewingMyProfileItems(
+                    photoUrl = it.userPhoto,
+                    email = it.mail,
+                    job = it.job,
+                    numberOfAchievement = it.numberOfAchievement,
+                    totalLikes = it.totalLikes,
+                    completionRate = it.completionRate,
+                    onClickToProfile = onClickToProfile,
+                    context = context,
                 )
             }
 
-            if(isShowConfirmDialog){
-                ConfirmDialog(
-                    onDismiss = {isShowConfirmDialog = false},
-                    onConfirm = {isShowConfirmDialog = false},
-                )
-            }
+            BottomItemBar(
+                category = offeringData.category,
+                deliveryDays = offeringData.deliveryDays,
+                applyingCount = offeringData.applyingCount,
+                checkBoxState = offeringData.checkBoxState,
+                description = offeringData.description,
+                precautions = offeringData.precautions
+            )
+
         }
     }
 }
@@ -232,6 +259,8 @@ fun ViewingImageAndVideoThumbnail(
     selectedImageAndMovie:List<String?>?,
     selectImageAndMoviePageCount:Int,
     createThumbnail:suspend (String?) -> Bitmap?,
+    changeIsShowSelectedImageAndMovieDialog:(Boolean) -> Unit,
+    changeImageAndMovieIndex:(Int) -> Unit
 ){
 
     Box(
@@ -246,7 +275,7 @@ fun ViewingImageAndVideoThumbnail(
                 shape = RectangleShape,
                 colors = CardDefaults.cardColors(Color.Black),
                 onClick = {
-
+                    changeIsShowSelectedImageAndMovieDialog(true)
                 }
             ){
                 Image(
@@ -296,36 +325,42 @@ fun ViewingImageAndVideoThumbnail(
                                         shape = RectangleShape,
                                         colors = CardDefaults.cardColors(Color.Black),
                                         onClick = {
-
+                                            changeIsShowSelectedImageAndMovieDialog(true)
+                                            changeImageAndMovieIndex(page)
                                         }
                                     ) {
-                                        thumbnail?.let { thumbnail ->
-                                            Image(
-                                                bitmap = thumbnail.asImageBitmap(),
-                                                contentDescription = null,
-                                                contentScale = ContentScale.Fit,
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                            )
-
-                                            IconButton(
-                                                onClick = {
-
-                                                },
-                                                modifier = Modifier
-                                                    .align(Alignment.CenterHorizontally)
-                                                    .size(50.dp),
-                                                colors = IconButtonDefaults.iconButtonColors(Color.White)
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.PlayArrow,
-                                                    contentDescription = stringResource(
-                                                        id = R.string.ViewingVideo_playVideoIcon_description
-                                                    ),
+                                        Box{
+                                            thumbnail?.let { thumbnail ->
+                                                Image(
+                                                    bitmap = thumbnail.asImageBitmap(),
+                                                    contentDescription = null,
+                                                    contentScale = ContentScale.Fit,
                                                     modifier = Modifier
-                                                        .size(40.dp),
-                                                    tint = Color.Black
+                                                        .fillMaxSize()
                                                 )
+
+                                                IconButton(
+                                                    onClick = {
+                                                        changeIsShowSelectedImageAndMovieDialog(true)
+                                                        changeImageAndMovieIndex(page)
+                                                    },
+                                                    modifier = Modifier
+                                                        .align(Alignment.Center)
+                                                        .size(50.dp),
+                                                    colors = IconButtonDefaults.iconButtonColors(
+                                                        Color.White
+                                                    )
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.PlayArrow,
+                                                        contentDescription = stringResource(
+                                                            id = R.string.ViewingVideo_playVideoIcon_description
+                                                        ),
+                                                        modifier = Modifier
+                                                            .size(40.dp),
+                                                        tint = Color.Black
+                                                    )
+                                                }
                                             }
                                         }
                                     }
@@ -340,7 +375,8 @@ fun ViewingImageAndVideoThumbnail(
                                 shape = RectangleShape,
                                 colors = CardDefaults.cardColors(Color.Black),
                                 onClick = {
-
+                                    changeIsShowSelectedImageAndMovieDialog(true)
+                                    changeImageAndMovieIndex(page)
                                 }
                             ) {
                                 AsyncImage(
@@ -705,6 +741,52 @@ fun ConfirmDialog(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectedImageAndMovieDialog(
+    images:List<String?>?,
+    imageAndMovieIndex:Int,
+    selectedImageAndMovie: List<String?>,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = { onDismiss() }
+    ) {
+        when  {
+            selectedImageAndMovie.isEmpty() -> {
+                val painter = painterResource(id = R.drawable.nitiiden_icon)
+                val zoomState = rememberZoomState(contentSize = painter.intrinsicSize)
+
+                Image(
+                    painter = painter,
+                    contentDescription = stringResource(id = R.string.ViewingImage_default_description),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(300.dp)
+                        .zoomable(zoomState),
+                )
+            }
+           images == null || imageAndMovieIndex >= images.size -> {
+                selectedImageAndMovie[imageAndMovieIndex]?.let{
+                    val convertUri: Uri =Uri.parse(it)
+                    VideoThumbnail(convertUri)
+                }
+            }
+            else -> {
+                val zoomState = rememberZoomState()
+
+                AsyncImage(
+                    model = selectedImageAndMovie[imageAndMovieIndex],
+                    contentDescription = stringResource(id = R.string.SelectedImageAndMovie_description),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .defaultMinSize(300.dp)
+                        .zoomable(zoomState),
+                )
             }
         }
     }
