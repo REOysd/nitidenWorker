@@ -39,6 +39,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +69,7 @@ import com.google.firebase.auth.FirebaseAuth
 import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
+import jp.ac.jec.cm01xx.nitidenworker.compose.ApplyScreen
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -75,19 +77,26 @@ import kotlinx.coroutines.launch
 @Composable
 fun JobScreen(
     modifier: Modifier,
-    onClickToProfile:() -> Unit,
-    onClickToServiceOfferingsScreen:() -> Unit,
-    onClickToRequestServiceScreen:() -> Unit,
     userData:UserDocument?,
     auth_:FirebaseAuth?,
     startLeadingUserData:(String) -> Unit,
     myServiceOfferings:StateFlow<List<PublishData?>>,
+    ApplyingServiceOfferings:StateFlow<List<PublishData?>>,
+    onClickToProfile:() -> Unit,
+    onClickToServiceOfferingsScreen:() -> Unit,
+    onClickToRequestServiceScreen:() -> Unit,
+    onClickToServiceOfferingDetailScreen:() -> Unit,
+    getServiceOfferingData:(String) -> Unit,
     getMyServiceOfferings:() -> Unit,
-    onClickToServiceOfferingsDetailScreen:(String) -> Unit,
-    cleanServiceOfferingData:() -> Unit
+    getApplyingServiceOfferings:() -> Unit,
+    updateLikedUsers:(String,String) -> Unit,
+    updateFavoriteUsers:(String,String) -> Unit,
+    onClickHeartAndFavoriteIcon:(String, Boolean, String) -> Unit,
+    cleanServiceOfferingData:() -> Unit,
+    cleanServiceOfferingCreationPreview:() -> Unit
 ){
     val state = rememberPagerState(
-        pageCount = {2},
+        pageCount = {3},
         initialPage = 0
     )
     val currentUser = auth_?.currentUser
@@ -103,9 +112,9 @@ fun JobScreen(
         object: NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
-                if(delta < -50f){
+                if(delta < 0f){
                     isProfileLinkVisible = false
-                }else if(delta > 50f ){
+                }else if(delta > 0f ){
                     isProfileLinkVisible = true
                 }
                 lastScrollOffset += delta
@@ -114,12 +123,12 @@ fun JobScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        val uid = auth_?.currentUser?.uid
-        if(uid != null){
-            startLeadingUserData(uid)
-        }
-    }
+//    LaunchedEffect(Unit) {
+//        val uid = auth_?.currentUser?.uid
+//        if(uid != null){
+//            startLeadingUserData(uid)
+//        }
+//    }
 
 
     Scaffold(
@@ -296,14 +305,34 @@ fun JobScreen(
             ) {
                 when (it) {
                     0 -> RequestServiceScreen(
-                        modifier = modifier
-                            .nestedScroll(nestScrollConnection),
+                        uid = currentUser?.uid,
                         myServiceOfferings = myServiceOfferings,
                         getMyServiceOfferings = getMyServiceOfferings,
-                        onClickToServiceOfferingsDetailScreen = onClickToServiceOfferingsDetailScreen
+                        getServiceOfferingData = getServiceOfferingData,
+                        cleanServiceOfferingCreationPreview = cleanServiceOfferingCreationPreview,
+                        onClickToServiceOfferingDetailScreen = onClickToServiceOfferingDetailScreen,
+                        updateLikedUsers = updateLikedUsers,
+                        updateFavoriteUsers = updateFavoriteUsers,
+                        onClickHeartAndFavoriteIcon = onClickHeartAndFavoriteIcon,
+                        modifier = modifier
+                            .nestedScroll(nestScrollConnection),
                     )
 
                     1 -> ClientScreen(
+                        modifier = modifier
+                            .nestedScroll(nestScrollConnection)
+                    )
+
+                    2 -> ApplyScreen(
+                        uid = currentUser?.uid,
+                        ApplyingServiceOfferings = ApplyingServiceOfferings,
+                        getServiceOfferingData = getServiceOfferingData,
+                        getApplyingServiceOfferings = getApplyingServiceOfferings,
+                        cleanServiceOfferingCreationPreview = cleanServiceOfferingCreationPreview,
+                        onClickToServiceOfferingDetailScreen = onClickToServiceOfferingDetailScreen,
+                        updateLikedUsers = updateLikedUsers,
+                        updateFavoriteUsers = updateFavoriteUsers,
+                        onClickHeartAndFavoriteIcon = onClickHeartAndFavoriteIcon,
                         modifier = modifier
                             .nestedScroll(nestScrollConnection)
                     )
@@ -323,7 +352,8 @@ fun JobTopBarContent(
     val height = systemBarsPadding.calculateTopPadding()
     val scrollPage = listOf(
         stringResource(id = R.string.ScrollPage_worker),
-        stringResource(id = R.string.ScrollPage_client)
+        stringResource(id = R.string.ScrollPage_client),
+        stringResource(id = R.string.ScrollPage_apply)
     )
     val scope = rememberCoroutineScope()
 

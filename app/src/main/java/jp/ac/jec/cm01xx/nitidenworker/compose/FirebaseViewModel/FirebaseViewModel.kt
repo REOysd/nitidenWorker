@@ -29,6 +29,12 @@ class FirebaseViewModel:ViewModel() {
     private val _userData = MutableStateFlow<UserDocument?>(null)
     val userData:StateFlow<UserDocument?> = _userData.asStateFlow()
 
+    private val _applicants = MutableStateFlow<List<UserDocument?>>(emptyList())
+    val applicant:StateFlow<List<UserDocument?>> = _applicants.asStateFlow()
+
+    private val _applyingServiceOfferings = MutableStateFlow<List<PublishData?>>(emptyList())
+    val applyingServiceOfferings:StateFlow<List<PublishData?>> = _applyingServiceOfferings.asStateFlow()
+
     private val _myServiceOfferings = MutableStateFlow<List<PublishData?>>(emptyList())
     val myServiceOfferings = _myServiceOfferings.asStateFlow()
 
@@ -52,6 +58,10 @@ class FirebaseViewModel:ViewModel() {
                 Log.d("startLeadingUserDataError", e.message.toString())
             }
         }
+    }
+
+    fun getApplicants(uids: List<String?>){
+        viewModelScope.launch { _applicants.value = userDataRepository.getApplicants(uids) }
     }
 
     fun updateOnMyProfile(key:String,value:Any?){
@@ -92,6 +102,13 @@ class FirebaseViewModel:ViewModel() {
             _myFavoriteServiceOfferings.value = serviceOfferingRepository.getMyFavoriteServiceOfferings()
         }
     }
+
+    fun getApplyingServiceOfferings(){
+        viewModelScope.launch {
+            _applyingServiceOfferings.value = serviceOfferingRepository.getApplyingServiceOfferings()
+        }
+    }
+
     fun updateServiceOffering(key:String,value:Any?,id:String){
         viewModelScope.launch {
             serviceOfferingRepository.updateServiceOffering(key, value, id)
@@ -142,10 +159,7 @@ class FirebaseViewModel:ViewModel() {
 
     fun updateListTypeOfServiceOffering(id:String?,listType:String){
         viewModelScope.launch {
-            serviceOfferingRepository.updateListTypeOfServiceOffering(
-                id,
-                listType,
-            )
+            serviceOfferingRepository.updateListTypeOfServiceOffering(id, listType)
         }
     }
 

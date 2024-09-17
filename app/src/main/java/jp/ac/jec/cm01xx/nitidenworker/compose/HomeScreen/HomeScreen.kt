@@ -33,7 +33,7 @@ fun HomeScreen(
     serviceOfferings_:StateFlow<List<PublishData?>>,
     getServiceOfferingData:(String) -> Unit,
     onClickToServiceOfferingDetailScreen:() -> Unit,
-    onClickTOProfile:() -> Unit,
+    onClickToProfile:() -> Unit,
     updateLikedUsers:(String,String) -> Unit,
     updateFavoriteUsers:(String,String) -> Unit,
     onClickHeartAndFavoriteIcon:(String, Boolean, String) -> Unit,
@@ -49,7 +49,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             HomeScreenTopBar(
-                onClickToProfile = onClickTOProfile,
+                onClickToProfile = onClickToProfile,
                 cleanServiceOfferingData = cleanServiceOfferingData,
                 modifier = Modifier
                     .statusBarsPadding()

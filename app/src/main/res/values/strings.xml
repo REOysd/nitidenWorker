@@ -58,6 +58,7 @@
     <string name="ServiceRequest">サービスを依頼</string>
     <string name="ScrollPage_worker">Worker</string>
     <string name="ScrollPage_client">Client</string>
+    <string name="ScrollPage_apply">Apply</string>
     <string name="JobTopBarContent_title">MyJob</string>
     <string name="ArrowBack_Icon_description">popBackStackIcon</string>
     <string name="ServiceOfferingCreationTopBar_title">ServiceOfferings</string>
@@ -100,8 +101,13 @@
     <string name="TotalLikes">総いいね数</string>
     <string name="Apply">応募する</string>
     <string name="ListenToTheStory">話を聞いてみる</string>
+    <string name="ConfirmApplicant">応募者を確認</string>
     <string name="ServiceOfferingCreationPreview_TopBar">ServiceOfferingsDetail</string>
     <string name="NumberOfApplying">応募している人数</string>
     <string name="Yes">あり</string>
     <string name="No">なし</string>
+    <string name="Mail">mail</string>
+    <string name="emptyMessageText">現在受信しているメッセージはありません</string>
+    <string name="emptyApplicant">現在応募している人はいません</string>
+    <string name="adoption">採用</string>
 </resources>

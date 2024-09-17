@@ -1,6 +1,5 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen
+package jp.ac.jec.cm01xx.nitidenworker.compose
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,36 +12,35 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen.ServiceOfferingsViewingScreen
 import jp.ac.jec.cm01xx.nitidenworker.PublishData
+import jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen.ServiceOfferingsViewingScreen
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun RequestServiceScreen(
+fun ApplyScreen(
     uid:String?,
-    modifier: Modifier,
-    myServiceOfferings:StateFlow<List<PublishData?>>,
-    getMyServiceOfferings:() -> Unit,
+    ApplyingServiceOfferings: StateFlow<List<PublishData?>>,
     getServiceOfferingData:(String) -> Unit,
+    getApplyingServiceOfferings:() -> Unit,
     cleanServiceOfferingCreationPreview:() -> Unit,
+    onClickToServiceOfferingDetailScreen:() -> Unit,
     updateLikedUsers:(String,String) -> Unit,
     updateFavoriteUsers:(String,String) -> Unit,
     onClickHeartAndFavoriteIcon:(String,Boolean,String) -> Unit,
-    onClickToServiceOfferingDetailScreen:() -> Unit,
-
-    ){
-    val serviceOffering = myServiceOfferings.collectAsState()
+    modifier: Modifier,
+){
+    val applyingServiceOfferings = ApplyingServiceOfferings.collectAsState()
 
     LaunchedEffect(Unit) {
-        getMyServiceOfferings()
+        getApplyingServiceOfferings()
     }
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-    ){
-        items(items = serviceOffering.value){ item ->
+    ) {
+        items(items = applyingServiceOfferings.value) {item ->
             Spacer(modifier = Modifier.height(6.dp))
 
             item?.let { serviceOffering ->

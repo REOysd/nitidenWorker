@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
@@ -89,6 +90,7 @@ class ServiceOfferingRepository(
         return try {
             val querySnapshot = fireStore
                 .collection("ServiceOfferings")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .await()
 
@@ -118,10 +120,7 @@ class ServiceOfferingRepository(
         }
     }
 
-    suspend fun updateListTypeOfServiceOffering(
-        id: String?,
-        listType: String,
-        ) {
+    suspend fun updateListTypeOfServiceOffering(id: String?, listType: String) {
         if (auth.currentUser == null || id == null) {
             Log.d("updateListTypeError", "UID or ID is null")
             return
@@ -134,7 +133,7 @@ class ServiceOfferingRepository(
                 try {
                     fireStore.runTransaction { transaction ->
                         val snapshot = transaction.get(ref)
-                        val currentList = snapshot.get(listType) as? List<String> ?: emptyList()
+                        val currentList: List<String> = snapshot.get(listType) as? List<String> ?: emptyList()
 
                         if (currentUser.uid in currentList) {
                             transaction.update(ref, listType, FieldValue.arrayRemove(currentUser.uid))
@@ -193,6 +192,25 @@ class ServiceOfferingRepository(
             }?: emptyList()
         } catch (e:Exception){
             Log.d("getMyFavoriteServiceOfferingsError",e.message.toString())
+            emptyList()
+        }
+    }
+
+    suspend fun getApplyingServiceOfferings():List<PublishData>{
+        return try {
+            auth.currentUser?.let { user ->
+                val querySnapshot = fireStore
+                    .collection("ServiceOfferings")
+                    .whereArrayContains("applicant",user.uid)
+                    .get()
+                    .await()
+
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(PublishData::class.java)
+                }
+            }?: emptyList()
+        } catch (e:Exception) {
+            Log.d("getApplyingServiceOfferingsError",e.message.toString())
             emptyList()
         }
     }
