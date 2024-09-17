@@ -12,4 +12,6 @@
     <color name="nitidenBlue">#FF45c1FF</color>
     <color name="nitidenLiteBlue">#FF47c6c6</color>
     <color name="RatingStarYellow">#FFFFD700</color>
+    <color name="applyButtonColor">#FFA533</color>
+    <color name="nitidenRed">#FF0000</color>
 </resources>

@@ -32,7 +32,6 @@ class ServiceOfferingsDetailViewingViewModel:ViewModel() {
                     selectedImageAndMovie = _selectImageAndMovie,
                     isShowConfirmDialog = isShowConfirmDialog,
                     isShowSelectedImageAndMovieDialog = isShowSelectedImageAndMovieDialog,
-                    isInitialized = true
                 )
             }
         }
@@ -55,6 +54,12 @@ class ServiceOfferingsDetailViewingViewModel:ViewModel() {
             imageAndMovieIndex = index
         )
     }
+
+    fun changeIsApplied(isApplied: Boolean){
+        _uiState.value = uiState.value.copy(
+            isApplied = isApplied
+        )
+    }
 }
 
 data class ServiceOfferingsDetailViewingUiState(
@@ -64,5 +69,5 @@ data class ServiceOfferingsDetailViewingUiState(
     val imageAndMovieIndex:Int = 0,
     val isShowConfirmDialog:Boolean = false,
     val isShowSelectedImageAndMovieDialog:Boolean = false,
-    val isInitialized:Boolean = false
+    val isApplied:Boolean = false
 )

@@ -45,6 +45,7 @@ data class PublishData(
     val favoriteUserIds:List<String> = listOf(),
     val favoriteCount:Int = 0,
     val applyingCount:Int = 0,
+    val applicant:List<String?> = listOf(),
     val timestamp: Timestamp = Timestamp.now(),
 )
 

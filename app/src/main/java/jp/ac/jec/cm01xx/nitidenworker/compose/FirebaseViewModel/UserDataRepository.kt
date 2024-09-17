@@ -1,13 +1,17 @@
 package jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel
 
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class UserDataRepository(
@@ -74,5 +78,28 @@ class UserDataRepository(
         } catch (e:Exception){
             Log.d("updateUonOtherProfileError",e.message.toString())
         }
+    }
+
+    suspend fun getApplicants(uids:List<String?>):List<UserDocument>{
+        val userDocuments = mutableListOf<UserDocument>()
+
+        try {
+            for(uid in uids){
+                uid?.let{
+                    val querySnapshot = fireStore
+                        .collection("Users")
+                        .document(it)
+                        .get()
+                        .await()
+
+                    querySnapshot.toObject(UserDocument::class.java)?.let { userDocument ->
+                        userDocuments.add(userDocument)
+                    }
+                }
+            }
+        } catch (e:Exception){
+            Log.d("getApplicantsError",e.message.toString())
+        }
+        return userDocuments
     }
 }

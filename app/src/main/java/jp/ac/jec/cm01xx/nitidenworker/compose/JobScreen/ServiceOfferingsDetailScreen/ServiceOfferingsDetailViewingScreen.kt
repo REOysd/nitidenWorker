@@ -48,7 +48,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -100,8 +99,10 @@ fun ServiceOfferingsDetailViewingScreen(
     onClickToPopBackStack:() -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     onClickToProfile: () -> Unit,
+    onClickToApplicantScreen: () -> Unit,
     createThumbnail: suspend (String?) -> Bitmap?,
     updateLikedAndFavoriteUsers:(String,String) -> Unit,
+    addApplicant:(String,String) -> Unit,
     onClickHeartAndFavoriteIcon:(String, Boolean, String) -> Unit,
     modifier: Modifier
 ){
@@ -126,9 +127,13 @@ fun ServiceOfferingsDetailViewingScreen(
         bottomBar = {
             if (uid != serviceOfferingData?.thisUid) {
                 NavigateFloatingActionButtonOnViewing(
-                    changeConfirmDialog = {
-                        viewModel.changeIsShowConfirmDialog(it)
-                    }
+                    myUid = uid,
+                    uiState = uiState,
+                    changeConfirmDialog = { viewModel.changeIsShowConfirmDialog(it) },
+                )
+            }else{
+                NavigateFloatingActionButtonOnMyViewing(
+                    onClickToApplicantScreen = onClickToApplicantScreen
                 )
             }
         }
@@ -149,12 +154,15 @@ fun ServiceOfferingsDetailViewingScreen(
 
         if (uiState.isShowConfirmDialog) {
             ConfirmDialog(
+                id = uiState.serviceOfferingData?.id,
                 onDismiss = {
                     viewModel.changeIsShowConfirmDialog(false)
                 },
                 onConfirm = {
                     viewModel.changeIsShowConfirmDialog(false)
                 },
+                addApplicant = addApplicant,
+                changeIsApplied = viewModel::changeIsApplied
             )
         }
 
@@ -572,31 +580,113 @@ fun ViewingMyProfileItems(
 
 @Composable
 fun NavigateFloatingActionButtonOnViewing(
-    changeConfirmDialog:(Boolean) -> Unit
+    myUid:String?,
+    uiState: ServiceOfferingsDetailViewingUiState,
+    changeConfirmDialog:(Boolean) -> Unit,
 ){
 
+    uiState.serviceOfferingData?.let{ data ->
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .padding(top = 20.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = 8.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        if(data.applicant.contains(myUid) || uiState.isApplied) {
+
+                        }else{
+                            changeConfirmDialog(true)
+                        }
+                    },
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(53.dp)
+                        .padding(horizontal = 8.dp),
+                    containerColor = if(data.applicant.contains(myUid) || uiState.isApplied){
+                        Color.Gray
+                    }else {
+                        colorResource(id = R.color.nitidenGreen)
+                    },
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.Apply),
+                        fontWeight = FontWeight.ExtraBold,
+                        color = if(data.applicant.contains(myUid) || uiState.isApplied){
+                            Color.LightGray
+                        }else{
+                            Color.White
+                        },
+                        textAlign = TextAlign.Center,
+                        fontSize = 15.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Box(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = 8.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                    },
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(53.dp)
+                        .padding(horizontal = 8.dp),
+                    containerColor = colorResource(id = R.color.nitidenBlue),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.ListenToTheStory),
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        fontSize = 15.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NavigateFloatingActionButtonOnMyViewing(
+    onClickToApplicantScreen:() -> Unit
+) {
     Row(
         modifier = Modifier
             .padding(horizontal = 12.dp)
             .padding(top = 20.dp)
+            .background(Color.White)
     ){
+        Spacer(modifier = Modifier.weight(1f))
+
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
                 .padding(bottom = 8.dp)
+                .background(Color.White)
         ) {
             FloatingActionButton(
                 onClick = {
-                    changeConfirmDialog(true)
+                    onClickToApplicantScreen()
                 },
                 modifier = Modifier
-                    .width(200.dp)
+                    .width(300.dp)
                     .height(53.dp)
                     .padding(horizontal = 8.dp),
-                containerColor = colorResource(id = R.color.nitidenGreen),
+                containerColor = colorResource(id = R.color.applyButtonColor),
             ) {
                 Text(
-                    text = stringResource(id = R.string.Apply),
+                    text = stringResource(id = R.string.ConfirmApplicant),
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
@@ -606,35 +696,15 @@ fun NavigateFloatingActionButtonOnViewing(
         }
 
         Spacer(modifier = Modifier.weight(1f))
-
-        Box(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .padding(bottom = 8.dp)
-        ) {
-            FloatingActionButton(
-                onClick = {
-                },
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(53.dp)
-                    .padding(horizontal = 8.dp),
-                containerColor = colorResource(id = R.color.nitidenBlue),
-            ) {
-                Text(
-                    text = stringResource(id = R.string.ListenToTheStory),
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    fontSize = 15.sp
-                )
-            }
-        }
     }
 }
 
+
 @Composable
 fun ConfirmDialog(
+    id:String?,
+    addApplicant: (String, String) -> Unit,
+    changeIsApplied:(Boolean) -> Unit,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
@@ -712,6 +782,8 @@ fun ConfirmDialog(
                                 delay(600)
                                 onConfirm()
                                 showConfirmation = false
+                                id?.let{ addApplicant(it,"applicant") }
+                                changeIsApplied(true)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
