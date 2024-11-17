@@ -34,6 +34,7 @@ import jp.ac.jec.cm01xx.nitidenworker.compose.MessageScreen.MessageScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.SearchScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.ServiceOfferingsDetailViewingScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.serviceOfferingCreateScreen.ServiceOfferingCreationScreen
+import jp.ac.jec.cm01xx.nitidenworker.compose.MessageScreen.IndividualMessageScreen
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserScreen
 import kotlinx.coroutines.launch
 
@@ -76,12 +77,14 @@ fun Navigation(
                 exit = slideOutVertically (targetOffsetY = {it})
             ) {
                 if(backStack?.destination?.route != NavigationScreen.serviceOfferingsDetail.name){
-                    BottomNavigationBarContext(
-                        selectedItemIndex = selectedItemIndex,
-                        onSelectedItemIndexChange = { navigationViewModel.setSelectedItemIndex(it) },
-                        navigationItems = navigationViewModel.navigationItems,
-                        navHostController = navHostController
-                    )
+                    if(backStack?.destination?.route != NavigationScreen.Message.name){
+                        BottomNavigationBarContext(
+                            selectedItemIndex = selectedItemIndex,
+                            onSelectedItemIndexChange = { navigationViewModel.setSelectedItemIndex(it) },
+                            navigationItems = navigationViewModel.navigationItems,
+                            navHostController = navHostController
+                        )
+                    }
                 }else{
                     if(serviceOfferingData != null){
                         serviceOfferingData?.let {
@@ -155,11 +158,15 @@ fun Navigation(
             }
 
             composable(NavigationScreen.Message.name){
-                MessageScreen(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .nestedScroll(navigationViewModel.nestScrollConnection)
+                IndividualMessageScreen(
+                    sendMessage = firebaseViewModel::sendMessage
                 )
+
+//                MessageScreen(
+//                    modifier = Modifier
+//                        .padding(innerPadding)
+//                        .nestedScroll(navigationViewModel.nestScrollConnection)
+//                )
             }
             composable(NavigationScreen.MyJob.name){
                 JobScreen(

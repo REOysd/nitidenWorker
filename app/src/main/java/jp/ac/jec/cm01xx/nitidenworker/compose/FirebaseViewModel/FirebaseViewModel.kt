@@ -25,6 +25,7 @@ class FirebaseViewModel:ViewModel() {
     val fireStorage = FirebaseStorage.getInstance()
     val userDataRepository = UserDataRepository(auth, fireStore, fireStorage)
     val serviceOfferingRepository = ServiceOfferingRepository(auth,fireStore, fireStorage)
+    val messageRepository = MessageRepository(auth,fireStore,fireStorage)
 
     private val _userData = MutableStateFlow<UserDocument?>(null)
     val userData:StateFlow<UserDocument?> = _userData.asStateFlow()
@@ -204,5 +205,9 @@ class FirebaseViewModel:ViewModel() {
 
     private suspend fun uploadMovieThumbnail(thumbnail:Bitmap?):String?{
         return serviceOfferingRepository.uploadMovieThumbnail(thumbnail)
+    }
+
+    fun sendMessage(conversationId:String,messages:Messages) {
+//        viewModelScope.launch { messageRepository.sendMessage(conversationId,messages) }
     }
 }

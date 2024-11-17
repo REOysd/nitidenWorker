@@ -763,9 +763,7 @@ fun ServiceOfferingCreationScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
-                                            contentDescription = stringResource(
-                                                id = R.string.ServiceOfferingCreationScreen_deleteImageIcon_description
-                                            )
+                                            contentDescription = stringResource(id = R.string.ServiceOfferingCreationScreen_deleteImageIcon_description)
                                         )
                                     }
                                 }
@@ -776,9 +774,7 @@ fun ServiceOfferingCreationScreen(
                                 ) {
                                     Image(
                                         painter = painterResource(id = R.drawable.kamera_icon_by_icons8),
-                                        contentDescription = stringResource(
-                                            id = R.string.ServiceOfferingCreationScreen_addImageIcon_description
-                                        ),
+                                        contentDescription = stringResource(id = R.string.ServiceOfferingCreationScreen_addImageIcon_description),
                                         modifier = Modifier
                                             .size(60.dp)
                                             .align(Alignment.CenterHorizontally)

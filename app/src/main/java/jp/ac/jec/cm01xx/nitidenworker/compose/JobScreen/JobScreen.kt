@@ -70,6 +70,7 @@ import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.compose.ApplyScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -125,7 +126,7 @@ fun JobScreen(
 
 //    LaunchedEffect(Unit) {
 //        val uid = auth_?.currentUser?.uid
-//        if(uid != null){
+//        if (uid != null) {
 //            startLeadingUserData(uid)
 //        }
 //    }
@@ -214,9 +215,9 @@ fun JobScreen(
 
                                 Spacer(modifier = Modifier.height(8.dp))
 
-                                userData?.job?.let {
+                                currentUser?.uid?.let {
                                     Text(
-                                        text = it,
+                                        text = "ID:${it}",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 12.sp,
                                         color = Color.Gray.copy(alpha = 0.5f)
