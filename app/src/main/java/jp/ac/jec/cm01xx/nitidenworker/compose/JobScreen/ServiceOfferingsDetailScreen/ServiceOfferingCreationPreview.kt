@@ -37,6 +37,8 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,7 +48,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,14 +61,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -78,16 +83,19 @@ import com.google.firebase.auth.FirebaseUser
 import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
+import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.serviceOfferingCreateScreen.VideoThumbnail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ServiceOfferingCreationPreview(
-    viewModel: ServiceOfferingsDetailViewModel = viewModel(),
+    serviceOfferingsCreationViewModel: ServiceOfferingsCreationViewModel = viewModel(),
     firebaseViewModel: FirebaseViewModel,
     data: ServiceOfferingData,
     onClickToPopBackStack:() -> Unit,
@@ -96,8 +104,8 @@ fun ServiceOfferingCreationPreview(
 ){
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
-    val selectImageAndMovie by viewModel.selectImageAndMovie.collectAsState()
+    val uiState by serviceOfferingsCreationViewModel.uiState.collectAsState()
+    val selectImageAndMovie by serviceOfferingsCreationViewModel.selectImageAndMovie.collectAsState()
     val selectImageAndMoviePagerState = rememberPagerState(
         pageCount = {uiState.selectImageAndMoviePageCount},
         initialPage = 0
@@ -106,7 +114,7 @@ fun ServiceOfferingCreationPreview(
     val userData by firebaseViewModel.userData.collectAsState()
     
     LaunchedEffect(data) {
-        viewModel.initializeData(data)
+        serviceOfferingsCreationViewModel.initializeData(data)
     }
 
     Scaffold(
@@ -132,6 +140,8 @@ fun ServiceOfferingCreationPreview(
                 selectImageAndMovie = selectImageAndMovie,
                 context = context,
                 selectImageAndMoviePageCount = uiState.selectImageAndMoviePageCount,
+                changeIsShowSelectedImageAndMovieDialog = serviceOfferingsCreationViewModel::changeIsShowSelectedImageAndMovieDialog,
+                changeImageAndMovieIndex = serviceOfferingsCreationViewModel::changeImageAndMovieIndex
             )
 
             TitleAndSubTitleBar(
@@ -159,6 +169,17 @@ fun ServiceOfferingCreationPreview(
                 description = data.description,
                 precautions = data.precautions ?: "",
             )
+
+            if(uiState.isShowImageDialog){
+                SelectedImageAndMovieDialog(
+                    changeIsShowSelectedImageAndMovieDialog = {
+                        serviceOfferingsCreationViewModel.changeIsShowSelectedImageAndMovieDialog(it)
+                    },
+                    images = uiState.images,
+                    selectedImageAndMovie = selectImageAndMovie,
+                    imageAndMovieIndex = uiState.imageAndMovieIndex
+                )
+            }
         }
     }
 }
@@ -281,7 +302,7 @@ fun RatingStar(
                         Icon(
                             imageVector = Icons.Filled.Star,
                             contentDescription = null,
-                            tint = Color(0xFFFFD700),
+                            tint = colorResource(id = R.color.RatingStarYellow),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -298,7 +319,7 @@ fun RatingStar(
             }
         }
         Text(
-            text = "（完了率:${completionRate}）",
+            text = "（${stringResource(id = R.string.UserProfileScreen_completionRate)}:${completionRate}）",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
                 .padding(start = 4.dp)
@@ -323,7 +344,7 @@ fun HeartIcon(
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (isLiked) 0.6f else 0f,
-        animationSpec = tween(durationMillis = 500)
+        animationSpec = tween(durationMillis = 500), label = ""
     )
 
     // ここでアイコンタップの誤作動が起きてる（イイね回数がおかしくなる）
@@ -336,10 +357,10 @@ fun HeartIcon(
         onClick = {
             if(uid != serviceUid && !isProgress){
                 isProgress = true
-                if(isLiked == true){
-                    isLiked = false
+                isLiked = if(isLiked){
+                    false
                 }else{
-                    isLiked = true
+                    true
                 }
 
                 scope.launch{
@@ -382,7 +403,7 @@ fun FavoriteIcon(
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (isFavorite) 1f else 0f,
-        animationSpec = tween(durationMillis = 900)
+        animationSpec = tween(durationMillis = 900), label = ""
     )
 
     // ここでアイコンタップの誤作動が起きてる（お気に入り回数がおかしくなる）
@@ -395,11 +416,11 @@ fun FavoriteIcon(
         onClick = {
             if(uid != serviceUid && !isProgress){
                 isProgress = true
-               if(isFavorite == true){
-                   isFavorite = false
-               }else{
-                   isFavorite = true
-               }
+                isFavorite = if(isFavorite){
+                    false
+                }else{
+                    true
+                }
 
                 scope.launch{
                     try {
@@ -427,40 +448,51 @@ fun FavoriteIcon(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ImageAndVideoThumbnail(
+private fun ImageAndVideoThumbnail(
+    context: Context,
     scope:CoroutineScope,
     selectImageAndMoviePagerState:PagerState,
     images:List<Uri?>,
     selectImageAndMovie:List<Uri?>,
-    context: Context,
     selectImageAndMoviePageCount:Int,
+    changeIsShowSelectedImageAndMovieDialog: (Boolean) -> Unit,
+    changeImageAndMovieIndex:(Int) -> Unit,
     ) {
 
     Box(
         modifier = Modifier
-            .height(170.dp)
             .background(Color.Black)
-            .clickable(
-                onClick = {}
-            )
+            .height(170.dp),
     ){
-        if (selectImageAndMovie.isEmpty() == true) {
-            Image(
-                painter = painterResource(id = R.drawable.nitiiden_icon),
-                contentDescription = "normalImage",
-                contentScale = ContentScale.Fit,
+        if (selectImageAndMovie.isEmpty()) {
+            Card(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 10.dp, end = 10.dp)
-            )
+                    .fillMaxSize(),
+                shape = RectangleShape,
+                colors = CardDefaults.cardColors(Color.Black),
+                onClick = {
+                    changeIsShowSelectedImageAndMovieDialog(true)
+                }
+            ){
+                Box {
+                    Image(
+                        painter = painterResource(id = R.drawable.nitiiden_icon),
+                        contentDescription = stringResource(id = R.string.ViewingImage_default_description),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 10.dp, end = 10.dp)
+                    )
 
-            Text(
-                text = "※画像、動画を選択しなかった場合,こちらの画像がデフォルトで表示されます。",
-                color = Color.White.copy(alpha = 0.5f),
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-            )
+                    Text(
+                        text = stringResource(id = R.string.ViewingImage_default_text),
+                        color = Color.White.copy(alpha = 0.5f),
+                        fontSize = 13.sp,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                    )
+                }
+            }
         } else {
             HorizontalPager(
                 state = selectImageAndMoviePagerState,
@@ -469,7 +501,7 @@ fun ImageAndVideoThumbnail(
                     .height(200.dp)
             ) { page ->
 
-                images.let{
+                images.let {
                     if (it.size <= page) {
                         var thumbnail by rememberSaveable { mutableStateOf<Bitmap?>(null) }
 
@@ -491,42 +523,70 @@ fun ImageAndVideoThumbnail(
                         }
 
                         thumbnail?.let {
-                            Box(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                )
-
-                                IconButton(
-                                    onClick = { },
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .size(50.dp),
-                                    colors = IconButtonDefaults.iconButtonColors(Color.White)
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                shape = RectangleShape,
+                                colors = CardDefaults.cardColors(Color.Black),
+                                onClick = {
+                                    changeIsShowSelectedImageAndMovieDialog(true)
+                                    changeImageAndMovieIndex(page)
+                                }
+                            ){
+                                Box(
+                                    modifier = Modifier.fillMaxSize()
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = "play video",
+                                    Image(
+                                        bitmap = it.asImageBitmap(),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Fit,
                                         modifier = Modifier
-                                            .size(40.dp),
-                                        tint = Color.Black
+                                            .fillMaxSize()
                                     )
+
+                                    IconButton(
+                                        onClick = {
+                                            changeIsShowSelectedImageAndMovieDialog(true)
+                                            changeImageAndMovieIndex(page)
+                                        },
+                                        modifier = Modifier
+                                            .align(Alignment.Center)
+                                            .size(50.dp),
+                                        colors = IconButtonDefaults.iconButtonColors(Color.White)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.PlayArrow,
+                                            contentDescription = stringResource(
+                                                id = R.string.ViewingVideo_playVideoIcon_description
+                                            ),
+                                            modifier = Modifier
+                                                .size(40.dp),
+                                            tint = Color.Black
+                                        )
+                                    }
                                 }
                             }
                         }
+
                     } else {
-                        AsyncImage(
-                            model = selectImageAndMovie[page],
-                            contentDescription = "selectImageAndMovie",
-                            contentScale = ContentScale.Fit,
+                        Card(
                             modifier = Modifier
-                                .fillMaxSize()
-                        )
+                                .fillMaxSize(),
+                            shape = RectangleShape,
+                            colors = CardDefaults.cardColors(Color.Black),
+                            onClick = {
+                                changeIsShowSelectedImageAndMovieDialog(true)
+                                changeImageAndMovieIndex(page)
+                            }
+                        ){
+                            AsyncImage(
+                                model = selectImageAndMovie[page],
+                                contentDescription = stringResource(id = R.string.SelectedImageAndMovie_description),
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            )
+                        }
                     }
                 }
             }
@@ -565,10 +625,10 @@ fun ImageAndVideoThumbnail(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MyProfileItems(
+private fun MyProfileItems(
     currentUser:FirebaseUser?,
     context:Context,
-    userData:userDocument?,
+    userData:UserDocument?,
 ){
     Row(
         modifier = Modifier
@@ -598,7 +658,7 @@ fun MyProfileItems(
                     .data(it)
                     .crossfade(true)
                     .build(),
-                contentDescription = "ProfileImage",
+                contentDescription = stringResource(id = R.string.ProfileImage_description),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(60.dp)
@@ -631,7 +691,7 @@ fun MyProfileItems(
 
             userData?.job?.let {
                 Text(
-                    text = "学科 : ${it}",
+                    text = "${stringResource(id = R.string.UserProfileScreen_department)} : $it",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -644,7 +704,7 @@ fun MyProfileItems(
 
             userData?.numberOfAchievement?.let {
                 Text(
-                    text = "実績数 : ${it}",
+                    text = "${stringResource(id = R.string.UserProfileScreen_achievements)} : $it",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -658,7 +718,7 @@ fun MyProfileItems(
 
             userData?.totalLikes?.let {
                 Text(
-                    text = "総イイね数 : ${it}",
+                    text = "${stringResource(id = R.string.Apply)} : $it",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = Color.Gray,
@@ -688,7 +748,7 @@ fun MyProfileItems(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                contentDescription = "ToProfile",
+                contentDescription = stringResource(id = R.string.ArrowBack_Icon_description),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(24.dp)
@@ -715,7 +775,7 @@ fun BottomItemBar(
                 .padding(start = 10.dp, end = 20.dp)
         ){
             Text(
-                text = "カテゴリー",
+                text = stringResource(id = R.string.category),
                 fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier
@@ -728,11 +788,11 @@ fun BottomItemBar(
                 text = category,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = Color(0xFF45c152),
+                color = colorResource(id = R.color.nitidenGreen),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .border(
-                        color = Color(0xFF45c152),
+                        color = colorResource(id = R.color.nitidenGreen),
                         width = 1.dp,
                         shape = RoundedCornerShape(5.dp),
                     )
@@ -748,7 +808,7 @@ fun BottomItemBar(
                 .padding(start = 10.dp, end = 20.dp)
         ){
             Text(
-                text = "応募してる人数",
+                text = stringResource(id = R.string.NumberOfApplying),
                 fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier
@@ -758,7 +818,7 @@ fun BottomItemBar(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "${applyingCount}",
+                text = "$applyingCount",
                 fontWeight = FontWeight.Bold,
                 fontSize = 17.sp,
                 modifier = Modifier
@@ -766,7 +826,7 @@ fun BottomItemBar(
             )
 
             Text(
-                text = "　人",
+                text = "　${stringResource(id = R.string.NumberOfPeople)}",
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
                 modifier = Modifier
@@ -784,7 +844,7 @@ fun BottomItemBar(
                 .padding(start = 10.dp, end = 20.dp)
         ){
             Text(
-                text = "予想お届け日数",
+                text = stringResource(id = R.string.deliveryDays),
                 fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier
@@ -802,7 +862,7 @@ fun BottomItemBar(
             )
 
             Text(
-                text = "　日",
+                text = "　${stringResource(id = R.string.deliveryDays_day)}",
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
                 modifier = Modifier
@@ -818,7 +878,7 @@ fun BottomItemBar(
                 .padding(start = 10.dp, end = 22.dp)
         ){
             Text(
-                text = "外部サイトでのビデオチャット",
+                text = stringResource(id = R.string.ServiceOfferingCreationScreen_videoChat),
                 fontWeight = FontWeight.W500,
                 fontSize = 13.sp,
                 modifier = Modifier
@@ -828,7 +888,7 @@ fun BottomItemBar(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = if(checkBoxState) "あり" else "なし",
+                text = if(checkBoxState) stringResource(id = R.string.Yes) else stringResource(id = R.string.No),
                 fontWeight = FontWeight.Bold,
                 fontSize = 17.sp,
                 modifier = Modifier
@@ -844,7 +904,7 @@ fun BottomItemBar(
                 .padding(start = 10.dp, end = 10.dp)
         ) {
             Text(
-                text = "サービス内容の説明",
+                text = stringResource(id = R.string.ServiceOfferingCreationScreen_descriptionOfServices),
                 fontWeight = FontWeight.W900,
                 fontSize = 16.sp,
                 modifier = Modifier
@@ -878,7 +938,7 @@ fun BottomItemBar(
                     .padding(start = 10.dp, end = 10.dp)
             ) {
                 Text(
-                    text = "注意事項の説明",
+                    text = stringResource(id = R.string.ServiceOfferingCreationScreen_precautions),
                     fontWeight = FontWeight.W900,
                     fontSize = 16.sp,
                     modifier = Modifier
@@ -905,6 +965,47 @@ fun BottomItemBar(
         }
     }
 }
+
+@Composable
+fun SelectedImageAndMovieDialog(
+    changeIsShowSelectedImageAndMovieDialog:(Boolean) -> Unit,
+    images:List<Uri?>,
+    selectedImageAndMovie:List<Uri?>,
+    imageAndMovieIndex:Int
+){
+    Dialog(
+        onDismissRequest = { changeIsShowSelectedImageAndMovieDialog(false) }
+    ){
+        if (selectedImageAndMovie.isEmpty()){
+            val painter = painterResource(id = R.drawable.nitiiden_icon)
+            val zoomState = rememberZoomState(contentSize = painter.intrinsicSize)
+
+            Image(
+                painter = painter,
+                contentDescription = stringResource(id = R.string.ViewingImage_default_description),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zoomable(zoomState),
+            )
+        }else if(images.size <= imageAndMovieIndex){
+            selectedImageAndMovie[imageAndMovieIndex]?.let{
+                VideoThumbnail(it)
+            }
+        }else{
+            val zoomState = rememberZoomState()
+
+            AsyncImage(
+                model = selectedImageAndMovie[imageAndMovieIndex],
+                contentDescription = stringResource(id = R.string.SelectedImageAndMovie_description),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .zoomable(zoomState),
+            )
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable

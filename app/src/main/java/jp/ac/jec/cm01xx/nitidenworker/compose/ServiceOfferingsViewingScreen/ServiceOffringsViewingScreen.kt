@@ -17,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jp.ac.jec.cm01xx.nitidenworker.publishData
+import jp.ac.jec.cm01xx.nitidenworker.R
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
 
 @Composable
 fun ServiceOfferingsViewingScreen(
@@ -28,7 +30,7 @@ fun ServiceOfferingsViewingScreen(
     itemUid:String,
     likedUsers:List<String?>?,
     favoriteUsers:List<String?>?,
-    serviceOfferings: publishData?,
+    serviceOfferings: PublishData?,
     isAuthDataVisible:Boolean,
     serviceOfferingsViewingViewModel:ServiceOfferingsViewingViewModel =
         ServiceOfferingsViewingViewModel(serviceOfferings),
@@ -142,7 +144,7 @@ fun ServiceOfferingsViewingTitle(
     modifier: Modifier
 ){
     Text(
-        text = "更新日：${timeStamp}",
+        text = "${stringResource(id = R.string.ServiceOfferingsViewingTitle_updateDate)}：${timeStamp}",
         color = Color.Gray,
         fontSize = 8.sp,
         modifier = modifier

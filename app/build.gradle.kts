@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -39,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -63,8 +65,6 @@ dependencies {
     implementation(libs.androidx.media3.common)
     implementation(libs.androidx.media3.ui)
     implementation(libs.volley)
-    implementation(libs.firebase.storage)
-    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,10 +72,15 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation("androidx.compose.ui:ui-tooling:1.4.2")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.4.2")
+
 
     //Firebase
     implementation(libs.firebase.auth)
-    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.storage.ktx)
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation(libs.firebase.firestore)
 
@@ -98,4 +103,7 @@ dependencies {
 
     //lottie
     implementation ("com.airbnb.android:lottie-compose:6.4.1")
+
+    //Zoomable(ライセンスのコピーをアプリに含める必要があります)
+    implementation ("net.engawapg.lib:zoomable:1.6.2")
 }

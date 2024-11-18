@@ -17,6 +17,5 @@ fun ClientScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ){
-        Text(text = "dfsdaff")
     }
 }

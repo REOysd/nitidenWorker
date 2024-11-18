@@ -2,8 +2,9 @@ package jp.ac.jec.cm01xx.nitidenworker
 
 import android.net.Uri
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.ServerTimestamp
 
-data class userDocument(
+data class UserDocument(
     val uid:String = "",
     val mail:String = "",
     val name:String = "",
@@ -14,10 +15,11 @@ data class userDocument(
     val selfPresentation:String = "",
     val urls:List<String> = emptyList(),
     val totalLikes:Int = 0,
+    @ServerTimestamp
     val timeStamp: Timestamp = Timestamp.now()
 )
 
-data class publishData(
+data class PublishData(
     val id:String = "",
     val thisUid:String = "",
     val email:String = "",
@@ -43,6 +45,7 @@ data class publishData(
     val favoriteUserIds:List<String> = listOf(),
     val favoriteCount:Int = 0,
     val applyingCount:Int = 0,
+    val applicant:List<String?> = listOf(),
     val timestamp: Timestamp = Timestamp.now(),
 )
 

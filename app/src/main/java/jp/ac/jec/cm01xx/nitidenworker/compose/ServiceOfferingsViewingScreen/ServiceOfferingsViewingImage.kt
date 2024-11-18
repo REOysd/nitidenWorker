@@ -25,7 +25,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,12 +61,12 @@ fun RecruitmentBadge(
     modifier: Modifier
 ){
     Card(
-        colors = CardDefaults.cardColors(Color(0xFF47c6c6)),
+        colors = CardDefaults.cardColors(colorResource(id = R.color.nitidenLiteBlue)),
         shape = RoundedCornerShape(4.dp),
         modifier = modifier
     ) {
         Text(
-            text = "現在募集中!!",
+            text = stringResource(id = R.string.RecruitmentBadge_wanted),
             color = Color.White,
             fontSize = 8.sp,
             fontWeight = FontWeight.ExtraBold,
@@ -133,7 +135,7 @@ fun MovieThumbnail(selectMovieThumbnail:String?){
                     .data(selectMovieThumbnail)
                     .crossfade(true)
                     .build(),
-                contentDescription = "MovieThumbnail",
+                contentDescription = stringResource(id = R.string.MovieThumbnail_description),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
@@ -149,7 +151,7 @@ fun MovieThumbnail(selectMovieThumbnail:String?){
             ) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "play video",
+                    contentDescription = stringResource(id = R.string.MovieThumbnail_IconButton_description),
                     modifier = Modifier
                         .size(20.dp),
                     tint = Color.Black

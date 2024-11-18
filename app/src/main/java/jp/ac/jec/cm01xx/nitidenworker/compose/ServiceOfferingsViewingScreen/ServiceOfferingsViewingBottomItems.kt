@@ -17,9 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.FavoriteIcon
 import jp.ac.jec.cm01xx.nitidenworker.compose.JobScreen.ServiceOfferingsDetailScreen.HeartIcon
 
@@ -127,7 +130,7 @@ fun CategoryItem(
             .height(45.dp)
     ){
         Text(
-            text = "カテゴリー ：",
+            text = "${stringResource(id = R.string.category)} ：",
             fontSize = 10.sp,
             color = Color.Gray,
             modifier = Modifier
@@ -140,11 +143,11 @@ fun CategoryItem(
             text = category,
             fontWeight = FontWeight.Bold,
             fontSize = 10.sp,
-            color = Color(0xFF45c152),
+            color = colorResource(id = R.color.nitidenGreen),
             modifier = Modifier
                 .padding(top = 9.dp)
                 .border(
-                    color = Color(0xFF45c152),
+                    color = colorResource(id = R.color.nitidenGreen),
                     width = 1.dp,
                     shape = RoundedCornerShape(5.dp),
                 )
@@ -163,7 +166,7 @@ fun DeliveryDaysItem(
         modifier = modifier
     ){
         Text(
-            text = "予定お届け日数：",
+            text = "${deliveryDays}：",
             fontSize = 10.sp,
             color = Color.Gray,
             modifier = Modifier
@@ -180,7 +183,7 @@ fun DeliveryDaysItem(
         )
 
         Text(
-            text = "日",
+            text = stringResource(id = R.string.deliveryDays_day),
             fontSize = 10.sp,
             color = Color.Gray,
             modifier = Modifier
@@ -198,7 +201,7 @@ fun ApplyingItem(
         modifier = modifier
     ){
         Text(
-            text = "応募人数：",
+            text = "${stringResource(id = R.string.NumberOfApplications)}：",
             fontSize = 10.sp,
             color = Color.Gray,
             modifier = Modifier
@@ -217,7 +220,7 @@ fun ApplyingItem(
         )
 
         Text(
-            text = "人",
+            text = stringResource(id = R.string.NumberOfPeople),
             fontSize = 10.sp,
             color = Color.Gray,
             modifier = Modifier

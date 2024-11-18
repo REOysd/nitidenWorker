@@ -10,10 +10,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
-import jp.ac.jec.cm01xx.nitidenworker.publishData
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
@@ -32,7 +33,7 @@ class ServiceOfferingRepository(
     suspend fun publishServiceOfferings(
         serviceOfferingData: ServiceOfferingData,
         context: Context,
-        userData:StateFlow<userDocument?>
+        userData:StateFlow<UserDocument?>
     ){
         try{
             val id:String = UUID.randomUUID().toString()
@@ -46,7 +47,7 @@ class ServiceOfferingRepository(
                 movieThumbnail = uploadMovieThumbnail(_movieThumbnail)
             }
 
-            val publishData = publishData(
+            val publishData = PublishData(
                 id = id,
                 thisUid = auth.currentUser?.uid.toString(),
                 email = auth.currentUser?.email.toString(),
@@ -85,15 +86,16 @@ class ServiceOfferingRepository(
         }
     }
 
-    suspend fun getServiceOfferings():List<publishData>{
+    suspend fun getServiceOfferings():List<PublishData>{
         return try {
             val querySnapshot = fireStore
                 .collection("ServiceOfferings")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .await()
 
             querySnapshot.documents.mapNotNull { document ->
-                document.toObject(publishData::class.java)
+                document.toObject(PublishData::class.java)
             }
 
         } catch (e:Exception) {
@@ -118,10 +120,7 @@ class ServiceOfferingRepository(
         }
     }
 
-    suspend fun updateListTypeOfServiceOffering(
-        id: String?,
-        listType: String,
-        ) {
+    suspend fun updateListTypeOfServiceOffering(id: String?, listType: String) {
         if (auth.currentUser == null || id == null) {
             Log.d("updateListTypeError", "UID or ID is null")
             return
@@ -134,7 +133,7 @@ class ServiceOfferingRepository(
                 try {
                     fireStore.runTransaction { transaction ->
                         val snapshot = transaction.get(ref)
-                        val currentList = snapshot.get(listType) as? List<String> ?: emptyList()
+                        val currentList: List<String> = snapshot.get(listType) as? List<String> ?: emptyList()
 
                         if (currentUser.uid in currentList) {
                             transaction.update(ref, listType, FieldValue.arrayRemove(currentUser.uid))
@@ -159,7 +158,7 @@ class ServiceOfferingRepository(
         getServiceOfferings()
     }
 
-    suspend fun getMyServiceOfferings():List<publishData>{
+    suspend fun getMyServiceOfferings():List<PublishData>{
         return try{
             auth.currentUser?.let { user ->
                 val querySnapshot = fireStore
@@ -169,7 +168,7 @@ class ServiceOfferingRepository(
                     .await()
 
                 querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(publishData::class.java)
+                    document.toObject(PublishData::class.java)
                 }
             }?: emptyList()
         }catch (e:Exception){
@@ -178,7 +177,7 @@ class ServiceOfferingRepository(
         }
     }
 
-    suspend fun getMyFavoriteServiceOfferings():List<publishData>{
+    suspend fun getMyFavoriteServiceOfferings():List<PublishData>{
         return try {
             auth.currentUser?.let { user ->
                 val querySnapshot = fireStore
@@ -188,7 +187,7 @@ class ServiceOfferingRepository(
                     .await()
 
                 querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(publishData::class.java)
+                    document.toObject(PublishData::class.java)
                 }
             }?: emptyList()
         } catch (e:Exception){
@@ -197,7 +196,26 @@ class ServiceOfferingRepository(
         }
     }
 
-    suspend fun getServiceOfferingData(id:String):publishData? {
+    suspend fun getApplyingServiceOfferings():List<PublishData>{
+        return try {
+            auth.currentUser?.let { user ->
+                val querySnapshot = fireStore
+                    .collection("ServiceOfferings")
+                    .whereArrayContains("applicant",user.uid)
+                    .get()
+                    .await()
+
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(PublishData::class.java)
+                }
+            }?: emptyList()
+        } catch (e:Exception) {
+            Log.d("getApplyingServiceOfferingsError",e.message.toString())
+            emptyList()
+        }
+    }
+
+    suspend fun getServiceOfferingData(id:String):PublishData? {
         return try{
             auth.currentUser?.let {
                 val querySnapshot = fireStore
@@ -207,7 +225,7 @@ class ServiceOfferingRepository(
                     .await()
 
                 querySnapshot.documents.firstOrNull()?.let {
-                    it.toObject(publishData::class.java)
+                    it.toObject(PublishData::class.java)
                 }
             }
         }catch (e:Exception){
@@ -216,7 +234,7 @@ class ServiceOfferingRepository(
         }
     }
 
-    fun cleanServiceOfferingData():publishData?{
+    fun cleanServiceOfferingData():PublishData?{
         return null
     }
 

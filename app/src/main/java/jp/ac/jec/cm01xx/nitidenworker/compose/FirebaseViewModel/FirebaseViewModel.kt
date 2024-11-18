@@ -11,8 +11,8 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
-import jp.ac.jec.cm01xx.nitidenworker.publishData
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.PublishData
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,33 +25,44 @@ class FirebaseViewModel:ViewModel() {
     val fireStorage = FirebaseStorage.getInstance()
     val userDataRepository = UserDataRepository(auth, fireStore, fireStorage)
     val serviceOfferingRepository = ServiceOfferingRepository(auth,fireStore, fireStorage)
+    val messageRepository = MessageRepository(auth,fireStore,fireStorage)
 
-    private val _userData = MutableStateFlow<userDocument?>(null)
-    val userData:StateFlow<userDocument?> = _userData.asStateFlow()
+    private val _userData = MutableStateFlow<UserDocument?>(null)
+    val userData:StateFlow<UserDocument?> = _userData.asStateFlow()
 
-    private val _myServiceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
+    private val _applicants = MutableStateFlow<List<UserDocument?>>(emptyList())
+    val applicant:StateFlow<List<UserDocument?>> = _applicants.asStateFlow()
+
+    private val _applyingServiceOfferings = MutableStateFlow<List<PublishData?>>(emptyList())
+    val applyingServiceOfferings:StateFlow<List<PublishData?>> = _applyingServiceOfferings.asStateFlow()
+
+    private val _myServiceOfferings = MutableStateFlow<List<PublishData?>>(emptyList())
     val myServiceOfferings = _myServiceOfferings.asStateFlow()
 
-    private val _myFavoriteServiceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
+    private val _myFavoriteServiceOfferings = MutableStateFlow<List<PublishData?>>(emptyList())
     val myFavoriteServiceOfferings = _myFavoriteServiceOfferings.asStateFlow()
 
-    private val _serviceOfferings = MutableStateFlow<List<publishData?>>(emptyList())
+    private val _serviceOfferings = MutableStateFlow<List<PublishData?>>(emptyList())
     val serviceOfferings = _serviceOfferings.asStateFlow()
 
-    private val _serviceOfferingData = MutableStateFlow<publishData?>(null)
+    private val _serviceOfferingData = MutableStateFlow<PublishData?>(null)
     val serviceOfferingData = _serviceOfferingData.asStateFlow()
 
 
     fun startLeadingUserData(userId:String){
         viewModelScope.launch {
             try {
-                userDataRepository.startLeadingUserData(userId).collect { userDocument ->
-                    _userData.value = userDocument
+                userDataRepository.startLeadingUserData(userId).collect { UserDocument ->
+                    _userData.value = UserDocument
                 }
             } catch (e:Exception){
                 Log.d("startLeadingUserDataError", e.message.toString())
             }
         }
+    }
+
+    fun getApplicants(uids: List<String?>){
+        viewModelScope.launch { _applicants.value = userDataRepository.getApplicants(uids) }
     }
 
     fun updateOnMyProfile(key:String,value:Any?){
@@ -92,6 +103,13 @@ class FirebaseViewModel:ViewModel() {
             _myFavoriteServiceOfferings.value = serviceOfferingRepository.getMyFavoriteServiceOfferings()
         }
     }
+
+    fun getApplyingServiceOfferings(){
+        viewModelScope.launch {
+            _applyingServiceOfferings.value = serviceOfferingRepository.getApplyingServiceOfferings()
+        }
+    }
+
     fun updateServiceOffering(key:String,value:Any?,id:String){
         viewModelScope.launch {
             serviceOfferingRepository.updateServiceOffering(key, value, id)
@@ -142,10 +160,7 @@ class FirebaseViewModel:ViewModel() {
 
     fun updateListTypeOfServiceOffering(id:String?,listType:String){
         viewModelScope.launch {
-            serviceOfferingRepository.updateListTypeOfServiceOffering(
-                id,
-                listType,
-            )
+            serviceOfferingRepository.updateListTypeOfServiceOffering(id, listType)
         }
     }
 
@@ -190,5 +205,9 @@ class FirebaseViewModel:ViewModel() {
 
     private suspend fun uploadMovieThumbnail(thumbnail:Bitmap?):String?{
         return serviceOfferingRepository.uploadMovieThumbnail(thumbnail)
+    }
+
+    fun sendMessage(conversationId:String,messages:Messages) {
+//        viewModelScope.launch { messageRepository.sendMessage(conversationId,messages) }
     }
 }

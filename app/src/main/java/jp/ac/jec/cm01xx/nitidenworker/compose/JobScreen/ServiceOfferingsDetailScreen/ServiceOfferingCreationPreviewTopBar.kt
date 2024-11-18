@@ -19,9 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 
 @Composable
@@ -60,11 +62,11 @@ fun ServiceOfferingCreationPreviewTopBar(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = "backToScreen"
+                contentDescription = stringResource(id = R.string.ArrowBack_Icon_description)
             )
         }
         Text(
-            text = "ServiceOfferingsDetail",
+            text = stringResource(id = R.string.ServiceOfferingCreationPreview_TopBar),
             modifier = Modifier
                 .padding(top = 12.dp)
                 .align(Alignment.Center),

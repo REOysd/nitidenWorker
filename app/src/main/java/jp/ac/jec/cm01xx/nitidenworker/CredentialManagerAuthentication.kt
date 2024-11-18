@@ -24,7 +24,7 @@ fun CredentialManagerAuthentication(
     scope:CoroutineScope,
     credentialManager: CredentialManager
 ){
-    val WEB_CLIENT_ID = "899480932485-vq9dkp81a41l1kargodov0ld004sndsi.apps.googleusercontent.com"
+    val WEB_CLIENT_ID = BuildConfig.WEB_CLIENT_ID
 
     val googleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
@@ -61,7 +61,7 @@ fun CredentialManagerAuthentication(
 
                 if (!userDocument.get().await().exists()) {
                     val newUser = user.let {
-                        userDocument(
+                        UserDocument(
                             uid = it.uid,
                             mail = it.email.toString(),
                             name = it.displayName.toString(),
@@ -71,7 +71,7 @@ fun CredentialManagerAuthentication(
                     userDocument.set(newUser).await()
                 }
                 val userDocumentUpdate = userDocument.get().await()
-                val userData = userDocumentUpdate.toObject(userDocument::class.java)
+                val userData = userDocumentUpdate.toObject(UserDocument::class.java)
 
                 if (userData != null) {
                     println(userData)

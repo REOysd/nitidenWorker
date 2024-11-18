@@ -17,7 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import jp.ac.jec.cm01xx.nitidenworker.R
@@ -39,14 +41,14 @@ fun NoUserProfileHeader(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.unlogin_icon_by_icons8),
-                contentDescription = "No Login",
+                contentDescription = stringResource(id = R.string.NoUserProfileHeader_Image_description),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .size(120.dp),
                 colorFilter = ColorFilter.tint(Color.Gray)
             )
             Text(
-                text = "ログインされていません",
+                text = stringResource(id = R.string.NoUserProfileHeader_Text),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 10.dp),
@@ -58,10 +60,10 @@ fun NoUserProfileHeader(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 50.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFF00B900))
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bottomNavigationBarColor))
             ) {
                 Text(
-                    text = "ログイン",
+                    text = stringResource(id = R.string.NoUserProfileHeader_buttonText),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier

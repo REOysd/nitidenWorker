@@ -6,7 +6,7 @@ import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class ServiceOfferingsDetailViewModel:ViewModel() {
+class ServiceOfferingsCreationViewModel:ViewModel() {
     private val _uiState = MutableStateFlow(ServiceOfferingsDetailUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -25,11 +25,24 @@ class ServiceOfferingsDetailViewModel:ViewModel() {
             deliveryDays = data.deliveryDays,
             precautions = data.precautions,
             checkBoxState = data.checkBoxState,
+            images = images,
+            movies = movies,
             selectImageAndMoviePageCount = images.size + movies.size,
             niceCount = data.niceCount,
             favoriteCount = data.favoriteCount,
             applyingCount = data.applyingCount,
-            images = images
+        )
+    }
+
+    fun changeIsShowSelectedImageAndMovieDialog(isShowImageDialog: Boolean){
+        _uiState.value = uiState.value.copy(
+            isShowImageDialog = isShowImageDialog
+        )
+    }
+
+    fun changeImageAndMovieIndex(index:Int){
+        _uiState.value = uiState.value.copy(
+            imageAndMovieIndex = index
         )
     }
 }
@@ -42,8 +55,11 @@ data class ServiceOfferingsDetailUiState(
     val precautions:String? = "",
     val checkBoxState:Boolean = false,
     val images:List<Uri> = emptyList(),
+    val movies:List<Uri> = emptyList(),
     val selectImageAndMoviePageCount:Int = 0,
     val niceCount:Int = 0,
     val favoriteCount:Int = 0,
-    val applyingCount:Int = 0
+    val applyingCount:Int = 0,
+    val isShowImageDialog: Boolean = false,
+    val imageAndMovieIndex:Int = 0
 )

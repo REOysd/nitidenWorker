@@ -2,28 +2,24 @@ package jp.ac.jec.cm01xx.nitidenworker.Navigation
 
 import android.content.Context
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.R
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import jp.ac.jec.cm01xx.nitidenworker.ServiceOfferingData
 
 @Composable
@@ -31,7 +27,7 @@ fun NavigateFloatingActionButtonOnPreview(
     publishServiceOfferings:(ServiceOfferingData,Context) -> Unit,
     setServiceOfferingData:(ServiceOfferingData?) -> Unit,
     data:ServiceOfferingData?,
-    userData: userDocument?,
+    userData: UserDocument?,
     onClickToMyJob:() -> Unit,
     context: Context
 ){
@@ -55,10 +51,10 @@ fun NavigateFloatingActionButtonOnPreview(
                 .height(53.dp)
                 .padding(horizontal = 80.dp),
             shape = RoundedCornerShape(34.dp),
-            containerColor = Color(0xFF45c152),
+            containerColor = colorResource(id = R.color.nitidenGreen),
         ) {
             Text(
-                text = "公開する",
+                text = stringResource(id = R.string.NavigateFloatingActionButtonOnPreview_buttonText),
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.White,
                 textAlign = TextAlign.Center,

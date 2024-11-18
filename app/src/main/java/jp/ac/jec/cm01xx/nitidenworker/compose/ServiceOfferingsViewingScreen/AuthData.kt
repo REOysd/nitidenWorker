@@ -19,11 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import jp.ac.jec.cm01xx.nitidenworker.R
 
 @Composable
 fun AuthData(
@@ -63,7 +65,7 @@ fun AuthData(
                     .data(it)
                     .crossfade(true)
                     .build(),
-                contentDescription = "ProfileImage",
+                contentDescription = stringResource(id = R.string.UserPhoto_description),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)

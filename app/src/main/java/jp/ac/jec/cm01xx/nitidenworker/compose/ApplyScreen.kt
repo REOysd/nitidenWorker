@@ -1,5 +1,6 @@
 package jp.ac.jec.cm01xx.nitidenworker.compose
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -9,35 +10,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen.ServiceOfferingsViewingScreen
 import jp.ac.jec.cm01xx.nitidenworker.PublishData
+import jp.ac.jec.cm01xx.nitidenworker.compose.ServiceOfferingsViewingScreen.ServiceOfferingsViewingScreen
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun FavoriteScreen(
+fun ApplyScreen(
     uid:String?,
+    ApplyingServiceOfferings: StateFlow<List<PublishData?>>,
     getServiceOfferingData:(String) -> Unit,
-    getMyFavoriteServiceOfferings:() -> Unit,
+    getApplyingServiceOfferings:() -> Unit,
+    cleanServiceOfferingCreationPreview:() -> Unit,
+    onClickToServiceOfferingDetailScreen:() -> Unit,
     updateLikedUsers:(String,String) -> Unit,
     updateFavoriteUsers:(String,String) -> Unit,
     onClickHeartAndFavoriteIcon:(String,Boolean,String) -> Unit,
-    onClickToServiceOfferingDetailScreen:() -> Unit,
-    _myFavoriteServiceOfferings:StateFlow<List<PublishData?>>,
-    cleanServiceOfferingCreationPreview:() -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
 ){
-    val myFavoriteServiceOfferings = _myFavoriteServiceOfferings.collectAsState()
+    val applyingServiceOfferings = ApplyingServiceOfferings.collectAsState()
 
     LaunchedEffect(Unit) {
-        getMyFavoriteServiceOfferings()
+        getApplyingServiceOfferings()
     }
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
+            .background(Color.White)
     ) {
-        items(items = myFavoriteServiceOfferings.value){ item ->
+        items(items = applyingServiceOfferings.value) {item ->
             Spacer(modifier = Modifier.height(6.dp))
 
             item?.let { serviceOffering ->
@@ -66,8 +69,7 @@ fun FavoriteScreen(
                             "favoriteUserIds"
                         )
                     },
-                    onClickHeartIcon =
-                    {
+                    onClickHeartIcon = {
                         onClickHeartAndFavoriteIcon(
                             "niceCount",
                             it,
@@ -83,6 +85,7 @@ fun FavoriteScreen(
                     }
                 )
             }
+            Spacer(modifier = Modifier.height(6.dp))
         }
     }
-    }
+}

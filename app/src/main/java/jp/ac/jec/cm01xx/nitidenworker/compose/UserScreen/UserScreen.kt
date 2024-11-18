@@ -38,6 +38,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -46,10 +48,11 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseUser
+import jp.ac.jec.cm01xx.nitidenworker.R
 import jp.ac.jec.cm01xx.nitidenworker.compose.FirebaseViewModel.FirebaseViewModel
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileAppeal.UserProfileAppeal
 import jp.ac.jec.cm01xx.nitidenworker.compose.UserScreen.UserProfileHeader.UserProfileScreen
-import jp.ac.jec.cm01xx.nitidenworker.userDocument
+import jp.ac.jec.cm01xx.nitidenworker.UserDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -62,7 +65,7 @@ import kotlinx.coroutines.launch
     onClickLoginButton:() -> Unit,
     onClickLogoutButton:() -> Unit,
 ){
-    var ProfileCurrentUser by rememberSaveable { mutableStateOf(currentUser) }
+    var profileCurrentUser by rememberSaveable { mutableStateOf(currentUser) }
     val context = LocalContext.current
     val state = rememberPagerState (
         pageCount = {2},
@@ -70,7 +73,10 @@ import kotlinx.coroutines.launch
     )
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
     val height = systemBarsPadding.calculateTopPadding()
-    val scrollPage = listOf("プロフィール","アピール")
+    val scrollPage = listOf(
+        stringResource(id = R.string.UserScreen_Profile),
+        stringResource(id = R.string.UserScreen_appeal)
+    )
     val scope = rememberCoroutineScope()
     val userData by firebaseViewModel.userData.collectAsState()
     val serviceOfferingData by firebaseViewModel.serviceOfferingData.collectAsState()
@@ -88,7 +94,7 @@ import kotlinx.coroutines.launch
     }
 
 
-    if(ProfileCurrentUser == null){
+    if(profileCurrentUser == null){
             NoUserProfileHeader(
                 onClickLoginButton = onClickLoginButton
             )
@@ -118,7 +124,7 @@ import kotlinx.coroutines.launch
                                     .padding(innerPadding),
                                 onClickLogoutButton = onClickLogoutButton,
                                 SwitchProfileCurrentUser = {
-                                    ProfileCurrentUser = null
+                                    profileCurrentUser = null
                                 },
                                 userData = userData,
                                 uid = currentUser?.uid,
@@ -139,12 +145,13 @@ import kotlinx.coroutines.launch
             }
         }
 }
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileTopBar(
     height:Dp,
     context: Context,
-    userData:userDocument?,
+    userData:UserDocument?,
     state:PagerState,
     scrollPage:List<String>,
     scope:CoroutineScope
@@ -164,7 +171,7 @@ fun ProfileTopBar(
                     .data(it)
                     .crossfade(true)
                     .build(),
-                contentDescription = "ProfileImage",
+                contentDescription = stringResource(id = R.string.UserPhoto_description),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -202,10 +209,10 @@ fun ProfileTopBar(
                 .background(Color.Black)
                 .fillMaxWidth(),
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
+                TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(tabPositions[state.currentPage]),
                     height = 3.dp,
-                    color = Color(0xFF00B900)  // ここで指定した色を使用
+                    color = colorResource(id = R.color.bottomNavigationBarColor)
                 )
             },
         ) {
@@ -227,7 +234,7 @@ fun ProfileTopBar(
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         color =
-                        if(index == state.currentPage)Color(0xFF00B900)
+                        if(index == state.currentPage) colorResource(id = R.color.bottomNavigationBarColor)
                         else Color.Gray
                     )
                 }
