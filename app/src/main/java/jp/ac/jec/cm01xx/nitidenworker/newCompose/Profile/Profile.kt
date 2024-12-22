@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.Profile
+package jp.ac.jec.cm01xx.nitidenworker.newCompose.Profile
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

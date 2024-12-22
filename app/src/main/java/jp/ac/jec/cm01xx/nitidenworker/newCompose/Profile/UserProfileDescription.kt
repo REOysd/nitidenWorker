@@ -1,8 +1,7 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.Profile
+package jp.ac.jec.cm01xx.nitidenworker.newCompose.Profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
@@ -37,9 +38,12 @@ import jp.ac.jec.cm01xx.nitidenworker.R
 
 @Composable
 fun UserProfileDescription(modifier: Modifier) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .background(Color.White)
+            .verticalScroll(scrollState)
             .fillMaxSize()
     ) {
         UserResultAndRoundOfApplause()
@@ -49,6 +53,7 @@ fun UserProfileDescription(modifier: Modifier) {
         UserPR()
         Spacer(modifier = Modifier.height(30.dp))
         UserURL()
+        Spacer(modifier = Modifier.height(46.dp))
     }
 }
 
@@ -143,16 +148,17 @@ fun UserDepartment() {
         )
         Card (
             shape = RectangleShape,
+            onClick = {},
             modifier = Modifier
+                .background(Color(0xFFEFEDED))
                 .fillMaxWidth()
-                .background(Color(0xFFEFEDED)),
-            onClick = {}
         ){
             Row (
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .background(Color(0xFFEFEDED))
-                    .height(40.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
             ){
                 Spacer(modifier = Modifier.width(18.dp))
                 Image(
@@ -167,7 +173,7 @@ fun UserDepartment() {
                     Text(
                         text = stringResource(id = R.string.UserProfileScreen_department),
                         style = TextStyle(
-                            fontSize = 11.sp,
+                            fontSize = 12.sp,
                             fontFamily = FontFamily(Font(R.font.hiragino_bold))
                         ),
                         textAlign = TextAlign.Start
@@ -176,7 +182,7 @@ fun UserDepartment() {
                         text = stringResource(id = R.string.UserProfileScreen_department_example),
                         fontFamily = FontFamily(Font(R.font.hiragino_bold)),
                         color = Color.Gray,
-                        fontSize = 9.sp,
+                        fontSize = 10.sp,
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
@@ -223,7 +229,7 @@ fun UserPR() {
                 Text(
                     text = stringResource(id = R.string.UserProfileAppealExample),
                     style = TextStyle(
-                        fontSize = 9.sp,
+                        fontSize = 10.sp,
                         fontFamily = FontFamily(Font(R.font.hiragino_bold)),
                         color = Color.Gray,
                         lineHeight = 16.sp
@@ -275,7 +281,7 @@ fun UserURL() {
                 Text(
                     text = stringResource(id = R.string.UserProfileAppealUrlExample),
                     style = TextStyle(
-                        fontSize = 9.sp,
+                        fontSize = 10.sp,
                         fontFamily = FontFamily(Font(R.font.hiragino_bold)),
                         color = Color.Gray,
                         lineHeight = 16.sp
