@@ -25,10 +25,10 @@
     <string name="NoUserProfileHeader_Text">ログインされていません</string>
     <string name="NoUserProfileHeader_buttonText">ログイン</string>
     <string name="UserProfileScreen_achievements">実績数</string>
-    <string name="UserProfileScreen_completionRate">完了率</string>
+    <string name="UserProfileScreen_completionRate">いいね数</string>
     <string name="UserProfileScreen_basicInformation">基本情報</string>
     <string name="UserProfileScreen_department_description">department</string>
-    <string name="UserProfileScreen_department">学科</string>
+    <string name="UserProfileScreen_department">学科選択</string>
     <string name="UserProfileScreen_department_example">＜例＞モバイルアプリケーション開発科</string>
     <string name="UserProfileScreen_department_IconButton_description">編集</string>
     <string name="UserProfileScreen_setting">設定</string>
