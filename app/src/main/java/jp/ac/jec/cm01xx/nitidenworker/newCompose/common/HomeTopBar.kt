@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.Home
+package jp.ac.jec.cm01xx.nitidenworker.newCompose.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

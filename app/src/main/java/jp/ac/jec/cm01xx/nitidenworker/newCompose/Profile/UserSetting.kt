@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.Profile
+package jp.ac.jec.cm01xx.nitidenworker.newCompose.Profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,6 +27,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.jec.cm01xx.nitidenworker.R
@@ -63,7 +64,7 @@ private fun Setting() {
             text = stringResource(id = R.string.UserProfileScreen_pushNotification)
         )
         Item_Setting(
-            imagePainter = painterResource(id = R.drawable.logout),
+            imagePainter = painterResource(id = R.drawable.baseline_logout_24),
             contentDescription = "logout",
             text = "ログアウト"
         )
@@ -83,7 +84,7 @@ private fun Other() {
                 .padding(bottom = 6.dp, start = 10.dp)
         )
         Item_Setting(
-            imagePainter = painterResource(id = R.drawable.support),
+            imagePainter = painterResource(id = R.drawable.baseline_contact_support_24),
             contentDescription = "support",
             text = "お問い合わせ"
         )
@@ -101,7 +102,7 @@ private fun Item_Setting(imagePainter: Painter,contentDescription:String,text:St
         Row (
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .height(40.dp)
+                .height(48.dp)
                 .background(Color(0xFFEFEDED))
         ){
             Spacer(modifier = Modifier.width(18.dp))
@@ -132,4 +133,10 @@ private fun Item_Setting(imagePainter: Painter,contentDescription:String,text:St
             Spacer(modifier = Modifier.width(14.dp))
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun UserSettingPreview() {
+    UserSetting(modifier = Modifier)
 }

@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.compose.Home
+package jp.ac.jec.cm01xx.nitidenworker.newCompose.Home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import jp.ac.jec.cm01xx.nitidenworker.newCompose.common.HomeTopBar
 
 @Composable
 fun Home() {
