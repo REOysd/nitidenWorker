@@ -110,4 +110,9 @@
     <string name="emptyMessageText">現在受信しているメッセージはありません</string>
     <string name="emptyApplicant">現在応募している人はいません</string>
     <string name="adoption">採用</string>
+    
+    //jobScreen
+    <string name="jobScreen_submit">応募した作品</string>
+    <string name="jobScreen_offer">提供した作品</string>
+    <string name="jobScreen_OfferProduction">作品を提案する</string>
 </resources>

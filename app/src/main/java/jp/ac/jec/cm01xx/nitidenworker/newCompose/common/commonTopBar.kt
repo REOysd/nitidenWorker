@@ -109,7 +109,7 @@ fun CommonTopBar(
 fun CommonTopBarPreview() {
     CommonTopBar(
         modifier = Modifier,
-        showBackButton = false,
+        showBackButton = true,
         showUserIcon = false,
         topAppBarTitle = "ユーザーネーム",
         isCenterAlignment = true
