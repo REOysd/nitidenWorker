@@ -35,7 +35,7 @@ import jp.ac.jec.cm01xx.nitidenworker.R
 
 @Composable
 fun CommonTopBar(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     showBackButton: Boolean = true,
     showUserIcon: Boolean = false,
     onClickToBack: (() -> Unit)? = null,
