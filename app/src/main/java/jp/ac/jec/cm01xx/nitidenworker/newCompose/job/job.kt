@@ -3,12 +3,8 @@ package jp.ac.jec.cm01xx.nitidenworker.newCompose.job
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,21 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -65,8 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import jp.ac.jec.cm01xx.nitidenworker.R
-import jp.ac.jec.cm01xx.nitidenworker.newCompose.Home.Home
 import jp.ac.jec.cm01xx.nitidenworker.newCompose.Profile.UserProfile
+import jp.ac.jec.cm01xx.nitidenworker.newCompose.common.UserInformationButton
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -114,7 +102,7 @@ fun JobScreen() {
         ) {
             OfferContent(
                 animatedHeight = animatedHeight,
-                UserName = "ユーザーネーム",
+                userName = "ユーザーネーム",
                 studentID = "24cm0137@jec.ac.jp"
             )
             HorizontalPager(
@@ -205,7 +193,7 @@ fun JobTopBarContent(
 @Composable
 fun OfferContent(
     animatedHeight: Dp,
-    UserName:String,
+    userName:String,
     studentID:String
 ) {
     Column(
@@ -221,57 +209,11 @@ fun OfferContent(
                 )
             }
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(animatedHeight)
-                .background(Color.White)
-                .clickable(
-                    indication = rememberRipple(bounded = true),
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                }
-        ){
-            Spacer(modifier = Modifier.width(15.dp))
-            Surface(
-                modifier = Modifier
-                    .size(60.dp)
-                    .align(Alignment.CenterVertically),
-                shape = CircleShape,
-                color = Color.LightGray,
-            ) {}
-            Spacer(modifier = Modifier.width(15.dp))
-            Column(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .background(Color.White)
-                    .weight(1f)
-            ) {
-                Text(
-                    text = UserName,
-                    style = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.hiragino_black)),
-                        fontSize = 16.sp
-                    ),
-                )
-                Text(
-                    text = studentID,
-                    style = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.hiragino_black)),
-                        fontSize = 12.sp,
-                        color = Color(0xFF909090)
-                    ),
-                )
-            }
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                contentDescription = "backArrowIcon",
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.CenterVertically),
-                )
-            Spacer(modifier = Modifier.width(15.dp))
-        }
+        UserInformationButton(
+            userName = "ユーザーネーム",
+            studentID = "24cm0137@jec.ac.jp",
+            height = animatedHeight
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
