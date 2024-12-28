@@ -1,4 +1,4 @@
-package jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.conponents
+package jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

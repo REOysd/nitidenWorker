@@ -20,12 +20,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.conponents.ConfirmProposalBody
-import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.conponents.ConfirmProposalFooter
-import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.conponents.ConfirmProposalHeader
-import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.conponents.ConfirmProposalPublishButton
-import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.conponents.ConfirmProposalThumbnail
-import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.conponents.ConfirmProposalUserInformationButton
+import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.components.ConfirmProposalBody
+import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.components.ConfirmProposalFooter
+import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.components.ConfirmProposalHeader
+import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.components.ConfirmProposalPublishButton
+import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.components.ConfirmProposalThumbnail
+import jp.ac.jec.cm01xx.nitidenworker.newCompose.Confirm_proposal.components.ConfirmProposalUserInformationButton
 import jp.ac.jec.cm01xx.nitidenworker.newCompose.common.CommonTopBar
 
 @OptIn(ExperimentalFoundationApi::class)
